@@ -1,0 +1,1417 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f4f7f9">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <title>BetaTEST • Stride</title>
+  <style>
+    :root{
+      --bg:#f4f7f9; --card:#ffffff; --ink:#14202b; --muted:#71808f; --line:#e7edf1;
+      --brand:#216e68; --brand2:#5c6de8; --soft:#e6f3f1; --danger:#c8434f;
+      --shadow:0 10px 30px rgba(25,44,58,.08); --radius:24px;
+      --walk:#2a9d8f; --light-run:#7182ee; --run:#5364d8; --mixed:#e79547;
+    }
+    *{box-sizing:border-box}
+    html{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+    body{margin:0;background:var(--bg);min-height:100vh;-webkit-font-smoothing:antialiased}
+    button,input,select,textarea{font:inherit}
+    button{cursor:pointer}
+    .app{max-width:760px;margin:0 auto;min-height:100vh;padding-bottom:calc(94px + env(safe-area-inset-bottom))}
+    .topbar{position:sticky;top:0;z-index:20;padding:calc(14px + env(safe-area-inset-top)) 18px 12px;
+      background:rgba(244,247,249,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+      display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;align-items:center;gap:11px}
+    .brand-mark{width:38px;height:38px;border:0;border-radius:13px;background:linear-gradient(145deg,var(--brand),#4da99d);
+      color:white;display:grid;place-items:center;font-weight:800;letter-spacing:-1px;box-shadow:0 8px 18px rgba(33,110,104,.18);
+      cursor:pointer;appearance:none;-webkit-appearance:none;padding:0;transition:transform .15s ease,box-shadow .15s ease}
+    .brand-mark:active{transform:scale(.94);box-shadow:0 4px 10px rgba(33,110,104,.16)}
+    .brand h1{font-size:19px;line-height:1;margin:0;letter-spacing:-.35px}
+    .brand small{display:block;color:var(--muted);font-size:11px;margin-top:4px;font-weight:600}
+    .icon-btn{border:0;background:var(--card);width:40px;height:40px;border-radius:13px;color:var(--ink);box-shadow:0 3px 14px rgba(25,44,58,.06);
+      display:grid;place-items:center;font-size:20px}
+    main{padding:0 16px}
+    .page{display:none;animation:fade .18s ease}
+    .page.active{display:block}
+    @keyframes fade{from{opacity:.35;transform:translateY(3px)}to{opacity:1;transform:none}}
+    .hero{background:linear-gradient(145deg,#183d45,#216e68 50%,#5b6ce2);border-radius:30px;color:white;padding:22px;box-shadow:0 18px 38px rgba(42,80,90,.20);overflow:hidden;position:relative}
+    .hero:after{content:"";position:absolute;width:190px;height:190px;border-radius:50%;right:-80px;top:-80px;background:rgba(255,255,255,.09)}
+    .hero-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;position:relative;z-index:1}
+    .eyebrow{font-size:11px;font-weight:750;letter-spacing:.11em;text-transform:uppercase;opacity:.78}
+    .hero h2{font-size:29px;line-height:1.05;margin:5px 0 5px;letter-spacing:-1.1px}
+    .hero p{margin:0;font-size:13px;opacity:.8}
+    .month-pill{border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.12);color:white;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:700}
+    .hero-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:17px;position:relative;z-index:1}
+    .hero-metric{
+      min-height:70px;padding:9px 10px 8px;border-radius:16px;
+      background:rgba(255,255,255,.105);
+      border:1px solid rgba(255,255,255,.09);
+      box-shadow:0 4px 12px rgba(8,34,40,.045);
+      backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px)
+    }
+    .metric-head{margin-bottom:4px}
+    .metric-label{display:block;font-size:8.5px!important;opacity:.67!important;font-weight:780!important;letter-spacing:.07em;text-transform:uppercase}
+    .hero-metric b{display:block;font-size:19px;line-height:1.02;letter-spacing:-.55px;white-space:nowrap}
+    .hero-trend{display:inline-flex;align-items:center;margin-top:6px;padding:3px 5px;border-radius:999px;font-size:8px;font-weight:780;white-space:nowrap}
+    .hero-trend.up{color:#ddfff5;background:rgba(109,223,188,.09)}
+    .hero-trend.down{color:#ffe6ca;background:rgba(242,170,89,.09)}
+    .hero-trend.flat{color:rgba(255,255,255,.76);background:rgba(255,255,255,.06)}
+    .hero-trend.none{color:rgba(255,255,255,.54);font-weight:680;background:rgba(255,255,255,.045)}
+    .section-title{display:flex;align-items:center;justify-content:space-between;margin:24px 2px 11px}
+    .section-title h3{font-size:17px;margin:0;letter-spacing:-.35px}
+    .section-title button{
+      border:0;background:none;color:var(--brand);font-size:12px;font-weight:750;
+      padding:3px 0;margin:0;min-height:auto;border-radius:0;touch-action:manipulation;
+      -webkit-tap-highlight-color:transparent
+    }
+    .section-title button:active{opacity:.55;background:none}
+    @media(max-width:380px){
+      .hero-metrics{gap:6px}
+      .hero-metric{min-height:66px;padding:8px 8px 7px;border-radius:14px}
+      .hero-metric b{font-size:17px}
+      .metric-label{font-size:7.8px!important}
+      .hero-trend{font-size:7.4px;padding:3px 4px}
+    }
+    .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+    .kpi{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px;box-shadow:0 7px 20px rgba(30,50,64,.035)}
+    .kpi .label{color:var(--muted);font-size:11px;font-weight:700}
+    .kpi strong{display:block;font-size:24px;letter-spacing:-.9px;margin-top:5px}
+    .kpi small{font-size:10px;color:var(--muted);display:block;margin-top:2px}
+    .kpi-trend{display:inline-flex;align-items:center;gap:3px;margin-top:8px;padding:4px 7px;border-radius:999px;font-size:9px;font-weight:800;line-height:1.1;white-space:nowrap}
+    .kpi-trend.up{background:#e9f7f3;color:#24796e}
+    .kpi-trend.down{background:#fff3e7;color:#b56b24}
+    .kpi-trend.flat{background:#f1f4f6;color:#71808f}
+    .kpi-trend.none{background:#f5f7f8;color:#99a4ad;font-weight:700}
+    .card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:0 7px 22px rgba(30,50,64,.04)}
+    .last-card{padding:16px;display:flex;align-items:center;gap:14px}
+    .activity-dot{width:46px;height:46px;border-radius:16px;display:grid;place-items:center;color:white;font-size:14px;font-weight:850;flex:0 0 auto}
+    .activity-dot.walk{background:var(--walk)} .activity-dot.run{background:var(--run)}
+    .activity-dot.light-run{background:var(--light-run)} .activity-dot.mixed{background:var(--mixed)}
+    .last-main{min-width:0;flex:1}.last-main b{font-size:14px}.last-main p{margin:4px 0 0;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .chev{color:#9aa7b3;font-size:22px}
+    .chart-card{padding:14px 12px 9px;overflow:hidden}
+    .chart-head{padding:3px 5px 10px;display:flex;align-items:center;justify-content:space-between}
+    .chart-head b{font-size:13px}.chart-head span{font-size:11px;color:var(--muted)}
+    .svg-chart{width:100%;display:block;overflow:visible}
+    .calendar-card{padding:14px}
+    .calendar-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .calendar-head b{font-size:14px}.calendar-head .cal-nav{display:flex;gap:6px}
+    .mini-btn{width:32px;height:32px;border:1px solid var(--line);background:white;border-radius:10px;color:var(--ink)}
+    .calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+    .dow{text-align:center;font-size:9px;color:var(--muted);font-weight:750;padding-bottom:3px}
+    .day{aspect-ratio:1;border:0;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:11px;position:relative;
+      background:rgba(255,255,255,.72);color:#7d8a95;box-shadow:0 2px 8px rgba(27,45,58,.035);transition:transform .14s ease,box-shadow .14s ease;appearance:none;-webkit-appearance:none;padding:0}
+    .day:active{transform:scale(.94)}
+    .day.has{color:#fff;font-weight:820;text-shadow:0 1px 2px rgba(0,0,0,.12);box-shadow:0 3px 10px rgba(27,45,58,.07)}
+    .day.today{box-shadow:0 0 0 2px rgba(33,110,104,.22),0 3px 10px rgba(27,45,58,.06)}
+    .day .multi-count{position:absolute;right:4px;top:4px;min-width:16px;height:16px;padding:0 4px;border-radius:999px;display:grid;place-items:center;font-size:9px;font-weight:800;line-height:1;background:rgba(255,255,255,.22);color:rgba(255,255,255,.96);border:1px solid rgba(255,255,255,.20);box-shadow:0 2px 8px rgba(12,18,24,.10);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+    .toolbar{position:sticky;top:70px;z-index:10;background:linear-gradient(var(--bg) 82%,rgba(244,247,249,0));padding:4px 0 12px}
+    .search{background:white;border:1px solid var(--line);border-radius:17px;padding:0 13px;display:flex;align-items:center;gap:8px}
+    .search input{width:100%;border:0;outline:0;background:transparent;padding:13px 0;color:var(--ink)}
+    .chips{display:flex;gap:7px;overflow-x:auto;padding:9px 0 2px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
+    .chip{border:1px solid var(--line);background:white;color:var(--muted);padding:8px 11px;border-radius:999px;white-space:nowrap;font-size:11px;font-weight:700}
+    .chip.active{background:var(--ink);color:white;border-color:var(--ink)}
+    .month-group{margin-top:12px}.month-label{color:var(--muted);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin:18px 4px 8px}
+    .session-list{display:grid;gap:9px}
+    .session-card{padding:13px;display:flex;align-items:center;gap:12px;border:0;text-align:left;width:100%;color:inherit}
+    .session-date{width:45px;text-align:center;flex:0 0 auto}.session-date b{font-size:20px;display:block;line-height:1}.session-date span{font-size:9px;text-transform:uppercase;color:var(--muted);font-weight:800}
+    .session-info{min-width:0;flex:1}.session-info .title{font-size:13px;font-weight:780}.session-info .meta{font-size:11px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .session-km{text-align:right;flex:0 0 auto}.session-km b{font-size:16px}.session-km span{display:block;font-size:9px;color:var(--muted);margin-top:2px}
+    .empty{text-align:center;padding:42px 20px;color:var(--muted)}.empty b{display:block;color:var(--ink);margin-bottom:4px}
+    .progress-head{display:flex;align-items:center;justify-content:space-between;margin:3px 2px 12px}
+    .progress-head h2{font-size:27px;margin:0;letter-spacing:-1px}
+    .select{border:1px solid var(--line);background:white;border-radius:13px;padding:9px 11px;color:var(--ink);font-size:12px;font-weight:700;outline:0;max-width:155px}
+    .records{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .record{padding:15px}.record .tag{font-size:10px;color:var(--muted);font-weight:750}.record strong{display:block;margin-top:6px;font-size:20px;letter-spacing:-.6px}.record small{color:var(--muted);font-size:10px}
+    .weekly-card{padding:15px}.week-row{display:grid;grid-template-columns:82px 1fr 48px;align-items:center;gap:8px;margin:12px 0}
+    .week-label{font-size:10px;color:var(--muted);font-weight:700}.bar-track{height:10px;background:#edf1f3;border-radius:99px;overflow:hidden}.bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--brand),var(--brand2))}
+    .week-value{text-align:right;font-size:11px;font-weight:800}
+    .activity-bars{padding:15px}.activity-row{margin:14px 0}.activity-line{display:flex;justify-content:space-between;font-size:11px;margin-bottom:6px}.activity-line b{font-weight:750}.activity-line span{color:var(--muted)}
+    .speed-legend{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:3px}.legend-item{font-size:8px;color:#5f6e79;text-align:center}.legend-color{height:8px;border-radius:6px;margin-bottom:4px}
+    .bottom-nav{position:fixed;z-index:25;left:50%;bottom:0;transform:translateX(-50%);width:min(760px,100%);
+      padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+      border-top:1px solid rgba(222,229,234,.85);display:grid;grid-template-columns:1fr 1fr 68px 1fr}
+    .nav-btn{border:0;background:none;color:#8a98a3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:9px;font-weight:700;min-height:50px}
+    .nav-btn.active{color:var(--brand)}.nav-icon{font-size:20px;line-height:1}.add-main{width:58px;height:58px;border-radius:19px;border:0;background:linear-gradient(145deg,var(--brand),#4b85d5);color:white;font-size:30px;box-shadow:0 9px 20px rgba(33,110,104,.28);align-self:center;justify-self:center;margin-top:-22px}
+    .modal{position:fixed;inset:0;z-index:100;background:rgba(20,32,43,.38);display:none;align-items:flex-end;justify-content:center}
+    .modal.open{display:flex}.sheet{width:min(760px,100%);max-height:94vh;background:var(--bg);border-radius:30px 30px 0 0;overflow:auto;padding-bottom:calc(22px + env(safe-area-inset-bottom));box-shadow:0 -15px 45px rgba(0,0,0,.15)}
+    .sheet-head{position:sticky;top:0;z-index:3;background:rgba(244,247,249,.93);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);padding:14px 17px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(225,232,236,.8)}
+    .grab{width:42px;height:5px;background:#d3dade;border-radius:99px;position:absolute;top:7px;left:50%;transform:translateX(-50%)}
+    .sheet-head b{font-size:15px}.sheet-body{padding:16px}
+    .close-btn{border:0;background:white;width:35px;height:35px;border-radius:12px;color:var(--ink)}
+    .detail-hero{
+      position:relative;overflow:hidden;padding:19px;color:white;border-radius:23px;
+      box-shadow:0 12px 28px rgba(25,44,58,.12)
+    }
+    .detail-hero:after{
+      content:"";position:absolute;inset:auto -28px -36px auto;width:130px;height:130px;border-radius:50%;
+      background:radial-gradient(circle,rgba(255,255,255,.16) 0%,rgba(255,255,255,.07) 34%,rgba(255,255,255,0) 72%);
+      pointer-events:none
+    }
+    .detail-hero.walk{background:linear-gradient(135deg,#1f7169 0%,#278b81 48%,#38a99d 100%)}
+    .detail-hero.light-run{background:linear-gradient(135deg,#5f6fcb 0%,#7182ee 50%,#8d98f4 100%)}
+    .detail-hero.run{background:linear-gradient(135deg,#3748aa 0%,#5364d8 52%,#7181e5 100%)}
+    .detail-hero.mixed{background:linear-gradient(135deg,#c56f2e 0%,#df8a3f 50%,#eba45f 100%)}
+    .detail-hero h2{position:relative;z-index:1;font-size:26px;margin:5px 0 4px;letter-spacing:-.8px}
+    .detail-hero p{position:relative;z-index:1;margin:0;opacity:.84;font-size:12px}
+    .detail-hero .badge{position:relative;z-index:1}
+    .badge{display:inline-flex;padding:6px 9px;border-radius:999px;background:rgba(255,255,255,.13);font-size:10px;font-weight:750}
+    .detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:12px}.detail-metric{padding:14px}.detail-metric span{font-size:10px;color:var(--muted);font-weight:700}.detail-metric b{display:block;font-size:19px;margin-top:4px;letter-spacing:-.5px}
+    .detail-session-nav{
+      display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+      align-items:center;gap:8px;margin:10px 2px 12px
+    }
+    .detail-nav-btn{
+      min-width:0;border:0;background:rgba(255,255,255,.72);color:#5f6e79;
+      border-radius:13px;padding:8px 10px;font-size:10px;font-weight:750;
+      box-shadow:0 2px 8px rgba(27,45,58,.04);display:flex;align-items:center;gap:5px;
+      -webkit-tap-highlight-color:transparent;touch-action:manipulation
+    }
+    .detail-nav-btn.next{justify-content:flex-end;text-align:right}
+    .detail-nav-btn.prev{justify-content:flex-start;text-align:left}
+    .detail-nav-btn:active:not(:disabled){transform:scale(.97);background:white}
+    .detail-nav-btn:disabled{opacity:.27;cursor:default;box-shadow:none}
+    .detail-nav-btn .nav-arrow{font-size:16px;line-height:1;font-weight:650;flex:0 0 auto}
+    .detail-nav-btn .nav-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .detail-position{
+      min-width:48px;text-align:center;color:#8a98a3;font-size:9px;font-weight:800;
+      letter-spacing:.02em
+    }
+    #detailBody.detail-slide-left{animation:detailSlideLeft .20s ease}
+    #detailBody.detail-slide-right{animation:detailSlideRight .20s ease}
+    @keyframes detailSlideLeft{
+      from{opacity:.38;transform:translateX(18px)}
+      to{opacity:1;transform:translateX(0)}
+    }
+    @keyframes detailSlideRight{
+      from{opacity:.38;transform:translateX(-18px)}
+      to{opacity:1;transform:translateX(0)}
+    }
+    @media(max-width:430px){
+      .detail-session-nav{gap:5px;margin-top:9px}
+      .detail-nav-btn{padding:7px 8px;font-size:9px;border-radius:12px}
+      .detail-position{min-width:42px;font-size:8.5px}
+    }
+    .note-card{padding:15px;font-size:12px;line-height:1.55;color:#42515d}.note-card b{display:block;color:var(--ink);margin-bottom:6px}.note-card p{margin:0;white-space:pre-wrap}
+    .detail-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+    .btn{border:0;border-radius:15px;padding:13px 16px;font-weight:750;font-size:12px}.btn.primary{background:var(--ink);color:white}.btn.secondary{background:white;color:var(--ink);border:1px solid var(--line)}.btn.danger{background:#fff1f2;color:var(--danger);border:1px solid #f7d9dd}
+    .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}.field label{font-size:10px;color:var(--muted);font-weight:750;margin-left:2px}
+    .field input,.field select,.field textarea{width:100%;border:1px solid var(--line);background:white;border-radius:14px;padding:12px;color:var(--ink);outline:0}.field textarea{min-height:100px;resize:vertical}.field input:focus,.field select:focus,.field textarea:focus{border-color:#8bb6b2;box-shadow:0 0 0 3px rgba(42,157,143,.1)}
+    .auto-preview{grid-column:1/-1;padding:12px 13px;background:var(--soft);border-radius:14px;color:#255b57;font-size:11px;font-weight:700}
+    details.speed-editor{grid-column:1/-1;background:white;border:1px solid var(--line);border-radius:16px;padding:12px} details.speed-editor summary{font-size:12px;font-weight:750;cursor:pointer}
+    .speed-rows{margin-top:10px;display:grid;gap:6px}.speed-row{display:grid;grid-template-columns:1fr 1fr 36px;gap:6px}.speed-row input{padding:9px 10px!important;border-radius:11px!important}.remove-point{border:0;border-radius:10px;background:#fff0f1;color:var(--danger)}
+    .form-actions{display:grid;grid-template-columns:1fr 1.5fr;gap:9px;margin-top:14px}
+    .manager-grid{display:grid;gap:10px}.manager-btn{text-align:left;padding:15px;border:1px solid var(--line);background:white;border-radius:17px;color:var(--ink)}.manager-btn b{display:block;font-size:13px}.manager-btn span{display:block;color:var(--muted);font-size:10px;margin-top:3px}
+    .file-input{display:none}
+    .toast{position:fixed;z-index:200;left:50%;bottom:104px;transform:translate(-50%,20px);background:#14202b;color:white;padding:11px 15px;border-radius:13px;font-size:11px;font-weight:700;opacity:0;pointer-events:none;transition:.22s}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(min-width:600px){
+      main{padding:0 22px}.topbar{padding-left:24px;padding-right:24px}.hero{padding:26px}.kpi-grid{grid-template-columns:repeat(4,1fr)}.records{grid-template-columns:repeat(4,1fr)}
+      .detail-grid{grid-template-columns:repeat(4,1fr)}.form-grid{grid-template-columns:repeat(4,1fr)}.field.half{grid-column:span 2}.field.full{grid-column:1/-1}
+    }
+  
+    .beta-pill{display:inline-flex;vertical-align:middle;margin-left:4px;padding:3px 6px;border-radius:999px;background:#eef0ff;color:#5967cf;font-size:8px;font-weight:850;letter-spacing:.06em;text-transform:uppercase}
+    .beta-subtle{font-size:10px;color:var(--muted);font-weight:700}
+    .today-card{padding:15px}.today-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.today-top strong{font-size:22px;letter-spacing:-.7px}.today-top p{margin:4px 0 0;color:var(--muted);font-size:11px}.today-badge{padding:6px 9px;border-radius:999px;background:var(--soft);color:var(--brand);font-size:10px;font-weight:800;white-space:nowrap}
+    .today-sessions{display:grid;gap:6px;margin-top:12px}.today-session{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 10px;border-radius:13px;background:#f7f9fa;font-size:11px}.today-session b{font-size:11px}.today-session span{color:var(--muted)}
+    .beta-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.beta-panel{padding:15px}.beta-panel-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}.beta-panel-head b{font-size:13px}.text-btn{border:0;background:none;color:var(--brand);font-size:10px;font-weight:800;padding:4px}
+    .streak-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.micro-stat{padding:10px 7px;border-radius:14px;background:#f7f9fa;text-align:center}.micro-stat strong{display:block;font-size:17px;letter-spacing:-.5px}.micro-stat span{display:block;margin-top:3px;color:var(--muted);font-size:8px;font-weight:700;line-height:1.2}
+    .goal-line{margin:9px 0 12px}.goal-copy{display:flex;justify-content:space-between;gap:8px;margin-bottom:6px;font-size:10px}.goal-copy b{font-size:11px}.goal-copy span{color:var(--muted)}.goal-track{height:8px;background:#edf1f3;border-radius:999px;overflow:hidden}.goal-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--brand),var(--brand2))}
+    .week-summary{padding:15px}.week-main{display:flex;justify-content:space-between;gap:10px;align-items:flex-end}.week-main strong{font-size:23px;letter-spacing:-.8px}.week-main p{margin:4px 0 0;color:var(--muted);font-size:10px}.week-delta{padding:6px 9px;border-radius:999px;font-size:9px;font-weight:800;background:#eef5f4;color:var(--brand);white-space:nowrap}.week-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px}.week-mini div{padding:9px;border-radius:12px;background:#f7f9fa}.week-mini b{display:block;font-size:12px}.week-mini span{font-size:8px;color:var(--muted);font-weight:700}
+    .backup-reminder{display:none;margin-top:10px;padding:11px 13px;border-radius:14px;background:#fff7e9;color:#8b6429;font-size:10px;font-weight:700}.backup-reminder.show{display:block}
+    .beta-overview{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.beta-overview .card{padding:14px}.beta-overview span{font-size:9px;color:var(--muted);font-weight:750}.beta-overview strong{display:block;margin-top:5px;font-size:19px;letter-spacing:-.5px}.beta-overview small{display:block;margin-top:3px;color:var(--muted);font-size:8px}
+    .record-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px}.record-card{padding:14px}.record-card span{font-size:9px;color:var(--muted);font-weight:750}.record-card strong{display:block;font-size:18px;margin-top:5px;letter-spacing:-.5px}.record-card small{display:block;margin-top:3px;font-size:9px;color:var(--muted)}
+    .trend-card{padding:13px 10px 8px}.trend-empty{padding:30px 12px;text-align:center;color:var(--muted);font-size:11px}
+    .tag-picks{display:flex;gap:6px;flex-wrap:wrap}.tag-pick{position:relative}.tag-pick input{position:absolute;opacity:0;pointer-events:none}.tag-pick span{display:block;padding:7px 9px;border-radius:999px;background:white;border:1px solid var(--line);color:var(--muted);font-size:10px;font-weight:700}.tag-pick input:checked+span{background:var(--ink);border-color:var(--ink);color:white}
+    .detail-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}.detail-tag{padding:5px 8px;border-radius:999px;background:#f0f4f5;color:#53616c;font-size:9px;font-weight:750}
+    .day-list{display:grid;gap:8px}.day-session-btn{width:100%;border:1px solid var(--line);background:white;border-radius:17px;padding:12px;text-align:left;display:flex;align-items:center;gap:11px;color:var(--ink)}.day-session-btn .session-info{flex:1}.day-session-btn .session-km{min-width:46px}
+    .backup-status{padding:14px;margin-bottom:10px}.backup-status b{font-size:12px}.backup-status p{margin:5px 0 0;color:var(--muted);font-size:10px;line-height:1.4}
+    .goal-form{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    .goal-section{grid-column:1/-1;padding-top:4px;margin-top:2px;border-top:1px solid var(--line)}
+    .goal-section:first-child{border-top:0;padding-top:0;margin-top:0}
+    .goal-section b{font-size:12px}.goal-section p{margin:3px 0 7px;color:var(--muted);font-size:9px}
+    .goal-scope-label{display:flex;align-items:center;justify-content:space-between;margin:10px 0 5px;font-size:9px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+    .progress-filter-wrap{margin:-2px 0 13px}.progress-filter-wrap .chips{padding-top:0}.progress-filter-wrap .chip{font-size:10px;padding:7px 10px}
+    .rolling-toolbar{display:flex;align-items:center;gap:6px}.rolling-chip{border:1px solid var(--line);background:white;color:var(--muted);border-radius:999px;padding:6px 9px;font-size:9px;font-weight:800}.rolling-chip.active{background:var(--ink);border-color:var(--ink);color:white}
+    .type-records{display:grid;grid-template-columns:1fr 1fr;gap:9px}.type-record{padding:14px;position:relative;overflow:hidden}.type-record:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--type-color,#71808f)}.type-record-head{display:flex;align-items:center;justify-content:space-between;gap:7px}.type-record-head b{font-size:12px}.type-record-head span{font-size:8px;color:var(--muted);font-weight:750}.type-record-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px}.type-record-stats div{padding:8px 6px;border-radius:11px;background:#f7f9fa}.type-record-stats strong{display:block;font-size:11px;letter-spacing:-.2px}.type-record-stats small{display:block;margin-top:2px;font-size:7.5px;color:var(--muted);font-weight:700}
+    .heatmap-card{padding:13px;overflow:hidden}.heatmap-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:2px 3px 10px}.heatmap-head b{font-size:12px}.heatmap-head span{font-size:9px;color:var(--muted)}.heatmap-scroll{overflow-x:auto;scrollbar-width:none}.heatmap-scroll::-webkit-scrollbar{display:none}.heatmap-svg{display:block;min-width:560px;width:100%;height:auto}
+    .month-summary{padding:16px}.month-summary-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.month-summary-top strong{display:block;font-size:23px;letter-spacing:-.7px}.month-summary-top p{margin:4px 0 0;color:var(--muted);font-size:10px;line-height:1.4}.summary-export{border:1px solid var(--line);background:white;color:var(--brand);border-radius:12px;padding:8px 10px;font-size:9px;font-weight:800;white-space:nowrap}.month-summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:13px}.month-summary-grid div{padding:9px;border-radius:12px;background:#f7f9fa}.month-summary-grid b{display:block;font-size:12px}.month-summary-grid span{font-size:8px;color:var(--muted);font-weight:700}.summary-note{margin-top:11px;padding:10px 11px;border-radius:12px;background:var(--soft);font-size:9px;color:#355f5b;line-height:1.45;font-weight:650}
+    .habit-card{padding:13px;margin-top:10px}.habit-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:9px}.habit-card-head b{font-size:11px}.habit-card-head span{font-size:8px;color:var(--muted);font-weight:700}.habit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.habit-item{padding:8px;border-radius:11px;background:#f7f9fa}.habit-item strong{display:block;font-size:11px;color:var(--ink)}.habit-item span{font-size:7.5px;color:var(--muted);font-weight:700}.habit-delta{font-size:9px!important;color:var(--brand)!important;font-weight:850!important}
+    .detail-hero-top{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:8px}.quality-badge{padding:5px 7px;border-radius:999px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.12);font-size:8px;font-weight:800;color:rgba(255,255,255,.92);white-space:nowrap}.quality-badge.partial{background:rgba(255,221,173,.14);color:#fff0da}
+    @media(max-width:520px){.beta-grid{grid-template-columns:1fr}.streak-grid{gap:6px}.beta-overview,.record-grid,.type-records{grid-template-columns:1fr 1fr}.goal-form{grid-template-columns:1fr 1fr}.goal-section{grid-column:1/-1}.month-summary-grid{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:390px){.type-records{grid-template-columns:1fr}.month-summary-grid{grid-template-columns:1fr 1fr}.habit-grid{grid-template-columns:1fr 1fr}}
+
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <button class="brand-mark" id="logoHomeBtn" type="button" aria-label="Retour à l’accueil">S</button>
+      <div><h1>Stride <span class="beta-pill">BetaTEST V2</span></h1><small id="brandSub">BetaTEST V2 • données séparées</small></div>
+    </div>
+    <button class="icon-btn" id="manageBtn" aria-label="Données et sauvegarde">•••</button>
+  </header>
+
+  <main id="main">
+    <section class="page active" id="homePage">
+      <div class="hero">
+        <div class="hero-top">
+          <div><div class="eyebrow">Progression</div><h2 id="heroTitle">Mon suivi</h2><p id="heroSubtitle"></p></div>
+          <button class="month-pill" id="homeMonthBtn">Mois ▾</button>
+        </div>
+        <div class="hero-metrics">
+          <div class="hero-metric km">
+            <div class="metric-head"><span class="metric-label">Distance</span></div>
+            <b id="heroKm">0</b>
+            <div class="hero-trend none" id="heroKmTrend">—</div>
+          </div>
+          <div class="hero-metric time">
+            <div class="metric-head"><span class="metric-label">Temps</span></div>
+            <b id="heroTime">0</b>
+            <div class="hero-trend none" id="heroTimeTrend">—</div>
+          </div>
+          <div class="hero-metric sessions">
+            <div class="metric-head"><span class="metric-label">Séances</span></div>
+            <b id="heroCount">0</b>
+            <div class="hero-trend none" id="heroCountTrend">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title"><h3>Aujourd’hui</h3><span class="beta-subtle" id="todayDateLabel"></span></div>
+      <div class="card today-card" id="todayCard"></div>
+      <div class="backup-reminder" id="backupReminder"></div>
+
+      <div class="section-title"><h3>Régularité & objectif</h3><span></span></div>
+      <div class="beta-grid">
+        <div class="card beta-panel">
+          <div class="beta-panel-head"><b>Régularité</b><span class="beta-subtle" id="activeMonthLabel"></span></div>
+          <div class="streak-grid">
+            <div class="micro-stat"><strong id="currentStreak">0</strong><span>Série actuelle</span></div>
+            <div class="micro-stat"><strong id="activeDays">0</strong><span>Jours actifs</span></div>
+            <div class="micro-stat"><strong id="bestStreak">0</strong><span>Meilleure série</span></div>
+          </div>
+        </div>
+        <div class="card beta-panel">
+          <div class="beta-panel-head"><b>Objectifs</b><button class="text-btn" type="button" id="editGoalBtn">Modifier</button></div>
+          <div id="goalContent"></div>
+        </div>
+      </div>
+
+      <div class="section-title"><h3>Cette semaine</h3><span class="beta-subtle">vs semaine précédente</span></div>
+      <div class="card week-summary" id="weekSummary"></div>
+
+      <div class="section-title"><h3>Vue rapide</h3><button type="button" id="viewProgressBtn" data-go="progress">Voir progression</button></div>
+      <div class="kpi-grid">
+        <div class="kpi"><div class="label">Vitesse moyenne</div><strong id="kpiSpeed">—</strong><small>pondérée par le temps</small><div class="kpi-trend none" id="kpiSpeedTrend">—</div></div>
+        <div class="kpi"><div class="label">Distance / séance</div><strong id="kpiPerSession">—</strong><small>moyenne du mois</small><div class="kpi-trend none" id="kpiPerSessionTrend">—</div></div>
+        <div class="kpi"><div class="label">FC moyenne</div><strong id="kpiHr">—</strong><small>valeurs renseignées</small><div class="kpi-trend none" id="kpiHrTrend">—</div></div>
+        <div class="kpi"><div class="label">Calories</div><strong id="kpiCalories">—</strong><small>total du mois</small><div class="kpi-trend none" id="kpiCaloriesTrend">—</div></div>
+      </div>
+
+      <div class="section-title"><h3>Dernière séance</h3><button type="button" id="viewAllSessionsBtn" data-go="sessions">Toutes</button></div>
+      <button class="card last-card" id="lastSession"></button>
+
+      <div class="section-title"><h3>Distance quotidienne</h3><span></span></div>
+      <div class="card chart-card"><div class="chart-head"><b id="dailyChartTitle"></b><span id="dailyChartTotal"></span></div><div id="dailyChart"></div></div>
+
+      <div class="section-title"><h3>Calendrier</h3><span></span></div>
+      <div class="card calendar-card">
+        <div class="calendar-head"><b id="calendarTitle"></b><div class="cal-nav"><button class="mini-btn" id="calPrev">‹</button><button class="mini-btn" id="calNext">›</button></div></div>
+        <div class="calendar-grid" id="calendar"></div>
+      </div>
+    </section>
+
+    <section class="page" id="sessionsPage">
+      <div class="toolbar">
+        <div class="search"><span>⌕</span><input id="sessionSearch" placeholder="Rechercher une date, une note…"></div>
+        <div class="chips" id="filterChips">
+          <button class="chip active" data-filter="all">Toutes</button>
+          <button class="chip" data-filter="walk">Marche</button>
+          <button class="chip" data-filter="run">Course</button>
+          <button class="chip" data-filter="mixed">Mixte</button>
+        </div>
+      </div>
+      <div id="sessionsList"></div>
+    </section>
+
+    <section class="page" id="progressPage">
+      <div class="progress-head"><h2>Progression</h2><select class="select" id="progressPeriod"></select></div>
+      <div class="progress-filter-wrap"><div class="chips" id="progressFilterChips">
+        <button class="chip active" data-progress-filter="all">Toutes</button>
+        <button class="chip" data-progress-filter="walk">Marche</button>
+        <button class="chip" data-progress-filter="light-run">Course légère</button>
+        <button class="chip" data-progress-filter="run">Course</button>
+        <button class="chip" data-progress-filter="mixed">Mixte</button>
+      </div></div>
+      <div class="records">
+        <div class="card record"><div class="tag">Distance</div><strong id="pDistance">—</strong><small>sur la période</small></div>
+        <div class="card record"><div class="tag">Temps</div><strong id="pTime">—</strong><small>sur la période</small></div>
+        <div class="card record"><div class="tag">Séance la + longue</div><strong id="pLongest">—</strong><small id="pLongestDate">—</small></div>
+        <div class="card record"><div class="tag">Vitesse max. moy.</div><strong id="pFastest">—</strong><small id="pFastestDate">—</small></div>
+      </div>
+
+      <div class="section-title"><h3>Vue globale</h3><span></span></div>
+      <div class="beta-overview">
+        <div class="card"><span>Distance cumulée</span><strong id="globalDistance">—</strong><small id="marathonEq">—</small></div>
+        <div class="card"><span>Jours actifs</span><strong id="globalActiveDays">—</strong><small id="globalActiveRate">—</small></div>
+        <div class="card"><span>Meilleure journée</span><strong id="bestDayDistance">—</strong><small id="bestDayDate">—</small></div>
+        <div class="card"><span>Séances / jour actif</span><strong id="sessionsPerActiveDay">—</strong><small>moyenne sur la période</small></div>
+      </div>
+
+      <div class="section-title"><h3>Records personnels</h3><span></span></div>
+      <div class="record-grid" id="personalRecords"></div>
+
+      <div class="section-title"><h3>Records par type</h3><span></span></div>
+      <div class="type-records" id="recordsByType"></div>
+
+      <div class="section-title"><h3>Moyennes mobiles</h3><div class="rolling-toolbar" id="rollingToolbar"><button type="button" class="rolling-chip" data-window="7">7 j</button><button type="button" class="rolling-chip active" data-window="15">15 j</button><button type="button" class="rolling-chip" data-window="30">30 j</button></div></div>
+      <div class="section-title" style="margin-top:8px"><h3 style="font-size:13px">Distance quotidienne</h3><span class="beta-subtle" id="rollingDistanceLabel"></span></div>
+      <div class="card trend-card" id="distanceTrendChart"></div>
+      <div class="section-title" style="margin-top:14px"><h3 style="font-size:13px">Vitesse moyenne</h3><span class="beta-subtle" id="rollingSpeedLabel"></span></div>
+      <div class="card trend-card" id="speedTrendChart"></div>
+      <div class="section-title" style="margin-top:14px"><h3 style="font-size:13px">FC moyenne</h3><span class="beta-subtle" id="rollingHrLabel"></span></div>
+      <div class="card trend-card" id="hrTrendChart"></div>
+
+      <div class="section-title"><h3>Heatmap annuelle</h3><select class="select" id="heatmapYear" style="max-width:100px"></select></div>
+      <div class="card heatmap-card"><div class="heatmap-head"><b id="heatmapTitle">Activité annuelle</b><span id="heatmapMeta"></span></div><div class="heatmap-scroll" id="yearHeatmap"></div></div>
+
+      <div class="section-title"><h3>Résumé mensuel</h3><select class="select" id="summaryMonthSelect" style="max-width:145px"></select></div>
+      <div class="card month-summary" id="monthlySummary"></div>
+
+      <div class="section-title"><h3>Semaines</h3><span></span></div>
+      <div class="card weekly-card" id="weeklyBars"></div>
+
+      <div class="section-title"><h3>Répartition</h3><span></span></div>
+      <div class="card activity-bars" id="activityBars"></div>
+
+      <div class="section-title"><h3>Échelle des vitesses</h3><span></span></div>
+      <div class="card chart-card">
+        <div class="speed-legend" id="speedLegend"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-page="home"><span class="nav-icon">⌂</span><span>Accueil</span></button>
+  <button class="nav-btn" data-page="sessions"><span class="nav-icon">▤</span><span>Séances</span></button>
+  <button class="add-main" id="addBtn" aria-label="Ajouter une séance">+</button>
+  <button class="nav-btn" data-page="progress"><span class="nav-icon">◔</span><span>Progression</span></button>
+</nav>
+
+<div class="modal" id="detailModal"><div class="sheet">
+  <div class="sheet-head"><div class="grab"></div><b>Détail de la séance</b><button class="close-btn" data-close="detailModal">×</button></div>
+  <div class="sheet-body" id="detailBody"></div>
+</div></div>
+
+<div class="modal" id="formModal"><div class="sheet">
+  <div class="sheet-head"><div class="grab"></div><b id="formTitle">Ajouter une séance</b><button class="close-btn" data-close="formModal">×</button></div>
+  <form class="sheet-body" id="sessionForm">
+    <button type="button" class="manager-btn" id="pasteSessionBtn" style="width:100%;margin-bottom:12px;border-color:#cfe3e0;background:#f1f8f7">
+      <b>📋 Coller une séance depuis ChatGPT</b><span>Colle le bloc STRIDE-SEANCE reçu après l’analyse de tes photos : les champs et la courbe se rempliront automatiquement.</span>
+    </button>
+    <div class="form-grid">
+      <div class="field half"><label>Date</label><input type="date" id="fDate" required></div>
+      <div class="field half"><label>Heure de fin</label><input type="time" id="fTime"></div>
+      <div class="field half"><label>Activité</label><select id="fActivity"><option>Marche rapide</option><option>Course légère</option><option>Course</option><option>Mixte</option></select></div>
+      <div class="field half"><label>Statut</label><select id="fStatus"><option>Confirmé</option><option>À vérifier</option></select></div>
+      <div class="field half"><label>Durée — minutes</label><input type="number" id="fMinutes" min="0" step="1" required></div>
+      <div class="field half"><label>Secondes</label><input type="number" id="fSeconds" min="0" max="59" step="1" value="0"></div>
+      <div class="field half"><label>Distance (km)</label><input type="number" id="fDistance" min="0" step="0.01" required></div>
+      <div class="field half"><label>Inclinaison (%)</label><input type="number" id="fIncline" step="0.1"></div>
+      <div class="auto-preview" id="autoPreview">Vitesse et allure calculées automatiquement.</div>
+      <div class="field half"><label>FC moyenne (BPM)</label><input type="number" id="fHrAvg" min="0"></div>
+      <div class="field half"><label>FC maximum (BPM)</label><input type="number" id="fHrMax" min="0"></div>
+      <div class="field half"><label>Pouls affiché (BPM)</label><input type="number" id="fPulse" min="0"></div>
+      <div class="field half"><label>Calories (kcal)</label><input type="number" id="fCalories" min="0" step="1"></div>
+      <div class="field half"><label>Effort (1–10)</label><input type="number" id="fEffort" min="1" max="10" step="1"></div>
+      <div class="field half"><label>Ressenti</label><select id="fFeeling"><option value="">—</option><option value="😩 Difficile">😩 Difficile</option><option value="😐 Moyen">😐 Moyen</option><option value="🙂 Bien">🙂 Bien</option><option value="😄 Excellent">😄 Excellent</option></select></div>
+      <div class="field full"><label>Tags rapides</label><div class="tag-picks">
+        <label class="tag-pick"><input type="checkbox" name="sessionTag" value="Matin"><span>Matin</span></label>
+        <label class="tag-pick"><input type="checkbox" name="sessionTag" value="Après-midi"><span>Après-midi</span></label>
+        <label class="tag-pick"><input type="checkbox" name="sessionTag" value="Soir"><span>Soir</span></label>
+        <label class="tag-pick"><input type="checkbox" name="sessionTag" value="À jeun"><span>À jeun</span></label>
+        <label class="tag-pick"><input type="checkbox" name="sessionTag" value="Après repas"><span>Après repas</span></label>
+      </div></div>
+      <div class="field full"><label>Photo / source</label><input type="text" id="fSource" placeholder="Ex. Photos tapis + Apple Watch"></div>
+      <div class="field full"><label>Notes</label><textarea id="fNotes" placeholder="Détails de la séance…"></textarea></div>
+      <details class="speed-editor">
+        <summary>Vitesses minute par minute <span id="speedCount"></span></summary>
+        <div class="speed-rows" id="speedRows"></div>
+        <button type="button" class="btn secondary" id="addSpeedPoint" style="margin-top:9px;width:100%">+ Ajouter un point</button>
+      </details>
+    </div>
+    <div class="form-actions"><button type="button" class="btn secondary" data-close="formModal">Annuler</button><button class="btn primary" type="submit">Enregistrer</button></div>
+  </form>
+</div></div>
+
+<div class="modal" id="pasteModal"><div class="sheet">
+  <div class="sheet-head"><div class="grab"></div><b>Coller une séance</b><button class="close-btn" data-close="pasteModal">×</button></div>
+  <div class="sheet-body">
+    <div class="card note-card" style="margin-bottom:12px"><b>Depuis “Data course et marche”</b><p>Après tes photos du tapis et de l’Apple Watch, copie le bloc <strong>STRIDE-SEANCE</strong> que je te donne et colle-le ici.</p></div>
+    <div class="field full"><label>Bloc de données</label><textarea id="pasteDataInput" style="min-height:260px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace" placeholder="STRIDE-SEANCE v1
+date=2026-09-15
+time=10:00
+activity=Marche rapide
+duration=24:18
+distance=2,08
+hrAvg=112
+hrMax=126
+calories=135
+effort=3
+source=Photos tapis + Apple Watch
+notes=...
+speeds=0:00@3,2;1:00@4,4;2:00@5,1"></textarea></div>
+    <div class="card note-card" id="pastePreview" style="display:none;margin-top:12px"></div>
+    <div class="form-actions"><button type="button" class="btn secondary" id="parsePasteBtn">Analyser</button><button type="button" class="btn primary" id="usePasteBtn" style="display:none">Utiliser cette séance</button></div>
+  </div>
+</div></div>
+
+<div class="modal" id="manageModal"><div class="sheet">
+  <div class="sheet-head"><div class="grab"></div><b>Données & sauvegarde</b><button class="close-btn" data-close="manageModal">×</button></div>
+  <div class="sheet-body">
+    <div class="card backup-status" id="backupStatus"><b>État de la sauvegarde</b><p>Calcul en cours…</p></div>
+    <div class="manager-grid">
+      <button class="manager-btn" id="exportBtn"><b>Exporter une sauvegarde</b><span>Télécharge toutes les séances et les vitesses en JSON.</span></button>
+      <button class="manager-btn" id="importBtn"><b>Importer une sauvegarde</b><span>Remplace les données locales par un fichier JSON exporté depuis l’app.</span></button>
+      <button class="manager-btn" id="resetBtn"><b>Rétablir les données du tableur</b><span>Recharge toutes les séances intégrées dans cette version.</span></button>
+      <button class="manager-btn" id="clearBtn" style="color:var(--danger)"><b>Effacer toutes les données locales</b><span>Action irréversible sans sauvegarde.</span></button>
+    </div>
+    <input class="file-input" type="file" accept=".json,application/json" id="importFile">
+  </div>
+</div></div>
+
+<div class="modal" id="monthModal"><div class="sheet">
+  <div class="sheet-head"><div class="grab"></div><b>Choisir le mois</b><button class="close-btn" data-close="monthModal">×</button></div>
+  <div class="sheet-body"><div class="manager-grid" id="monthChoices"></div></div>
+</div></div>
+
+<div class="modal" id="dayModal"><div class="sheet">
+  <div class="sheet-head"><div class="grab"></div><b id="dayModalTitle">Séances du jour</b><button class="close-btn" data-close="dayModal">×</button></div>
+  <div class="sheet-body"><div class="day-list" id="dayModalBody"></div></div>
+</div></div>
+
+<div class="modal" id="goalModal"><div class="sheet">
+  <div class="sheet-head"><div class="grab"></div><b>Objectifs semaine & mois</b><button class="close-btn" data-close="goalModal">×</button></div>
+  <div class="sheet-body">
+    <div class="goal-form">
+      <div class="goal-section"><b>Semaine</b><p>Objectifs suivis du lundi au dimanche.</p></div>
+      <div class="field"><label>Distance (km)</label><input type="number" id="goalWeekKmInput" min="1" step="0.5"></div>
+      <div class="field"><label>Séances</label><input type="number" id="goalWeekSessionsInput" min="1" step="1"></div>
+      <div class="field"><label>Temps (min)</label><input type="number" id="goalWeekMinutesInput" min="1" step="5"></div>
+      <div class="goal-section"><b>Mois</b><p>Objectifs sur le mois civil en cours.</p></div>
+      <div class="field"><label>Distance (km)</label><input type="number" id="goalMonthKmInput" min="1" step="1"></div>
+      <div class="field"><label>Séances</label><input type="number" id="goalMonthSessionsInput" min="1" step="1"></div>
+      <div class="field"><label>Temps (min)</label><input type="number" id="goalMonthMinutesInput" min="1" step="10"></div>
+    </div>
+    <div class="form-actions"><button type="button" class="btn secondary" data-close="goalModal">Annuler</button><button type="button" class="btn primary" id="saveGoalBtn">Enregistrer</button></div>
+  </div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const INITIAL_SESSIONS = [{"id":"seed-01","date":"2026-08-14","time":"12:26","activity":"Marche rapide","duration":30.05,"distance":2.1,"avgSpeed":4.193,"pace":14.3095,"hrAvg":110.0,"hrMax":127.0,"pulse":null,"incline":2.0,"calories":158.0,"effort":3.0,"source":"IMG_1812 à IMG_1819","notes":"Fin déclarée : 12:26. Tapis : 30:03, 2,10 km, vitesse affichée moy. 4,1 km/h (max. 6,0 ; min. 1,0), inclinaison moy. 2 % (max. 15 ; min. 0), 140 kcal, 4,8 MET, FC moy. 78 BPM. Apple Watch : 30:17, 1,50 km, allure 20:07/km, FC 110 BPM (90–127), 158 kcal actives et 217 kcal totales, effort 3/10 Facile. Distance et durée retenues : tapis ; FC, calories actives et effort retenus : Apple Watch.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":3.1},{"t":"2:00","v":3.1},{"t":"3:00","v":3.1},{"t":"4:00","v":3.5},{"t":"5:00","v":3.5},{"t":"6:00","v":4.0},{"t":"7:00","v":4.0},{"t":"8:00","v":4.0},{"t":"9:00","v":4.4},{"t":"10:00","v":4.5},{"t":"11:00","v":4.5},{"t":"12:00","v":4.6},{"t":"13:00","v":4.9},{"t":"14:00","v":4.9},{"t":"15:00","v":5.0},{"t":"16:00","v":4.9},{"t":"17:00","v":4.9},{"t":"18:00","v":4.9},{"t":"19:00","v":4.5},{"t":"20:00","v":3.7},{"t":"21:00","v":3.6},{"t":"22:00","v":3.7},{"t":"23:00","v":3.4},{"t":"24:00","v":4.7},{"t":"25:00","v":5.0},{"t":"26:00","v":5.9},{"t":"27:00","v":4.1},{"t":"28:00","v":4.0},{"t":"29:00","v":3.5},{"t":"30:00","v":1.3},{"t":"30:03","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-02","date":"2026-08-15","time":"12:58","activity":"Marche rapide","duration":20.9167,"distance":1.6,"avgSpeed":4.5896,"pace":13.0729,"hrAvg":113.0,"hrMax":135.0,"pulse":null,"incline":2.0,"calories":110.0,"effort":3.0,"source":"IMG_1822 à IMG_1829","notes":"Fin : 12:58. Tapis : 20:55, 1,60 km, vitesse affichée moy. 4,6 km/h (max. 6,0 ; min. 1,0), inclinaison moy. 2 % (max. 15 ; min. 0), 106 kcal, 4,2 MET, FC non mesurée. Apple Watch : 12:37–12:58, durée 20:56, 1,28 km, allure 16:20/km, FC moy. 113 BPM (96–135), 110 kcal actives et 151 kcal totales, effort 3/10 Facile. Distance et durée retenues : tapis ; FC, calories actives et effort retenus : Apple Watch.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":3.4},{"t":"2:00","v":3.7},{"t":"3:00","v":4.1},{"t":"4:00","v":4.1},{"t":"5:00","v":4.2},{"t":"6:00","v":5.0},{"t":"7:00","v":5.1},{"t":"8:00","v":5.3},{"t":"9:00","v":5.7},{"t":"10:00","v":5.8},{"t":"11:00","v":6.0},{"t":"12:00","v":4.2},{"t":"13:00","v":4.3},{"t":"14:00","v":4.6},{"t":"15:00","v":4.7},{"t":"16:00","v":4.7},{"t":"17:00","v":5.6},{"t":"18:00","v":6.0},{"t":"19:00","v":4.6},{"t":"20:00","v":4.2},{"t":"20:55","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-03","date":"2026-08-17","time":"13:22","activity":"Marche rapide","duration":21.05,"distance":1.5,"avgSpeed":4.2755,"pace":14.0333,"hrAvg":111.0,"hrMax":135.0,"pulse":null,"incline":2.0,"calories":136.0,"effort":3.0,"source":"Photos séance 17 août","notes":"Fin : 13:22. Tapis : 21:03, 1,50 km, vitesse affichée moy. 4,3 km/h (max. 6,0 ; min. 1,0), inclinaison moy. 2 % (max. 15 ; min. 0), 98 kcal, 4,2 MET, FC moy. 105 BPM et max. 141 BPM. Apple Watch : durée 25:43, 1,28 km, allure 20:02/km, FC moy. 111 BPM (87–135), 136 kcal actives et 186 kcal totales, effort 3/10 Facile. Distance et durée retenues : tapis ; FC, calories actives et effort retenus : Apple Watch.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":3.6},{"t":"2:00","v":3.7},{"t":"3:00","v":4.3},{"t":"4:00","v":4.5},{"t":"5:00","v":4.7},{"t":"6:00","v":5.0},{"t":"7:00","v":5.2},{"t":"8:00","v":5.2},{"t":"9:00","v":4.7},{"t":"10:00","v":5.1},{"t":"11:00","v":5.0},{"t":"12:00","v":4.9},{"t":"13:00","v":4.0},{"t":"14:00","v":3.6},{"t":"15:00","v":3.4},{"t":"16:00","v":3.9},{"t":"17:00","v":4.4},{"t":"18:00","v":5.0},{"t":"19:00","v":6.0},{"t":"20:00","v":3.3},{"t":"21:00","v":1.2},{"t":"21:03","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-04","date":"2026-08-19","time":"19:45","activity":"Marche rapide","duration":23.0667,"distance":1.8,"avgSpeed":4.6821,"pace":12.8148,"hrAvg":117.0,"hrMax":141.0,"pulse":null,"incline":2.0,"calories":118.0,"effort":3.0,"source":"Photos séance 19 août","notes":"Fin déclarée : 19:45. Tapis : 23:04, 1,80 km, vitesse affichée moy. 4,8 km/h (max. 6,5 ; min. 1,0), inclinaison moy. 2 % (max. 15 ; min. 0), 122 kcal, 4,3 MET, FC moy. 82 BPM. Apple Watch : durée 23:37, 1,35 km, allure 17:26/km, FC moy. 117 BPM (100–141), 118 kcal actives et 164 kcal totales, effort 3/10 Facile. Distance et durée retenues : tapis ; FC, calories actives et effort retenus : Apple Watch.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.9},{"t":"2:00","v":5.4},{"t":"3:00","v":5.4},{"t":"4:00","v":5.4},{"t":"5:00","v":5.4},{"t":"6:00","v":5.4},{"t":"7:00","v":5.3},{"t":"8:00","v":5.3},{"t":"9:00","v":5.9},{"t":"10:00","v":6.0},{"t":"11:00","v":4.2},{"t":"12:00","v":4.0},{"t":"13:00","v":4.0},{"t":"14:00","v":3.9},{"t":"15:00","v":4.4},{"t":"16:00","v":5.6},{"t":"17:00","v":5.8},{"t":"18:00","v":3.8},{"t":"19:00","v":4.7},{"t":"20:00","v":3.6},{"t":"21:00","v":3.3},{"t":"22:00","v":2.4},{"t":"23:00","v":5.7},{"t":"23:04","v":5.7}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-05","date":"2026-08-20","time":"13:00","activity":"Marche rapide","duration":16.4667,"distance":1.3,"avgSpeed":4.7368,"pace":12.6667,"hrAvg":87.0,"hrMax":null,"pulse":null,"incline":2.0,"calories":90.0,"effort":null,"source":"Photos séance 20 août","notes":"Fin déclarée : 13:00. Tapis : 16:28, 1,30 km, vitesse affichée moy. 4,9 km/h (max. 6,5 ; min. 1,0), inclinaison moy. 2 % (max. 15 ; min. 0), 90 kcal, 4,7 MET, FC moy. 87 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.8},{"t":"2:00","v":5.0},{"t":"3:00","v":5.0},{"t":"4:00","v":5.1},{"t":"5:00","v":5.2},{"t":"6:00","v":5.8},{"t":"7:00","v":6.5},{"t":"8:00","v":5.5},{"t":"9:00","v":5.5},{"t":"10:00","v":5.5},{"t":"11:00","v":6.2},{"t":"12:00","v":6.4},{"t":"13:00","v":5.3},{"t":"14:00","v":4.7},{"t":"15:00","v":4.1},{"t":"16:00","v":3.4},{"t":"16:28","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-06","date":"2026-08-21","time":"12:49","activity":"Marche rapide","duration":20.9167,"distance":1.6,"avgSpeed":4.5896,"pace":13.0729,"hrAvg":89.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":93.0,"effort":null,"source":"Photos séance 21 août","notes":"Fin déclarée : 12:49. Tapis : 20:55, 1,60 km, vitesse affichée moy. 4,5 km/h (max. 6,5 ; min. 1,0), inclinaison moy. 0 % (aucune inclinaison visible), 93 kcal, 2,2 MET, FC moy. 89 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.2},{"t":"2:00","v":4.2},{"t":"3:00","v":4.5},{"t":"4:00","v":4.7},{"t":"5:00","v":5.0},{"t":"6:00","v":5.1},{"t":"7:00","v":5.5},{"t":"8:00","v":5.8},{"t":"9:00","v":6.0},{"t":"10:00","v":4.4},{"t":"11:00","v":4.3},{"t":"12:00","v":4.0},{"t":"13:00","v":4.0},{"t":"14:00","v":4.1},{"t":"15:00","v":4.5},{"t":"16:00","v":5.2},{"t":"17:00","v":5.3},{"t":"18:00","v":6.5},{"t":"19:00","v":4.4},{"t":"20:00","v":3.0},{"t":"20:55","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-07","date":"2026-08-21","time":"20:00","activity":"Marche rapide","duration":10.2333,"distance":0.8,"avgSpeed":4.6906,"pace":12.7917,"hrAvg":85.0,"hrMax":null,"pulse":null,"incline":2.0,"calories":63.0,"effort":null,"source":"Photos séance 21 août - séance 2 + inclinaison","notes":"Deuxième séance du 21 août. Fin déclarée : 20:00. Tapis : 10:14, 0,80 km, vitesse affichée moy. 5,0 km/h (max. 6,5 ; min. 1,0), inclinaison moy. 2 % (max. 15 % ; min. 0 %), 63 kcal, 5,3 MET, FC moy. 85 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.0},{"t":"2:00","v":4.5},{"t":"3:00","v":5.2},{"t":"4:00","v":5.8},{"t":"5:00","v":6.0},{"t":"6:00","v":6.5},{"t":"7:00","v":4.5},{"t":"8:00","v":5.1},{"t":"9:00","v":4.4},{"t":"10:00","v":3.7},{"t":"10:14","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-08","date":"2026-08-22","time":"13:45","activity":"Marche rapide","duration":31.0333,"distance":2.5,"avgSpeed":4.8335,"pace":12.4133,"hrAvg":124.0,"hrMax":150.0,"pulse":null,"incline":2.0,"calories":213.0,"effort":4.0,"source":"Photos séance 22 août","notes":"Fin déclarée : 13:45. Tapis : 31:02, 2,50 km, vitesse affichée moy. 4,9 km/h (max. 7,0 ; min. 1,0), inclinaison moy. 2 % (max. 15 % ; min. 0 %), 168 kcal, 4,4 MET, FC tapis moy. 82 BPM et max. 115 BPM. Apple Watch : 13:14–13:45, durée 31:17, 2,08 km, allure 15:03/km, FC moy. 124 BPM (100–150), 213 kcal actives et 274 kcal totales, effort 4/10 Modéré. Distance et durée retenues : tapis ; FC, calories actives et effort retenus : Apple Watch.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.2},{"t":"2:00","v":4.2},{"t":"3:00","v":4.6},{"t":"4:00","v":5.0},{"t":"5:00","v":5.2},{"t":"6:00","v":5.2},{"t":"7:00","v":5.2},{"t":"8:00","v":5.2},{"t":"9:00","v":5.4},{"t":"10:00","v":5.4},{"t":"11:00","v":5.7},{"t":"12:00","v":5.9},{"t":"13:00","v":4.4},{"t":"14:00","v":4.3},{"t":"15:00","v":5.5},{"t":"16:00","v":5.8},{"t":"17:00","v":5.0},{"t":"18:00","v":5.0},{"t":"19:00","v":4.3},{"t":"20:00","v":4.3},{"t":"21:00","v":4.4},{"t":"22:00","v":5.0},{"t":"23:00","v":5.5},{"t":"24:00","v":6.2},{"t":"25:00","v":7.0},{"t":"26:00","v":4.2},{"t":"27:00","v":4.2},{"t":"28:00","v":6.3},{"t":"29:00","v":4.0},{"t":"30:00","v":2.5},{"t":"31:00","v":1.2},{"t":"31:02","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-09","date":"2026-08-22","time":"20:00","activity":"Marche rapide","duration":12.3,"distance":1.1,"avgSpeed":5.3659,"pace":11.1818,"hrAvg":83.0,"hrMax":null,"pulse":null,"incline":1.0,"calories":72.0,"effort":null,"source":"Photos séance 22 août - séance 2","notes":"Deuxième séance du 22 août. Fin déclarée : 20:00. Tapis : 12:18, 1,10 km, vitesse affichée moy. 5,4 km/h (max. 6,5 ; min. 1,0), inclinaison moy. 1 % (max. 10 % ; min. 0 %), 72 kcal, 2,8 MET, FC moy. 83 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.0},{"t":"2:00","v":4.8},{"t":"3:00","v":5.4},{"t":"4:00","v":5.8},{"t":"5:00","v":6.2},{"t":"6:00","v":6.5},{"t":"7:00","v":5.3},{"t":"8:00","v":5.5},{"t":"9:00","v":5.5},{"t":"10:00","v":6.2},{"t":"11:00","v":5.2},{"t":"12:00","v":3.2},{"t":"12:18","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-10","date":"2026-08-24","time":"13:33","activity":"Course légère","duration":35.15,"distance":2.8,"avgSpeed":4.7795,"pace":12.5536,"hrAvg":74.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":163.0,"effort":null,"source":"Photos séance 24 août","notes":"Fin déclarée : 13:33. Tapis : 35:09, 2,80 km, vitesse affichée moy. 4,7 km/h (max. 7,0 ; min. 1,0), inclinaison moy. 0 % (max. 11 % ; min. 0 %), 163 kcal, 2,2 MET, FC moy. 74 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":3.8},{"t":"2:00","v":4.3},{"t":"3:00","v":4.4},{"t":"4:00","v":4.9},{"t":"5:00","v":5.0},{"t":"6:00","v":5.5},{"t":"7:00","v":5.6},{"t":"8:00","v":7.0},{"t":"9:00","v":5.3},{"t":"10:00","v":4.7},{"t":"11:00","v":4.8},{"t":"12:00","v":7.0},{"t":"13:00","v":4.8},{"t":"14:00","v":4.7},{"t":"15:00","v":7.0},{"t":"16:00","v":4.4},{"t":"17:00","v":4.3},{"t":"18:00","v":4.3},{"t":"19:00","v":4.3},{"t":"20:00","v":4.3},{"t":"21:00","v":4.3},{"t":"22:00","v":4.3},{"t":"23:00","v":4.3},{"t":"24:00","v":4.3},{"t":"25:00","v":4.4},{"t":"26:00","v":4.8},{"t":"27:00","v":5.2},{"t":"28:00","v":5.2},{"t":"29:00","v":5.3},{"t":"30:00","v":7.0},{"t":"31:00","v":5.4},{"t":"32:00","v":4.8},{"t":"33:00","v":3.5},{"t":"34:00","v":2.2},{"t":"35:00","v":1.2},{"t":"35:09","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-11","date":"2026-08-25","time":"19:44","activity":"Course légère","duration":30.1333,"distance":2.5,"avgSpeed":4.9779,"pace":12.0533,"hrAvg":124.0,"hrMax":150.0,"pulse":null,"incline":2.0,"calories":225.0,"effort":4.0,"source":"Photos séance 25 août + Apple Watch","notes":"Fin déclarée : 19:44. Tapis : 30:08, 2,50 km, vitesse affichée moy. 5,0 km/h (max. 7,0 ; min. 1,0), inclinaison moy. 2 % (max. 15 % ; min. 0 %), 168 kcal, 4,9 MET, FC tapis moy. 127 BPM et max. 178 BPM. Apple Watch : Indoor Run, durée 30:38, 2,01 km, allure 15:11/km, cadence moyenne 95 pas/min, FC moy. 124 BPM (106–150), 225 kcal actives et 285 kcal totales, effort 4/10 Modéré. Distance et durée retenues : tapis ; FC, calories actives et effort retenus : Apple Watch.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.1},{"t":"2:00","v":4.5},{"t":"3:00","v":4.5},{"t":"4:00","v":4.5},{"t":"5:00","v":5.0},{"t":"6:00","v":5.2},{"t":"7:00","v":5.5},{"t":"8:00","v":6.3},{"t":"9:00","v":5.0},{"t":"10:00","v":4.9},{"t":"11:00","v":5.4},{"t":"12:00","v":5.6},{"t":"13:00","v":7.0},{"t":"14:00","v":5.0},{"t":"15:00","v":4.9},{"t":"16:00","v":4.9},{"t":"17:00","v":4.9},{"t":"18:00","v":4.9},{"t":"19:00","v":4.9},{"t":"20:00","v":5.1},{"t":"21:00","v":6.4},{"t":"22:00","v":5.0},{"t":"23:00","v":4.8},{"t":"24:00","v":4.8},{"t":"25:00","v":5.3},{"t":"26:00","v":6.3},{"t":"27:00","v":6.3},{"t":"28:00","v":5.1},{"t":"29:00","v":4.4},{"t":"30:00","v":1.3},{"t":"30:08","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-12","date":"2026-08-26","time":"12:10","activity":"Course légère","duration":15.3667,"distance":1.4,"avgSpeed":5.4664,"pace":10.9762,"hrAvg":null,"hrMax":null,"pulse":null,"incline":1.0,"calories":95.0,"effort":null,"source":"Photos séance 26 août","notes":"Fin déclarée : 12:10. Tapis : 15:22, 1,40 km, vitesse affichée moy. 5,4 km/h (max. 8,0 ; min. 1,0), inclinaison moy. 1 % (max. 15 % ; min. 0 %), 95 kcal, 3,7 MET, FC tapis non mesurée (0 BPM). Apple Watch : données non fournies pour cette séance. Distance, durée et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.5},{"t":"2:00","v":5.1},{"t":"3:00","v":5.6},{"t":"4:00","v":6.0},{"t":"5:00","v":6.5},{"t":"6:00","v":5.4},{"t":"7:00","v":5.6},{"t":"8:00","v":7.2},{"t":"9:00","v":7.8},{"t":"10:00","v":5.8},{"t":"11:00","v":5.8},{"t":"12:00","v":7.0},{"t":"13:00","v":7.2},{"t":"14:00","v":5.4},{"t":"15:00","v":4.5},{"t":"15:22","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-13","date":"2026-08-26","time":"20:00","activity":"Course légère","duration":15.9667,"distance":1.5,"avgSpeed":5.6367,"pace":10.6444,"hrAvg":102.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":89.0,"effort":null,"source":"Photos séance 26 août - séance 2","notes":"Deuxième séance du 26 août. Fin déclarée : 20:00. Tapis : 15:58, 1,50 km, vitesse affichée moy. 5,5 km/h (max. 7,5 ; min. 1,0), inclinaison moy. 0 % (max. 11 % ; min. 0 %), 89 kcal, 2,3 MET, FC moy. 102 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.5},{"t":"2:00","v":5.2},{"t":"3:00","v":5.5},{"t":"4:00","v":5.5},{"t":"5:00","v":5.0},{"t":"6:00","v":5.8},{"t":"7:00","v":6.5},{"t":"8:00","v":7.5},{"t":"9:00","v":5.5},{"t":"10:00","v":6.8},{"t":"11:00","v":5.5},{"t":"12:00","v":5.5},{"t":"13:00","v":7.3},{"t":"14:00","v":5.6},{"t":"15:00","v":4.8},{"t":"15:58","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-14","date":"2026-08-27","time":"13:00","activity":"Course légère","duration":21.9167,"distance":2.0,"avgSpeed":5.4753,"pace":10.9583,"hrAvg":142.0,"hrMax":null,"pulse":null,"incline":2.0,"calories":129.0,"effort":null,"source":"Photos séance 27 août","notes":"Fin déclarée : 13:00. Tapis : 21:55, 2,00 km, vitesse affichée moy. 5,4 km/h (max. 7,8 ; min. 1,0), inclinaison moy. 2 % (max. 15 % ; min. 0 %), 129 kcal, 4,6 MET, FC moy. 142 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.1},{"t":"2:00","v":4.6},{"t":"3:00","v":4.7},{"t":"4:00","v":4.8},{"t":"5:00","v":4.8},{"t":"6:00","v":5.0},{"t":"7:00","v":5.1},{"t":"8:00","v":6.7},{"t":"9:00","v":5.2},{"t":"10:00","v":5.0},{"t":"11:00","v":5.0},{"t":"12:00","v":5.0},{"t":"13:00","v":5.1},{"t":"14:00","v":7.0},{"t":"15:00","v":5.0},{"t":"16:00","v":4.6},{"t":"17:00","v":4.6},{"t":"18:00","v":4.8},{"t":"19:00","v":7.2},{"t":"20:00","v":7.0},{"t":"21:00","v":4.0},{"t":"21:55","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-15","date":"2026-08-27","time":"20:00","activity":"Course légère","duration":16.0333,"distance":1.5,"avgSpeed":5.6133,"pace":10.6889,"hrAvg":null,"hrMax":null,"pulse":null,"incline":0.0,"calories":91.0,"effort":null,"source":"Photos séance 27 août - séance 2","notes":"Deuxième séance du 27 août. Fin déclarée : 20:00. Tapis : 16:02, 1,50 km, vitesse affichée moy. 5,7 km/h (max. 8,5 ; min. 1,0), inclinaison moy. 0 % (max. 0 % ; min. 0 %), 91 kcal, 1,1 MET, FC tapis non mesurée (0 BPM). Apple Watch : données non fournies pour cette séance. Distance, durée et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.8},{"t":"2:00","v":5.2},{"t":"3:00","v":5.4},{"t":"4:00","v":6.4},{"t":"5:00","v":7.3},{"t":"6:00","v":5.3},{"t":"7:00","v":6.2},{"t":"8:00","v":7.5},{"t":"9:00","v":5.2},{"t":"10:00","v":6.0},{"t":"11:00","v":7.7},{"t":"12:00","v":5.1},{"t":"13:00","v":5.8},{"t":"14:00","v":8.5},{"t":"15:00","v":5.3},{"t":"16:00","v":2.0},{"t":"16:02","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-16","date":"2026-08-28","time":"13:10","activity":"Course","duration":16.3167,"distance":1.6,"avgSpeed":5.8836,"pace":10.1979,"hrAvg":91.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":103.0,"effort":null,"source":"Photos séance 28 août","notes":"Fin déclarée : 13:10. Tapis : 16:19, 1,60 km, vitesse affichée moy. 5,8 km/h (max. 8,6 ; min. 1,0), inclinaison moy. 0 % (max. 10 % ; min. 0 %), 103 kcal, 2,5 MET, FC moy. 91 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.5},{"t":"2:00","v":5.1},{"t":"3:00","v":5.5},{"t":"4:00","v":6.2},{"t":"5:00","v":7.0},{"t":"6:00","v":5.2},{"t":"7:00","v":5.1},{"t":"8:00","v":7.8},{"t":"9:00","v":5.1},{"t":"10:00","v":5.0},{"t":"11:00","v":7.9},{"t":"12:00","v":5.1},{"t":"13:00","v":5.0},{"t":"14:00","v":8.2},{"t":"15:00","v":5.0},{"t":"16:00","v":2.0},{"t":"16:19","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-17","date":"2026-08-28","time":"20:00","activity":"Course","duration":16.3333,"distance":1.6,"avgSpeed":5.8776,"pace":10.2083,"hrAvg":null,"hrMax":null,"pulse":null,"incline":0.0,"calories":98.0,"effort":null,"source":"Photos séance 28 août - séance 2","notes":"Deuxième séance du 28 août. Fin déclarée : 20:00. Tapis : 16:20, 1,60 km, vitesse affichée moy. 5,9 km/h (max. 9,1 ; min. 1,0), inclinaison moy. 0 % (max. 0 % ; min. 0 %), 98 kcal, 1,1 MET, FC tapis non mesurée (0 BPM). Apple Watch : données non fournies pour cette séance. Distance, durée et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.8},{"t":"2:00","v":5.2},{"t":"3:00","v":5.7},{"t":"4:00","v":6.2},{"t":"5:00","v":7.7},{"t":"6:00","v":8.7},{"t":"7:00","v":4.7},{"t":"8:00","v":5.2},{"t":"9:00","v":7.8},{"t":"10:00","v":4.8},{"t":"11:00","v":5.4},{"t":"12:00","v":8.6},{"t":"13:00","v":4.8},{"t":"14:00","v":5.8},{"t":"15:00","v":8.5},{"t":"16:00","v":4.2},{"t":"16:20","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-18","date":"2026-08-29","time":"13:23","activity":"Mixte","duration":11.75,"distance":1.1,"avgSpeed":5.617,"pace":10.6818,"hrAvg":117.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":65.0,"effort":null,"source":"Photos séance 29 août","notes":"Fin déclarée : 13:23. Tapis : 11:45, 1,10 km, vitesse affichée moy. 5,6 km/h (max. 8,2 ; min. 1,0), inclinaison moy. 0 %, 65 kcal, 1,2 MET, FC moy. 117 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.5},{"t":"2:00","v":4.7},{"t":"3:00","v":4.9},{"t":"4:00","v":5.4},{"t":"5:00","v":5.8},{"t":"6:00","v":7.6},{"t":"7:00","v":7.8},{"t":"8:00","v":5.2},{"t":"9:00","v":5.1},{"t":"10:00","v":8.0},{"t":"11:00","v":5.0},{"t":"11:45","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-19","date":"2026-08-29","time":"20:25","activity":"Mixte","duration":30.8667,"distance":3.1,"avgSpeed":6.0259,"pace":9.957,"hrAvg":83.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":198.0,"effort":null,"source":"Photos séance 29 août - séance 2","notes":"Deuxième séance du 29 août. Fin déclarée : 20:25. Tapis : 30:52, 3,10 km, vitesse affichée moy. 6,0 km/h (max. 8,0 ; min. 1,0), inclinaison moy. 0 %, 198 kcal, 1,2 MET, FC moy. 83 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.5},{"t":"2:00","v":5.2},{"t":"3:00","v":5.5},{"t":"4:00","v":6.6},{"t":"5:00","v":6.6},{"t":"6:00","v":5.0},{"t":"7:00","v":6.0},{"t":"8:00","v":7.2},{"t":"9:00","v":5.0},{"t":"10:00","v":6.0},{"t":"11:00","v":7.2},{"t":"12:00","v":5.0},{"t":"13:00","v":5.5},{"t":"14:00","v":7.3},{"t":"15:00","v":5.0},{"t":"16:00","v":6.0},{"t":"17:00","v":7.2},{"t":"18:00","v":5.0},{"t":"19:00","v":5.4},{"t":"20:00","v":7.0},{"t":"21:00","v":5.0},{"t":"22:00","v":5.5},{"t":"23:00","v":6.8},{"t":"24:00","v":5.0},{"t":"25:00","v":5.6},{"t":"26:00","v":6.8},{"t":"27:00","v":5.0},{"t":"28:00","v":5.8},{"t":"29:00","v":7.4},{"t":"30:00","v":5.0},{"t":"30:52","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-20","date":"2026-08-30","time":"19:40","activity":"Mixte","duration":30.9667,"distance":3.0,"avgSpeed":5.8127,"pace":10.3222,"hrAvg":82.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":184.0,"effort":null,"source":"Photos séance 30 août","notes":"Fin déclarée : 19:40. Tapis : 30:58, 3,00 km, vitesse affichée moy. 5,8 km/h (max. 8,0 ; min. 1,0), inclinaison moy. 0 %, 184 kcal, 1,1 MET, FC moy. 82 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.5},{"t":"2:00","v":5.2},{"t":"3:00","v":5.5},{"t":"4:00","v":6.7},{"t":"5:00","v":6.7},{"t":"6:00","v":5.1},{"t":"7:00","v":6.0},{"t":"8:00","v":7.3},{"t":"9:00","v":5.0},{"t":"10:00","v":6.0},{"t":"11:00","v":7.4},{"t":"12:00","v":5.0},{"t":"13:00","v":5.8},{"t":"14:00","v":7.2},{"t":"15:00","v":5.0},{"t":"16:00","v":6.1},{"t":"17:00","v":7.1},{"t":"18:00","v":5.0},{"t":"19:00","v":5.8},{"t":"20:00","v":7.0},{"t":"21:00","v":5.0},{"t":"22:00","v":5.8},{"t":"23:00","v":6.9},{"t":"24:00","v":5.0},{"t":"25:00","v":5.8},{"t":"26:00","v":6.9},{"t":"27:00","v":5.0},{"t":"28:00","v":5.8},{"t":"29:00","v":7.0},{"t":"30:00","v":4.5},{"t":"30:58","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-21","date":"2026-09-01","time":"13:20","activity":"Mixte","duration":21.5667,"distance":2.1,"avgSpeed":5.8423,"pace":10.2698,"hrAvg":87.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":132.0,"effort":null,"source":"Photos séance 1er septembre","notes":"Fin déclarée : 13:20. Tapis : 21:34, 2,10 km, vitesse affichée moy. 5,9 km/h (max. 9,0 ; min. 1,0), inclinaison moy. 0 %, 132 kcal, 1,1 MET, FC moy. 87 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.4},{"t":"2:00","v":5.0},{"t":"3:00","v":5.4},{"t":"4:00","v":5.8},{"t":"5:00","v":6.2},{"t":"6:00","v":6.2},{"t":"7:00","v":5.0},{"t":"8:00","v":6.0},{"t":"9:00","v":6.8},{"t":"10:00","v":6.8},{"t":"11:00","v":5.0},{"t":"12:00","v":6.0},{"t":"13:00","v":6.9},{"t":"14:00","v":6.9},{"t":"15:00","v":5.0},{"t":"16:00","v":6.0},{"t":"17:00","v":7.4},{"t":"18:00","v":7.4},{"t":"19:00","v":5.2},{"t":"20:00","v":4.0},{"t":"21:00","v":2.2},{"t":"21:34","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-22","date":"2026-09-01","time":"19:20","activity":"Mixte","duration":21.65,"distance":2.1,"avgSpeed":5.8199,"pace":10.3095,"hrAvg":85.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":133.0,"effort":null,"source":"Photos séance 1er septembre - séance 2","notes":"Deuxième séance du 1er septembre. Fin déclarée : 19:20. Tapis : 21:39, 2,10 km, vitesse affichée moy. 5,8 km/h (max. 9,0 ; min. 1,0), inclinaison moy. 0 %, 133 kcal, 1,1 MET, FC moy. 85 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.5},{"t":"2:00","v":5.1},{"t":"3:00","v":5.5},{"t":"4:00","v":6.2},{"t":"5:00","v":6.2},{"t":"6:00","v":5.0},{"t":"7:00","v":6.0},{"t":"8:00","v":7.2},{"t":"9:00","v":7.2},{"t":"10:00","v":5.0},{"t":"11:00","v":6.0},{"t":"12:00","v":7.4},{"t":"13:00","v":7.4},{"t":"14:00","v":5.0},{"t":"15:00","v":6.0},{"t":"16:00","v":7.7},{"t":"17:00","v":7.7},{"t":"18:00","v":5.2},{"t":"19:00","v":8.2},{"t":"20:00","v":5.0},{"t":"21:00","v":3.8},{"t":"21:39","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-23","date":"2026-09-02","time":"13:08","activity":"Course","duration":23.0167,"distance":2.3,"avgSpeed":5.9957,"pace":10.0072,"hrAvg":87.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":148.0,"effort":null,"source":"Photos séance 2 septembre","notes":"Fin déclarée : 13:08. Tapis : 23:01, 2,30 km, vitesse affichée moy. 6,0 km/h (max. 9,0 ; min. 1,0), inclinaison moy. 0 %, 148 kcal, 1,1 MET, FC moy. 87 BPM. Valeurs max/min d’inclinaison non fournies sur les photos. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.3},{"t":"2:00","v":4.9},{"t":"3:00","v":5.3},{"t":"4:00","v":6.2},{"t":"5:00","v":6.2},{"t":"6:00","v":6.2},{"t":"7:00","v":6.8},{"t":"8:00","v":7.8},{"t":"9:00","v":7.8},{"t":"10:00","v":5.2},{"t":"11:00","v":5.2},{"t":"12:00","v":5.2},{"t":"13:00","v":5.2},{"t":"14:00","v":6.8},{"t":"15:00","v":7.4},{"t":"16:00","v":7.4},{"t":"17:00","v":5.2},{"t":"18:00","v":5.2},{"t":"19:00","v":7.5},{"t":"20:00","v":7.5},{"t":"21:00","v":5.1},{"t":"22:00","v":4.4},{"t":"23:00","v":1.5},{"t":"23:01","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-24","date":"2026-09-03","time":"19:30","activity":"Marche rapide","duration":24.5667,"distance":2.1,"avgSpeed":5.1289,"pace":11.6984,"hrAvg":null,"hrMax":null,"pulse":null,"incline":0.0,"calories":97.0,"effort":null,"source":"Photos séance 3 septembre","notes":"Fin déclarée : 19:30. Tapis : 24:34, 2,10 km, vitesse affichée moy. 5,0 km/h (max. 5,6 ; min. 1,0), inclinaison moy. 0 %, 97 kcal, 1,1 MET, FC tapis non mesurée (0 BPM). Apple Watch : données non fournies pour cette séance. Distance, durée et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.6},{"t":"2:00","v":4.8},{"t":"3:00","v":4.9},{"t":"4:00","v":5.0},{"t":"5:00","v":5.0},{"t":"6:00","v":5.1},{"t":"7:00","v":5.1},{"t":"8:00","v":5.2},{"t":"9:00","v":5.2},{"t":"10:00","v":5.2},{"t":"11:00","v":5.2},{"t":"12:00","v":5.2},{"t":"13:00","v":5.2},{"t":"14:00","v":5.2},{"t":"15:00","v":5.2},{"t":"16:00","v":5.2},{"t":"17:00","v":5.2},{"t":"18:00","v":5.3},{"t":"19:00","v":5.3},{"t":"20:00","v":5.3},{"t":"21:00","v":5.4},{"t":"22:00","v":5.4},{"t":"23:00","v":5.5},{"t":"24:00","v":5.4},{"t":"24:34","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-25","date":"2026-09-04","time":"20:00","activity":"Marche rapide","duration":30.1333,"distance":2.4,"avgSpeed":4.7788,"pace":12.5556,"hrAvg":106.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":121.0,"effort":null,"source":"Photos séance 4 septembre","notes":"Fin déclarée : 20:00. Tapis : 30:08, 2,40 km, vitesse affichée moy. 4,9 km/h (max. 6,0 ; min. 1,0), inclinaison moy. 0 %, 121 kcal, 1,1 MET, FC moy. 106 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.0},{"t":"2:00","v":4.3},{"t":"3:00","v":4.5},{"t":"4:00","v":4.7},{"t":"5:00","v":4.8},{"t":"6:00","v":4.8},{"t":"7:00","v":4.8},{"t":"8:00","v":4.8},{"t":"9:00","v":4.8},{"t":"10:00","v":4.8},{"t":"11:00","v":4.8},{"t":"12:00","v":4.8},{"t":"13:00","v":4.8},{"t":"14:00","v":4.8},{"t":"15:00","v":4.8},{"t":"16:00","v":4.8},{"t":"17:00","v":4.8},{"t":"18:00","v":4.8},{"t":"19:00","v":4.9},{"t":"20:00","v":5.0},{"t":"21:00","v":5.0},{"t":"22:00","v":5.0},{"t":"23:00","v":5.0},{"t":"24:00","v":5.1},{"t":"25:00","v":5.2},{"t":"26:00","v":5.3},{"t":"27:00","v":5.4},{"t":"28:00","v":5.5},{"t":"29:00","v":5.6},{"t":"30:00","v":5.4},{"t":"30:08","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-26","date":"2026-09-05","time":"13:40","activity":"Marche rapide","duration":17.3833,"distance":1.4,"avgSpeed":4.8322,"pace":12.4167,"hrAvg":95.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":67.0,"effort":null,"source":"Photos séance 5 septembre","notes":"Fin déclarée : 13:40. Tapis : 17:23, 1,40 km, vitesse affichée moy. 4,9 km/h (max. 5,8 ; min. 1,0), inclinaison moy. 0 %, 67 kcal, 1,1 MET, FC moy. 95 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.1},{"t":"2:00","v":4.2},{"t":"3:00","v":4.3},{"t":"4:00","v":4.6},{"t":"5:00","v":4.6},{"t":"6:00","v":5.0},{"t":"7:00","v":5.1},{"t":"8:00","v":5.1},{"t":"9:00","v":5.1},{"t":"10:00","v":5.1},{"t":"11:00","v":5.1},{"t":"12:00","v":5.1},{"t":"13:00","v":5.2},{"t":"14:00","v":5.2},{"t":"15:00","v":5.1},{"t":"16:00","v":5.0},{"t":"17:00","v":4.7},{"t":"17:23","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-27","date":"2026-09-05","time":"20:26","activity":"Marche rapide","duration":24.3667,"distance":2.1,"avgSpeed":5.171,"pace":11.6032,"hrAvg":78.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":108.0,"effort":null,"source":"Photos séance 5 septembre - séance 2","notes":"Deuxième séance du 5 septembre. Fin déclarée : 20:26. Tapis : 24:22, 2,10 km, vitesse affichée moy. 5,1 km/h (max. 6,4 ; min. 1,0), inclinaison moy. 0 %, 108 kcal, 1,1 MET, FC moy. 78 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.2},{"t":"2:00","v":4.5},{"t":"3:00","v":4.6},{"t":"4:00","v":5.0},{"t":"5:00","v":5.0},{"t":"6:00","v":5.4},{"t":"7:00","v":5.8},{"t":"8:00","v":5.8},{"t":"9:00","v":5.0},{"t":"10:00","v":4.4},{"t":"11:00","v":4.4},{"t":"12:00","v":5.0},{"t":"13:00","v":5.5},{"t":"14:00","v":6.0},{"t":"15:00","v":5.8},{"t":"16:00","v":5.8},{"t":"17:00","v":4.4},{"t":"18:00","v":4.4},{"t":"19:00","v":5.0},{"t":"20:00","v":5.5},{"t":"21:00","v":5.8},{"t":"22:00","v":5.8},{"t":"23:00","v":5.0},{"t":"24:00","v":4.8},{"t":"24:22","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-28","date":"2026-09-06","time":"12:40","activity":"Marche rapide","duration":29.7333,"distance":2.6,"avgSpeed":5.2466,"pace":11.4359,"hrAvg":122.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":148.0,"effort":null,"source":"Photos séance 6 septembre","notes":"Fin déclarée : 12:40. Tapis : 29:44, 2,60 km, vitesse affichée moy. 5,2 km/h (max. 6,1 ; min. 1,0), inclinaison moy. 0 %, 148 kcal, 1,1 MET, FC moy. 122 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":3.8},{"t":"2:00","v":4.0},{"t":"3:00","v":4.1},{"t":"4:00","v":4.2},{"t":"5:00","v":4.3},{"t":"6:00","v":4.5},{"t":"7:00","v":4.6},{"t":"8:00","v":4.6},{"t":"9:00","v":4.7},{"t":"10:00","v":4.7},{"t":"11:00","v":4.7},{"t":"12:00","v":4.8},{"t":"13:00","v":4.9},{"t":"14:00","v":5.0},{"t":"15:00","v":5.1},{"t":"16:00","v":5.2},{"t":"17:00","v":5.3},{"t":"18:00","v":5.1},{"t":"19:00","v":4.2},{"t":"20:00","v":4.6},{"t":"21:00","v":5.0},{"t":"22:00","v":5.0},{"t":"23:00","v":5.0},{"t":"24:00","v":5.0},{"t":"25:00","v":5.0},{"t":"26:00","v":4.8},{"t":"27:00","v":4.5},{"t":"28:00","v":4.1},{"t":"29:00","v":3.2},{"t":"29:44","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-29","date":"2026-09-06","time":"19:52","activity":"Marche rapide","duration":31.8167,"distance":2.7,"avgSpeed":5.0917,"pace":11.784,"hrAvg":102.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":166.0,"effort":null,"source":"Photos séance 6 septembre - séance 2","notes":"Deuxième séance du 6 septembre. Fin déclarée : 19:52. Tapis : 31:49, 2,70 km, vitesse affichée moy. 5,1 km/h (max. 6,0 ; min. 1,0), inclinaison moy. 0 %, 166 kcal, 1,1 MET, FC moy. 102 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.0},{"t":"2:00","v":4.1},{"t":"3:00","v":4.2},{"t":"4:00","v":4.4},{"t":"5:00","v":4.5},{"t":"6:00","v":4.6},{"t":"7:00","v":4.7},{"t":"8:00","v":4.8},{"t":"9:00","v":4.8},{"t":"10:00","v":4.8},{"t":"11:00","v":4.9},{"t":"12:00","v":5.0},{"t":"13:00","v":5.0},{"t":"14:00","v":5.1},{"t":"15:00","v":5.2},{"t":"16:00","v":5.3},{"t":"17:00","v":5.2},{"t":"18:00","v":4.0},{"t":"19:00","v":4.2},{"t":"20:00","v":4.6},{"t":"21:00","v":4.9},{"t":"22:00","v":5.0},{"t":"23:00","v":5.0},{"t":"24:00","v":5.0},{"t":"25:00","v":5.0},{"t":"26:00","v":5.0},{"t":"27:00","v":4.9},{"t":"28:00","v":4.7},{"t":"29:00","v":4.3},{"t":"30:00","v":3.7},{"t":"31:00","v":2.0},{"t":"31:49","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-30","date":"2026-09-07","time":"12:32","activity":"Marche rapide","duration":28.2333,"distance":2.4,"avgSpeed":5.1004,"pace":11.7639,"hrAvg":109.0,"hrMax":114.0,"pulse":null,"incline":0.0,"calories":114.0,"effort":3.0,"source":"Photos tapis + Apple Watch 7 septembre - séance 1","notes":"Première séance du 7 septembre. Fin déclarée : 12:32. Tapis : 28:14, 2,40 km, vitesse affichée moy. 5,0 km/h (max. 6,2 ; min. 1,0), inclinaison moy. 0 %, 121 kcal, FC moy. 132 BPM. Apple Watch : Marche en intérieur, 12:04–12:32, 28:09, 2,00 km, allure moyenne 14:03 min/km, 114 kcal actives, 169 kcal totales, FC moyenne 109 BPM, plage visible environ 101–114 BPM, effort 3 (Facile). Splits Watch : km 1 en 14:21 à 108 BPM ; km 2 en 13:44 à 109 BPM ; reste 0:03 à 17:12 min/km. Zone 1 : 25:52 sous 135 BPM ; zones 2 à 5 : 0:00. FC post-exercice visible : 103 BPM à l'arrêt, 75 BPM à 1 min, 76 BPM à 2 min. Référence retenue : durée et distance du tapis ; FC, calories et effort de l’Apple Watch.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.0},{"t":"2:00","v":4.2},{"t":"3:00","v":4.4},{"t":"4:00","v":4.6},{"t":"5:00","v":4.7},{"t":"6:00","v":4.8},{"t":"7:00","v":4.9},{"t":"8:00","v":4.9},{"t":"9:00","v":5.0},{"t":"10:00","v":5.0},{"t":"11:00","v":5.0},{"t":"12:00","v":5.0},{"t":"13:00","v":5.0},{"t":"14:00","v":5.0},{"t":"15:00","v":5.0},{"t":"16:00","v":5.1},{"t":"17:00","v":5.2},{"t":"18:00","v":5.2},{"t":"19:00","v":5.2},{"t":"20:00","v":5.2},{"t":"21:00","v":5.2},{"t":"22:00","v":5.2},{"t":"23:00","v":5.3},{"t":"24:00","v":5.3},{"t":"25:00","v":5.2},{"t":"26:00","v":5.0},{"t":"27:00","v":4.3},{"t":"28:00","v":2.2},{"t":"28:14","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-31","date":"2026-09-07","time":"20:12","activity":"Marche rapide","duration":28.8167,"distance":2.5,"avgSpeed":5.2053,"pace":11.5267,"hrAvg":109.0,"hrMax":118.0,"pulse":null,"incline":0.0,"calories":156.0,"effort":3.0,"source":"Photos tapis + Apple Watch 7 septembre - séance 2","notes":"Deuxième séance du 7 septembre. Fin déclarée : 20:12. Tapis : 28:49, 2,50 km, vitesse affichée moy. 5,2 km/h (max. 6,0 ; min. 1,0), inclinaison moy. 0 %, 144 kcal, FC moy. 117 BPM. Apple Watch : Marche en intérieur, 28:45, 2,13 km, allure moyenne 13:30 min/km, 156 kcal actives, 212 kcal totales, FC moyenne 109 BPM, plage 91–118 BPM, effort 3 (Facile), environ 19:43–20:12. Référence retenue : durée et distance du tapis ; FC, calories et effort de l’Apple Watch.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.0},{"t":"2:00","v":4.2},{"t":"3:00","v":4.3},{"t":"4:00","v":4.5},{"t":"5:00","v":4.7},{"t":"6:00","v":4.8},{"t":"7:00","v":5.0},{"t":"8:00","v":5.1},{"t":"9:00","v":5.2},{"t":"10:00","v":5.2},{"t":"11:00","v":5.2},{"t":"12:00","v":5.3},{"t":"13:00","v":5.4},{"t":"14:00","v":5.5},{"t":"15:00","v":4.8},{"t":"16:00","v":4.7},{"t":"17:00","v":4.8},{"t":"18:00","v":5.0},{"t":"19:00","v":5.4},{"t":"20:00","v":5.5},{"t":"21:00","v":5.5},{"t":"22:00","v":5.5},{"t":"23:00","v":4.8},{"t":"24:00","v":4.7},{"t":"25:00","v":5.0},{"t":"26:00","v":5.4},{"t":"27:00","v":5.2},{"t":"28:00","v":3.0},{"t":"28:49","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-2026-09-14-1956","date":"2026-09-14","time":"19:56","activity":"Marche rapide","duration":20.033333333333335,"distance":1.7,"avgSpeed":5.091514143094842,"pace":11.784313725490197,"hrAvg":108,"hrMax":null,"pulse":93,"incline":null,"calories":110,"effort":3,"source":"Photos tapis + Apple Watch 14 septembre","notes":"Fin déclarée : 19:56. Tapis : 20:02, 1,70 km, vitesse moyenne affichée 5,2 km/h (max. 6,0 ; min. 1,0), 94 kcal, FC moyenne 93 BPM. Apple Watch : Marche en intérieur, 20:05, 1,40 km, allure moyenne 14:17 min/km, 110 kcal actives, 149 kcal totales, FC moyenne 108 BPM, effort 3 (Facile). Référence retenue dans l'app : durée et distance du tapis ; FC, calories actives et effort de l’Apple Watch.","status":"Confirmé","speeds":[],"speedSource":"Courbe minute par minute non ajoutée : valeurs détaillées non disponibles dans le contexte accessible."}];
+const STORAGE_KEY = "stride_treadmill_BetaTEST_v1";
+const SOURCE_STORAGE_KEY = "stride_treadmill_v1";
+const GOAL_KEY = "stride_BetaTEST_goals_v1";
+const BACKUP_KEY = "stride_BetaTEST_backup_v1";
+const SPEED_BANDS = [
+  {max:2.5,label:"≤ 2,5",color:"#1B8F5A"},
+  {max:4.0,label:"2,6–4,0",color:"#65B741"},
+  {max:5.0,label:"4,1–5,0",color:"#D9B300"},
+  {max:5.8,label:"5,1–5,8",color:"#C99300"},
+  {max:6.6,label:"5,9–6,6",color:"#F28C28"},
+  {max:7.4,label:"6,7–7,4",color:"#D9611E"},
+  {max:8.2,label:"7,5–8,2",color:"#E34850"},
+  {max:Infinity,label:"> 8,2",color:"#9E2430"}
+];
+let sessions = loadSessions();
+let currentPage = "home";
+let filter = "all";
+let progressActivity = "all";
+let rollingWindow = 15;
+let heatmapSelectedYear = null;
+let summarySelectedMonth = null;
+let editingId = null;
+let pendingPastedSession = null;
+let calendarMonth = latestMonthKey();
+let selectedMonth = latestMonthKey();
+
+function clone(v){return JSON.parse(JSON.stringify(v))}
+function loadSessions(){
+  try{
+    let raw=localStorage.getItem(STORAGE_KEY);
+    if(!raw) raw=localStorage.getItem(SOURCE_STORAGE_KEY);
+    if(raw){
+      const parsed=JSON.parse(raw);
+      if(Array.isArray(parsed)){
+        const merged=clone(parsed);
+        INITIAL_SESSIONS.forEach(seed=>{
+          const exists=merged.some(x=>x.id===seed.id || (x.date===seed.date && (x.time||"")===(seed.time||"")));
+          if(!exists) merged.push(clone(seed));
+        });
+        localStorage.setItem(STORAGE_KEY,JSON.stringify(merged));
+        return merged;
+      }
+    }
+  }catch(e){}
+  const initial=clone(INITIAL_SESSIONS); localStorage.setItem(STORAGE_KEY,JSON.stringify(initial)); return initial;
+}
+function saveSessions(){localStorage.setItem(STORAGE_KEY,JSON.stringify(sessions)); renderAll()}
+function pad(n){return String(n).padStart(2,"0")}
+function dateObj(iso){const [y,m,d]=iso.split("-").map(Number);return new Date(y,m-1,d)}
+function monthKey(iso){return iso.slice(0,7)}
+function latestMonthKey(){
+  if(!sessions.length) return new Date().toISOString().slice(0,7);
+  return [...sessions].sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).at(-1).date.slice(0,7);
+}
+function fmtDate(iso,opts={day:"numeric",month:"long",year:"numeric"}){return new Intl.DateTimeFormat("fr-FR",opts).format(dateObj(iso))}
+function fmtMonth(key){const [y,m]=key.split("-").map(Number);return new Intl.DateTimeFormat("fr-FR",{month:"long",year:"numeric"}).format(new Date(y,m-1,1))}
+function cap(s){return s ? s.charAt(0).toUpperCase()+s.slice(1) : s}
+function num(v,d=1){return Number(v||0).toLocaleString("fr-FR",{minimumFractionDigits:d,maximumFractionDigits:d})}
+function fmtDuration(mins){
+  if(mins==null || !isFinite(mins)) return "—";
+  let total=Math.round(mins*60), m=Math.floor(total/60), s=total%60;
+  return `${m}:${pad(s)}`;
+}
+function fmtTotal(mins){
+  if(!mins) return "0 min";
+  const total=Math.round(mins), h=Math.floor(total/60), m=total%60;
+  return h ? `${h} h ${pad(m)}` : `${m} min`;
+}
+function fmtPace(minsPerKm){
+  if(!minsPerKm || !isFinite(minsPerKm)) return "—";
+  let sec=Math.round(minsPerKm*60), m=Math.floor(sec/60), s=sec%60;
+  return `${m}:${pad(s)}/km`;
+}
+function activityClass(a){if(a==="Marche rapide")return"walk";if(a==="Mixte")return"mixed";if(a==="Course légère")return"light-run";return"run"}
+function activityShort(a){return a==="Marche rapide"?"M":a==="Mixte"?"X":a==="Course légère"?"CL":"C"}
+function filterClass(a){return a==="Marche rapide"?"walk":a==="Mixte"?"mixed":"run"}
+function speedColor(v){return SPEED_BANDS.find(b=>v<=b.max).color}
+function safe(v){return (v==null || v==="") ? "—" : v}
+function esc(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function monthSessions(key){return sessions.filter(s=>monthKey(s.date)===key)}
+function sortDesc(arr){return [...arr].sort((a,b)=>(b.date+(b.time||"")).localeCompare(a.date+(a.time||"")))}
+function weightedSpeed(arr){const dur=arr.reduce((a,s)=>a+(+s.duration||0),0),dist=arr.reduce((a,s)=>a+(+s.distance||0),0);return dur?dist/dur*60:0}
+function summary(arr){
+  const distance=arr.reduce((a,s)=>a+(+s.distance||0),0);
+  const duration=arr.reduce((a,s)=>a+(+s.duration||0),0);
+  const calories=arr.reduce((a,s)=>a+(+s.calories||0),0);
+  const hrs=arr.map(s=>+s.hrAvg).filter(v=>v>0);
+  return {count:arr.length,distance,duration,calories,speed:weightedSpeed(arr),hr:hrs.length?hrs.reduce((a,b)=>a+b,0)/hrs.length:0};
+}
+function isoDate(d){
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+function addDays(d,days){
+  const x=new Date(d.getFullYear(),d.getMonth(),d.getDate());
+  x.setDate(x.getDate()+days);
+  return x;
+}
+function sessionsBetween(start,end){
+  const a=isoDate(start),b=isoDate(end);
+  return sessions.filter(s=>s.date>=a&&s.date<=b);
+}
+function comparisonRolling15(key){
+  const [y,m]=key.split("-").map(Number);
+  const today=new Date(), currentKey=`${today.getFullYear()}-${pad(today.getMonth()+1)}`;
+  const anchor=key===currentKey
+    ? new Date(today.getFullYear(),today.getMonth(),today.getDate())
+    : new Date(y,m,0);
+  const currentStart=addDays(anchor,-14);
+  const previousEnd=addDays(currentStart,-1);
+  const previousStart=addDays(previousEnd,-14);
+  const currentArr=sessionsBetween(currentStart,anchor);
+  const prevArr=sessionsBetween(previousStart,previousEnd);
+  return {
+    current:summary(currentArr),previous:summary(prevArr),
+    currentArr,prevArr,currentStart,currentEnd:anchor,previousStart,previousEnd
+  };
+}
+function previousFullMonthComparison(key){
+  const [y,m]=key.split("-").map(Number);
+  const prevDate=new Date(y,m-2,1);
+  const prevKey=`${prevDate.getFullYear()}-${pad(prevDate.getMonth()+1)}`;
+  return {
+    current:summary(monthSessions(key)),
+    previous:summary(monthSessions(prevKey)),
+    prevKey
+  };
+}
+function setMonthAverageTrend(id,current,previous,prevKey,titleText=""){
+  const el=document.getElementById(id),delta=percentChange(current,previous);
+  const base=el.classList.contains("hero-trend")?"hero-trend":"kpi-trend";
+  el.className=`${base} ${trendClass(delta)}`;
+  const [y,m]=prevKey.split("-").map(Number);
+  const monthLabel=new Intl.DateTimeFormat("fr-FR",{month:"short"}).format(new Date(y,m-1,1)).replace(".","");
+  if(delta==null){
+    el.textContent=`— vs ${monthLabel}`;
+    el.title=`Pas assez de données sur ${fmtMonth(prevKey)} pour comparer`;
+    return;
+  }
+  el.textContent=`${trendArrow(delta)} ${num(Math.abs(delta),1)} % · vs ${monthLabel}`;
+  el.title=titleText||`Comparaison avec ${fmtMonth(prevKey)} complet`;
+}
+function setMonthCountTrend(id,current,previous,prevKey,titleText=""){
+  const el=document.getElementById(id);
+  const [y,m]=prevKey.split("-").map(Number);
+  const monthLabel=new Intl.DateTimeFormat("fr-FR",{month:"short"}).format(new Date(y,m-1,1)).replace(".","");
+  const diff=current-previous;
+  if(previous===0&&current===0){
+    el.className="hero-trend none";
+    el.textContent=`— vs ${monthLabel}`;
+    el.title=`Pas assez de données sur ${fmtMonth(prevKey)} pour comparer`;
+    return;
+  }
+  el.className=`hero-trend ${diff>0?"up":diff<0?"down":"flat"}`;
+  el.textContent=diff>0?`↑ +${diff} · vs ${monthLabel}`:diff<0?`↓ ${diff} · vs ${monthLabel}`:`→ 0 · vs ${monthLabel}`;
+  el.title=titleText||`Comparaison avec ${fmtMonth(prevKey)} complet`;
+}
+function percentChange(current,previous){
+  if(!(previous>0)||!isFinite(current)||!isFinite(previous)) return null;
+  return ((current-previous)/previous)*100;
+}
+function trendClass(delta){
+  if(delta==null||!isFinite(delta)) return "none";
+  if(Math.abs(delta)<0.05) return "flat";
+  return delta>0?"up":"down";
+}
+function trendArrow(delta){
+  if(delta==null||!isFinite(delta)) return "";
+  if(Math.abs(delta)<0.05) return "→";
+  return delta>0?"↑":"↓";
+}
+function setPercentTrend(id,current,previous,titleText=""){
+  const el=document.getElementById(id),delta=percentChange(current,previous);
+  const base=el.classList.contains("hero-trend")?"hero-trend":"kpi-trend";
+  el.className=`${base} ${trendClass(delta)}`;
+  if(delta==null){
+    el.textContent="— · 15 j.";
+    el.title="Pas assez de données sur les 15 jours précédents pour comparer";
+    return;
+  }
+  el.textContent=`${trendArrow(delta)} ${num(Math.abs(delta),1)} % · 15 j.`;
+  el.title=titleText||"15 derniers jours comparés aux 15 jours précédents";
+}
+function setCountTrend(id,current,previous,titleText=""){
+  const el=document.getElementById(id),diff=current-previous;
+  if(previous===0&&current===0){el.className="hero-trend none";el.textContent="— · 15 j.";return;}
+  el.className=`hero-trend ${diff>0?"up":diff<0?"down":"flat"}`;
+  el.textContent=diff>0?`↑ +${diff} · 15 j.`:diff<0?`↓ ${diff} · 15 j.`:`→ 0 · 15 j.`;
+  el.title=titleText||"15 derniers jours comparés aux 15 jours précédents";
+}
+
+function loadGoals(){
+  const defaults={week:{km:15,sessions:5,minutes:180},month:{km:60,sessions:20,minutes:720}};
+  try{
+    const x=JSON.parse(localStorage.getItem(GOAL_KEY));
+    if(x?.week&&x?.month)return {
+      week:{km:+x.week.km||defaults.week.km,sessions:+x.week.sessions||defaults.week.sessions,minutes:+x.week.minutes||defaults.week.minutes},
+      month:{km:+x.month.km||defaults.month.km,sessions:+x.month.sessions||defaults.month.sessions,minutes:+x.month.minutes||defaults.month.minutes}
+    };
+    if(x&&x.km>0&&x.sessions>0)return {week:{km:+x.km,sessions:+x.sessions,minutes:defaults.week.minutes},month:defaults.month};
+  }catch(e){}
+  return defaults;
+}
+function saveGoals(g){localStorage.setItem(GOAL_KEY,JSON.stringify(g));renderGoal()}
+function getBackupMeta(){try{return JSON.parse(localStorage.getItem(BACKUP_KEY)||"null")}catch(e){return null}}
+function activeDateSet(arr=sessions){return [...new Set(arr.map(s=>s.date))].sort()}
+function streakStats(){
+  const dates=activeDateSet(),set=new Set(dates);let best=0,run=0,prev=null;
+  for(const iso of dates){const d=dateObj(iso);if(prev&&Math.round((d-prev)/86400000)===1)run++;else run=1;best=Math.max(best,run);prev=d}
+  const today=new Date(),todayIso=isoDate(today),yesterdayIso=isoDate(addDays(today,-1));
+  let end=set.has(todayIso)?todayIso:set.has(yesterdayIso)?yesterdayIso:null,current=0;
+  if(end){let d=dateObj(end);while(set.has(isoDate(d))){current++;d=addDays(d,-1)}}
+  return {current,best};
+}
+function currentWeekWindow(){
+  const now=new Date(),dow=(now.getDay()+6)%7,start=addDays(now,-dow),elapsed=dow;
+  const prevStart=addDays(start,-7),prevEnd=addDays(prevStart,elapsed);
+  return {start,end:now,prevStart,prevEnd};
+}
+function renderToday(){
+  const now=new Date(),iso=isoDate(now),arr=sortDesc(sessions.filter(s=>s.date===iso)),sum=summary(arr);
+  document.getElementById("todayDateLabel").textContent=new Intl.DateTimeFormat("fr-FR",{weekday:"short",day:"numeric",month:"short"}).format(now).replace(".","");
+  const root=document.getElementById("todayCard");
+  if(!arr.length){root.innerHTML=`<div class="today-top"><div><strong>Aucune séance</strong><p>La journée est encore libre.</p></div><span class="today-badge">Aujourd’hui</span></div>`;return}
+  root.innerHTML=`<div class="today-top"><div><strong>${num(sum.distance,2)} km</strong><p>${arr.length} séance${arr.length>1?"s":""} · ${fmtTotal(sum.duration)} · ${sum.calories?Math.round(sum.calories)+" kcal":"calories —"}</p></div><span class="today-badge">${arr.length} séance${arr.length>1?"s":""}</span></div><div class="today-sessions">${arr.map(s=>`<div class="today-session"><b>${esc(s.time||"—")} · ${esc(s.activity)}</b><span>${num(s.distance,2)} km · ${fmtDuration(s.duration)}</span></div>`).join("")}</div>`;
+}
+function renderRoutine(){
+  const st=streakStats(),active=activeDateSet(monthSessions(selectedMonth)).length;
+  document.getElementById("currentStreak").textContent=st.current;
+  document.getElementById("bestStreak").textContent=st.best;
+  document.getElementById("activeDays").textContent=active;
+  document.getElementById("activeMonthLabel").textContent=cap(fmtMonth(selectedMonth).split(" ")[0]);
+}
+function goalLine(label,current,target,suffix=""){
+  const pct=target>0?Math.min(100,current/target*100):0;
+  const currentText=suffix==="min"?fmtTotal(current):`${num(current,suffix==="km"?1:0)}${suffix==="km"?" km":""}`;
+  const targetText=suffix==="min"?fmtTotal(target):`${num(target,suffix==="km"?1:0)}${suffix==="km"?" km":""}`;
+  return `<div class="goal-line"><div class="goal-copy"><b>${label} · ${currentText} / ${targetText}</b><span>${Math.round(pct)} %</span></div><div class="goal-track"><div class="goal-fill" style="width:${pct}%"></div></div></div>`;
+}
+function renderGoal(){
+  const g=loadGoals(),w=currentWeekWindow(),week=summary(sessionsBetween(w.start,w.end));
+  const now=new Date(),mk=`${now.getFullYear()}-${pad(now.getMonth()+1)}`,month=summary(monthSessions(mk));
+  document.getElementById("goalContent").innerHTML=`<div class="goal-scope-label"><span>Semaine</span><span>${week.count} séance${week.count!==1?"s":""}</span></div>${goalLine("Distance",week.distance,g.week.km,"km")}${goalLine("Temps",week.duration,g.week.minutes,"min")}${goalLine("Séances",week.count,g.week.sessions)}<div class="goal-scope-label"><span>Mois</span><span>${cap(fmtMonth(mk).split(" ")[0])}</span></div>${goalLine("Distance",month.distance,g.month.km,"km")}${goalLine("Temps",month.duration,g.month.minutes,"min")}${goalLine("Séances",month.count,g.month.sessions)}`;
+}
+function renderWeekSummary(){
+  const w=currentWeekWindow(),cur=summary(sessionsBetween(w.start,w.end)),prev=summary(sessionsBetween(w.prevStart,w.prevEnd));
+  const delta=percentChange(cur.distance,prev.distance);let dtext="—";if(delta!=null)dtext=`${trendArrow(delta)} ${num(Math.abs(delta),1)} %`;
+  document.getElementById("weekSummary").innerHTML=`<div class="week-main"><div><strong>${num(cur.distance,1)} km</strong><p>${new Intl.DateTimeFormat("fr-FR",{day:"numeric",month:"short"}).format(w.start).replace(".","")} → aujourd’hui</p></div><span class="week-delta">${dtext}</span></div><div class="week-mini"><div><b>${cur.count}</b><span>Séances</span></div><div><b>${fmtTotal(cur.duration)}</b><span>Temps</span></div><div><b>${cur.speed?num(cur.speed,2):"—"}</b><span>km/h moy.</span></div></div>`;
+}
+function renderBackupInfo(){
+  const meta=getBackupMeta(),seedBase=INITIAL_SESSIONS.length,baseCount=meta?.count??seedBase,delta=Math.max(0,sessions.length-baseCount),status=document.getElementById("backupStatus"),rem=document.getElementById("backupReminder");
+  if(status){status.innerHTML=meta?`<b>Dernière sauvegarde : ${fmtDate(meta.date,{day:"numeric",month:"long",year:"numeric"})}</b><p>${meta.count} séances au moment de l’export · ${delta} nouvelle${delta!==1?"s":""} depuis.</p>`:`<b>Aucune sauvegarde BetaTEST exportée</b><p>Cette version utilise un stockage séparé. Exporte un JSON lorsque tu veux conserver un point de restauration.</p>`}
+  if(rem){rem.classList.toggle("show",delta>=10);rem.textContent=delta>=10?`${delta} nouvelles séances depuis la dernière sauvegarde. Pense à exporter un JSON.`:""}
+}
+function dayAggregates(arr){const m={};arr.forEach(s=>{(m[s.date]??=[]).push(s)});return m}
+function weekAggregates(arr){const m={};arr.forEach(s=>{const k=weekMonday(s.date);(m[k]??=[]).push(s)});return m}
+function makeTrendChart(arr,mode){
+  const points=sortDesc(arr).reverse().map(s=>({date:s.date,v:mode==="speed"?(+s.avgSpeed||(+s.distance/+s.duration*60)):+s.hrAvg})).filter(p=>p.v>0);
+  if(points.length<2)return `<div class="trend-empty">Pas assez de données pour afficher une tendance.</div>`;
+  const w=650,h=190,left=42,right=15,top=17,bottom=31,plotW=w-left-right,plotH=h-top-bottom,vals=points.map(p=>p.v),rawMin=Math.min(...vals),rawMax=Math.max(...vals),padV=Math.max((rawMax-rawMin)*.16,mode==="speed"?.3:5),min=Math.max(0,rawMin-padV),max=rawMax+padV;
+  const xy=points.map((p,i)=>({x:left+(i/(points.length-1))*plotW,y:top+(1-(p.v-min)/(max-min))*plotH,...p}));
+  let grid="",labs="";for(let i=0;i<=4;i++){const v=min+(max-min)*(i/4),y=top+plotH-(i/4)*plotH;grid+=`<line x1="${left}" y1="${y}" x2="${w-right}" y2="${y}" stroke="#edf1f3"/><text x="${left-7}" y="${y+3}" text-anchor="end" font-size="8" fill="#8a98a3">${mode==="speed"?num(v,1):Math.round(v)}</text>`}
+  const path=xy.map((p,i)=>`${i?"L":"M"}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");xy.forEach((p,i)=>{if(i===0||i===xy.length-1||i%Math.ceil(xy.length/5)===0)labs+=`<text x="${p.x}" y="${h-9}" text-anchor="middle" font-size="8" fill="#8a98a3">${fmtDate(p.date,{day:"numeric",month:"short"}).replace(".","")}</text>`});
+  return `<svg class="svg-chart" viewBox="0 0 ${w} ${h}">${grid}<path d="${path}" fill="none" stroke="#2a8f84" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${xy.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="2.8" fill="#2a8f84" stroke="white" stroke-width="1"><title>${fmtDate(p.date)} · ${mode==="speed"?num(p.v,2)+" km/h":Math.round(p.v)+" BPM"}</title></circle>`).join("")}${labs}</svg>`;
+}
+function averageField(arr,field){const vals=arr.map(s=>+s[field]).filter(v=>v>0);return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:0}
+function rollingSeries(arr,mode,windowDays){
+  if(!arr.length)return [];
+  const ordered=[...arr].sort((a,b)=>a.date.localeCompare(b.date));
+  const start=dateObj(ordered[0].date),end=dateObj(ordered.at(-1).date),points=[];
+  for(let d=new Date(start);d<=end;d=addDays(d,1)){
+    const from=addDays(d,-windowDays+1),bucket=arr.filter(s=>s.date>=isoDate(from)&&s.date<=isoDate(d));
+    if(!bucket.length)continue;
+    let v=0;
+    if(mode==="distance")v=bucket.reduce((a,s)=>a+(+s.distance||0),0)/windowDays;
+    if(mode==="speed")v=weightedSpeed(bucket);
+    if(mode==="hr")v=averageField(bucket,"hrAvg");
+    if(v>0)points.push({date:isoDate(d),v});
+  }
+  return points;
+}
+function rollingChart(arr,mode,windowDays){
+  const points=rollingSeries(arr,mode,windowDays);
+  if(points.length<2)return `<div class="trend-empty">Pas assez de données pour afficher cette moyenne mobile.</div>`;
+  const w=650,h=190,left=44,right=15,top=17,bottom=31,plotW=w-left-right,plotH=h-top-bottom,vals=points.map(p=>p.v),rawMin=Math.min(...vals),rawMax=Math.max(...vals),basePad=mode==="distance"?.08:mode==="speed"?.25:4,padV=Math.max((rawMax-rawMin)*.18,basePad),min=Math.max(0,rawMin-padV),max=Math.max(rawMax+padV,min+basePad*2);
+  const xy=points.map((p,i)=>({x:left+(i/(points.length-1))*plotW,y:top+(1-(p.v-min)/(max-min))*plotH,...p}));
+  let grid="",labs="";for(let i=0;i<=4;i++){const v=min+(max-min)*(i/4),y=top+plotH-(i/4)*plotH;grid+=`<line x1="${left}" y1="${y}" x2="${w-right}" y2="${y}" stroke="#edf1f3"/><text x="${left-7}" y="${y+3}" text-anchor="end" font-size="8" fill="#8a98a3">${mode==="hr"?Math.round(v):num(v,1)}</text>`}
+  const path=xy.map((p,i)=>`${i?"L":"M"}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+  const step=Math.max(1,Math.ceil(xy.length/5));xy.forEach((p,i)=>{if(i===0||i===xy.length-1||i%step===0)labs+=`<text x="${p.x}" y="${h-9}" text-anchor="middle" font-size="8" fill="#8a98a3">${fmtDate(p.date,{day:"numeric",month:"short"}).replace(".","")}</text>`});
+  const suffix=mode==="distance"?" km/j":mode==="speed"?" km/h":" BPM";
+  return `<svg class="svg-chart" viewBox="0 0 ${w} ${h}">${grid}<path d="${path}" fill="none" stroke="#2a8f84" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${xy.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="2.7" fill="#2a8f84" stroke="white" stroke-width="1"><title>${fmtDate(p.date)} · ${mode==="hr"?Math.round(p.v):num(p.v,2)}${suffix}</title></circle>`).join("")}${labs}</svg>`;
+}
+function renderRollingTrends(arr){
+  const distanceSeries=rollingSeries(arr,"distance",rollingWindow),speedSeries=rollingSeries(arr,"speed",rollingWindow),hrSeries=rollingSeries(arr,"hr",rollingWindow);
+  document.getElementById("distanceTrendChart").innerHTML=rollingChart(arr,"distance",rollingWindow);
+  document.getElementById("speedTrendChart").innerHTML=rollingChart(arr,"speed",rollingWindow);
+  document.getElementById("hrTrendChart").innerHTML=rollingChart(arr,"hr",rollingWindow);
+  const last=a=>a.length?a.at(-1).v:0;
+  document.getElementById("rollingDistanceLabel").textContent=distanceSeries.length?`${num(last(distanceSeries),2)} km/j · ${rollingWindow} j`:"";
+  document.getElementById("rollingSpeedLabel").textContent=speedSeries.length?`${num(last(speedSeries),2)} km/h · ${rollingWindow} j`:"";
+  document.getElementById("rollingHrLabel").textContent=hrSeries.length?`${Math.round(last(hrSeries))} BPM · ${rollingWindow} j`:"";
+  document.querySelectorAll("[data-window]").forEach(b=>b.classList.toggle("active",+b.dataset.window===rollingWindow));
+}
+function renderBetaProgress(arr){
+  const days=dayAggregates(arr),dayEntries=Object.entries(days),active=dayEntries.length,sum=summary(arr),bestDay=dayEntries.map(([date,x])=>({date,...summary(x)})).sort((a,b)=>b.distance-a.distance)[0];
+  document.getElementById("globalDistance").textContent=`${num(sum.distance,1)} km`;
+  document.getElementById("marathonEq").textContent=`≈ ${num(sum.distance/42.195,2)} marathon${sum.distance/42.195>=2?"s":""}`;
+  document.getElementById("globalActiveDays").textContent=active;
+  document.getElementById("globalActiveRate").textContent=arr.length?`${arr.length} séance${arr.length!==1?"s":""} au total`:"—";
+  document.getElementById("bestDayDistance").textContent=bestDay?`${num(bestDay.distance,2)} km`:"—";
+  document.getElementById("bestDayDate").textContent=bestDay?fmtDate(bestDay.date,{day:"numeric",month:"long"}):"—";
+  document.getElementById("sessionsPerActiveDay").textContent=active?num(arr.length/active,2):"—";
+  const longestDur=[...arr].sort((a,b)=>(b.duration||0)-(a.duration||0))[0],fastest=[...arr].sort((a,b)=>(b.avgSpeed||0)-(a.avgSpeed||0))[0],weeks=Object.entries(weekAggregates(arr)).map(([date,x])=>({date,...summary(x)})).sort((a,b)=>b.distance-a.distance),bestWeek=weeks[0];
+  const mostSessions=dayEntries.map(([date,x])=>({date,count:x.length})).sort((a,b)=>b.count-a.count)[0];
+  const cards=[
+    ["Durée record",longestDur?fmtDuration(longestDur.duration):"—",longestDur?fmtDate(longestDur.date,{day:"numeric",month:"short"}):"—"],
+    ["Vitesse moy. record",fastest?`${num(fastest.avgSpeed,2)} km/h`:"—",fastest?fmtDate(fastest.date,{day:"numeric",month:"short"}):"—"],
+    ["Semaine record",bestWeek?`${num(bestWeek.distance,1)} km`:"—",bestWeek?`semaine du ${fmtDate(bestWeek.date,{day:"numeric",month:"short"})}`:"—"],
+    ["+ de séances / jour",mostSessions?`${mostSessions.count} séances`:"—",mostSessions?fmtDate(mostSessions.date,{day:"numeric",month:"short"}):"—"]
+  ];
+  document.getElementById("personalRecords").innerHTML=cards.map(c=>`<div class="card record-card"><span>${c[0]}</span><strong>${c[1]}</strong><small>${c[2]}</small></div>`).join("");
+  renderRollingTrends(arr);
+}
+function renderRecordsByType(periodArr){
+  const types=[
+    {name:"Marche rapide",cls:"walk",color:"#2a9d8f"},{name:"Course légère",cls:"light-run",color:"#7182ee"},{name:"Course",cls:"run",color:"#5364d8"},{name:"Mixte",cls:"mixed",color:"#e79547"}
+  ];
+  document.getElementById("recordsByType").innerHTML=types.map(t=>{
+    const a=periodArr.filter(s=>activityClass(s.activity)===t.cls),longest=[...a].sort((x,y)=>(y.distance||0)-(x.distance||0))[0],fastest=[...a].sort((x,y)=>(y.avgSpeed||0)-(x.avgSpeed||0))[0],duration=[...a].sort((x,y)=>(y.duration||0)-(x.duration||0))[0];
+    return `<div class="card type-record" style="--type-color:${t.color}"><div class="type-record-head"><b>${t.name}</b><span>${a.length} séance${a.length!==1?"s":""}</span></div><div class="type-record-stats"><div><strong>${longest?num(longest.distance,2)+" km":"—"}</strong><small>Distance</small></div><div><strong>${fastest?num(fastest.avgSpeed,2):"—"}</strong><small>km/h</small></div><div><strong>${duration?fmtDuration(duration.duration):"—"}</strong><small>Durée</small></div></div></div>`;
+  }).join("");
+}
+function availableYears(){return [...new Set(sessions.map(s=>s.date.slice(0,4)))].sort().reverse()}
+function renderHeatmap(){
+  const years=availableYears();if(!years.length)return;
+  if(!heatmapSelectedYear||!years.includes(String(heatmapSelectedYear)))heatmapSelectedYear=years[0];
+  const sel=document.getElementById("heatmapYear");sel.innerHTML=years.map(y=>`<option value="${y}">${y}</option>`).join("");sel.value=heatmapSelectedYear;
+  const year=+heatmapSelectedYear,base=sessions.filter(s=>s.date.startsWith(`${year}-`)&&(progressActivity==="all"||activityClass(s.activity)===progressActivity)),daily={};base.forEach(s=>daily[s.date]=(daily[s.date]||0)+(+s.distance||0));
+  const active=Object.keys(daily).length,total=Object.values(daily).reduce((a,b)=>a+b,0),max=Math.max(...Object.values(daily),1),jan1=new Date(year,0,1),start=addDays(jan1,-((jan1.getDay()+6)%7)),dec31=new Date(year,11,31),weeks=Math.floor((dec31-start)/604800000)+1,w=weeks*11+34,h=103;
+  let cells="",labels="";for(let d=new Date(start);d<=dec31;d=addDays(d,1)){const week=Math.floor((d-start)/604800000),dow=(d.getDay()+6)%7,iso=isoDate(d),v=d.getFullYear()===year?(daily[iso]||0):0,x=30+week*11,y=15+dow*11,opacity=v?(.22+.75*Math.min(1,v/max)):0;cells+=`<rect x="${x}" y="${y}" width="8" height="8" rx="2" fill="${v?`rgba(42,157,143,${opacity.toFixed(2)})`:"#edf1f3"}"><title>${iso} · ${num(v,2)} km</title></rect>`}
+  ["L","M","M","J","V","S","D"].forEach((x,i)=>labels+=`<text x="20" y="${22+i*11}" text-anchor="end" font-size="7" fill="#8a98a3">${x}</text>`);
+  for(let m=0;m<12;m++){const d=new Date(year,m,1),week=Math.floor((d-start)/604800000),x=30+week*11;labels+=`<text x="${x}" y="8" font-size="7" fill="#8a98a3">${new Intl.DateTimeFormat("fr-FR",{month:"short"}).format(d).replace(".","")}</text>`}
+  document.getElementById("heatmapTitle").textContent=`${year} · activité`;
+  document.getElementById("heatmapMeta").textContent=`${active} jours · ${num(total,1)} km`;
+  document.getElementById("yearHeatmap").innerHTML=`<svg class="heatmap-svg" viewBox="0 0 ${w} ${h}" aria-label="Heatmap annuelle">${labels}${cells}</svg>`;
+}
+function previousKey(key){const [y,m]=key.split("-").map(Number),d=new Date(y,m-2,1);return `${d.getFullYear()}-${pad(d.getMonth()+1)}`}
+function renderMonthlySummary(){
+  const months=[...new Set(sessions.map(s=>monthKey(s.date)))].sort().reverse();if(!months.length)return;
+  if(!summarySelectedMonth||!months.includes(summarySelectedMonth))summarySelectedMonth=(document.getElementById("progressPeriod").value!=="all"&&months.includes(document.getElementById("progressPeriod").value))?document.getElementById("progressPeriod").value:selectedMonth;
+  if(!months.includes(summarySelectedMonth))summarySelectedMonth=months[0];
+  const sel=document.getElementById("summaryMonthSelect");sel.innerHTML=months.map(m=>`<option value="${m}">${cap(fmtMonth(m))}</option>`).join("");sel.value=summarySelectedMonth;
+  const arr=monthSessions(summarySelectedMonth),sum=summary(arr),days=activeDateSet(arr).length,prev=summary(monthSessions(previousKey(summarySelectedMonth))),delta=percentChange(sum.distance,prev.distance),best=[...arr].sort((a,b)=>(b.distance||0)-(a.distance||0))[0],avgPer=sum.count?sum.distance/sum.count:0;
+  const comparison=delta==null?"Pas assez de données le mois précédent":`${trendArrow(delta)} ${num(Math.abs(delta),1)} % de distance vs ${cap(fmtMonth(previousKey(summarySelectedMonth)))}`;
+  document.getElementById("monthlySummary").innerHTML=`<div class="month-summary-top"><div><strong>${cap(fmtMonth(summarySelectedMonth))}</strong><p>${sum.count} séance${sum.count!==1?"s":""} · ${days} jours actifs · ${fmtTotal(sum.duration)}</p></div><button type="button" class="summary-export" id="exportMonthlySummaryBtn">Exporter PNG</button></div><div class="month-summary-grid"><div><b>${num(sum.distance,1)} km</b><span>Distance</span></div><div><b>${sum.speed?num(sum.speed,2):"—"}</b><span>km/h moy.</span></div><div><b>${num(avgPer,2)} km</b><span>Par séance</span></div><div><b>${sum.hr?Math.round(sum.hr):"—"}</b><span>FC moy.</span></div><div><b>${Math.round(sum.calories||0)}</b><span>kcal</span></div><div><b>${best?num(best.distance,2)+" km":"—"}</b><span>Meilleure séance</span></div></div><div class="summary-note">${comparison}${best?` · Meilleure séance le ${fmtDate(best.date,{day:"numeric",month:"long"})}.`:""}</div>`;
+  document.getElementById("exportMonthlySummaryBtn").onclick=exportMonthlySummaryPNG;
+}
+function exportMonthlySummaryPNG(){
+  const key=summarySelectedMonth,arr=monthSessions(key),sum=summary(arr),days=activeDateSet(arr).length,prev=summary(monthSessions(previousKey(key))),delta=percentChange(sum.distance,prev.distance),best=[...arr].sort((a,b)=>(b.distance||0)-(a.distance||0))[0],c=document.createElement("canvas");c.width=1200;c.height=1200;const x=c.getContext("2d");
+  x.fillStyle="#f4f7f9";x.fillRect(0,0,1200,1200);x.fillStyle="#163f43";roundRect(x,70,70,1060,250,44);x.fill();x.fillStyle="#ffffff";x.font="700 42px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif";x.fillText("STRIDE · BetaTEST V2",120,145);x.font="800 72px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif";x.fillText(cap(fmtMonth(key)),120,235);x.font="500 28px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif";x.fillStyle="rgba(255,255,255,.82)";x.fillText(`${sum.count} séances · ${days} jours actifs · ${fmtTotal(sum.duration)}`,120,285);
+  const boxes=[["Distance",`${num(sum.distance,1)} km`],["Vitesse moyenne",sum.speed?`${num(sum.speed,2)} km/h`:"—"],["Distance / séance",sum.count?`${num(sum.distance/sum.count,2)} km`:"—"],["FC moyenne",sum.hr?`${Math.round(sum.hr)} BPM`:"—"],["Calories",`${Math.round(sum.calories||0)} kcal`],["Meilleure séance",best?`${num(best.distance,2)} km`:"—"]];
+  boxes.forEach((b,i)=>{const col=i%2,row=Math.floor(i/2),bx=70+col*535,by=365+row*190;x.fillStyle="#ffffff";roundRect(x,bx,by,500,155,28);x.fill();x.fillStyle="#71808f";x.font="700 23px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif";x.fillText(b[0],bx+32,by+48);x.fillStyle="#14202b";x.font="800 45px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif";x.fillText(b[1],bx+32,by+108)});
+  x.fillStyle="#216e68";x.font="700 28px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif";x.fillText(delta==null?"Comparaison mensuelle indisponible":`${trendArrow(delta)} ${num(Math.abs(delta),1)} % de distance vs ${cap(fmtMonth(previousKey(key)))}`,80,1010);x.fillStyle="#71808f";x.font="500 22px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif";x.fillText("Résumé généré depuis tes données Stride",80,1070);
+  const a=document.createElement("a");a.href=c.toDataURL("image/png");a.download=`Stride-${key}-resume.png`;a.click();
+}
+function roundRect(ctx,x,y,w,h,r){const rr=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+rr,y);ctx.arcTo(x+w,y,x+w,y+h,rr);ctx.arcTo(x+w,y+h,x,y+h,rr);ctx.arcTo(x,y+h,x,y,rr);ctx.arcTo(x,y,x+w,y,rr);ctx.closePath()}
+function dataQuality(s){
+  const checks=[['Distance',+s.distance>0],['Durée',+s.duration>0],['FC moy.',+s.hrAvg>0],['FC max',+s.hrMax>0],['Calories',s.calories!=null&&+s.calories>0],['Inclinaison',s.incline!=null],['Effort',+s.effort>0],['Courbe vitesse',Array.isArray(s.speeds)&&s.speeds.length>2]],missing=checks.filter(x=>!x[1]).map(x=>x[0]),score=checks.length-missing.length;
+  return {score,total:checks.length,missing,label:score>=7?`${score}/${checks.length} données`:`${score}/${checks.length} données`};
+}
+function habitComparisonHtml(s){
+  const end=addDays(dateObj(s.date),-1),start=addDays(end,-14),same=sessionsBetween(start,end).filter(x=>x.activity===s.activity);if(!same.length)return "";
+  const avg=summary(same),distAvg=avg.count?avg.distance/avg.count:0,durAvg=avg.count?avg.duration/avg.count:0,sp=+s.avgSpeed||(+s.distance/+s.duration*60),dSpeed=sp-avg.speed,dDist=(+s.distance||0)-distAvg,dDur=(+s.duration||0)-durAvg,sg=n=>n>0?"+":"";
+  return `<div class="card habit-card"><div class="habit-card-head"><b>Vs tes 15 jours précédents</b><span>même type · ${same.length} séance${same.length!==1?"s":""}</span></div><div class="habit-grid"><div class="habit-item"><strong>${num(sp,2)} km/h</strong><span class="habit-delta">${sg(dSpeed)}${num(dSpeed,2)} km/h</span><span>Vitesse</span></div><div class="habit-item"><strong>${num(s.distance,2)} km</strong><span class="habit-delta">${sg(dDist)}${num(dDist,2)} km</span><span>Distance</span></div><div class="habit-item"><strong>${fmtDuration(s.duration)}</strong><span class="habit-delta">${sg(dDur)}${num(dDur,1)} min</span><span>Durée</span></div></div></div>`;
+}
+
+function showDaySessions(date,matches){
+  document.getElementById("dayModalTitle").textContent=cap(fmtDate(date,{weekday:"long",day:"numeric",month:"long"}));
+  document.getElementById("dayModalBody").innerHTML=sortDesc(matches).reverse().map(s=>`<button class="day-session-btn" data-day-session="${esc(s.id)}"><div class="activity-dot ${activityClass(s.activity)}" style="width:38px;height:38px;border-radius:13px;font-size:11px">${activityShort(s.activity)}</div><div class="session-info"><div class="title">${esc(s.time||"—")} · ${esc(s.activity)}</div><div class="meta">${fmtDuration(s.duration)} · ${num(s.avgSpeed||(+s.distance/+s.duration*60),2)} km/h</div></div><div class="session-km"><b>${num(s.distance,2)}</b><span>KM</span></div></button>`).join("");
+  document.querySelectorAll("[data-day-session]").forEach(b=>b.onclick=()=>{closeModal("dayModal");showDetail(b.dataset.daySession)});openModal("dayModal");
+}
+
+function toast(msg){const el=document.getElementById("toast");el.textContent=msg;el.classList.add("show");clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove("show"),1800)}
+function openModal(id){document.getElementById(id).classList.add("open");document.body.style.overflow="hidden"}
+function closeModal(id){document.getElementById(id).classList.remove("open");document.body.style.overflow=""}
+
+function goPage(page){
+  currentPage=page;
+  document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===page+"Page"));
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
+  window.scrollTo({top:0,behavior:"smooth"});
+  if(page==="sessions")renderSessions();
+  if(page==="progress")renderProgress();
+}
+function renderAll(){
+  selectedMonth = getExistingOrLatest(selectedMonth);
+  calendarMonth = getExistingOrLatest(calendarMonth);
+  renderBrand(); renderHome(); renderSessions(); renderProgress(); renderMonthChoices(); renderLegend(); renderBackupInfo();
+}
+function getExistingOrLatest(key){return key || latestMonthKey()}
+function renderBrand(){document.getElementById("brandSub").textContent=`BetaTEST V2 • ${sessions.length} séance${sessions.length!==1?"s":""} • stockage séparé`}
+function renderHome(){
+  const arr=monthSessions(selectedMonth), s=summary(arr);
+  document.getElementById("heroTitle").textContent=cap(fmtMonth(selectedMonth));
+  document.getElementById("heroSubtitle").textContent=arr.length?`${num(s.distance,1)} km suivis ce mois-ci`:"Aucune séance sur ce mois";
+  document.getElementById("heroKm").textContent=num(s.distance,1);
+  document.getElementById("heroTime").textContent=fmtTotal(s.duration);
+  document.getElementById("heroCount").textContent=s.count;
+  document.getElementById("homeMonthBtn").textContent=cap(fmtMonth(selectedMonth).split(" ")[0])+" ▾";
+  document.getElementById("kpiSpeed").textContent=s.speed?`${num(s.speed,2)} km/h`:"—";
+  document.getElementById("kpiPerSession").textContent=s.count?`${num(s.distance/s.count,2)} km`:"—";
+  document.getElementById("kpiHr").textContent=s.hr?`${Math.round(s.hr)} BPM`:"—";
+  document.getElementById("kpiCalories").textContent=s.calories?`${Math.round(s.calories)} kcal`:"—";
+
+  // Bloc du haut : mois sélectionné vs mois précédent complet.
+  const monthComp=previousFullMonthComparison(selectedMonth),mc=monthComp.current,mp=monthComp.previous;
+  setMonthAverageTrend("heroKmTrend",mc.distance,mp.distance,monthComp.prevKey,`${fmtMonth(selectedMonth)} : ${num(mc.distance,1)} km contre ${num(mp.distance,1)} km sur ${fmtMonth(monthComp.prevKey)} complet`);
+  setMonthAverageTrend("heroTimeTrend",mc.duration,mp.duration,monthComp.prevKey,`${fmtMonth(selectedMonth)} : ${fmtTotal(mc.duration)} contre ${fmtTotal(mp.duration)} sur ${fmtMonth(monthComp.prevKey)} complet`);
+  setMonthCountTrend("heroCountTrend",mc.count,mp.count,monthComp.prevKey,`${fmtMonth(selectedMonth)} : ${mc.count} séance(s) contre ${mp.count} sur ${fmtMonth(monthComp.prevKey)} complet`);
+
+  // Vue rapide : 15 derniers jours vs les 15 jours précédents.
+  const comp=comparisonRolling15(selectedMonth),c=comp.current,p=comp.previous;
+  const currentPerSession=c.count?c.distance/c.count:0,prevPerSession=p.count?p.distance/p.count:0;
+  const compactDate=d=>new Intl.DateTimeFormat("fr-FR",{day:"numeric",month:"short"}).format(d).replace(".","");
+  const currentLabel=`${compactDate(comp.currentStart)}–${compactDate(comp.currentEnd)}`;
+  const prevLabel=`${compactDate(comp.previousStart)}–${compactDate(comp.previousEnd)}`;
+  const periodTitle=`${currentLabel} comparé à ${prevLabel}`;
+  setPercentTrend("kpiSpeedTrend",c.speed,p.speed,`${periodTitle} : ${num(c.speed,2)} km/h contre ${num(p.speed,2)} km/h`);
+  setPercentTrend("kpiPerSessionTrend",currentPerSession,prevPerSession,`${periodTitle} : ${num(currentPerSession,2)} km/séance contre ${num(prevPerSession,2)} km/séance`);
+  setPercentTrend("kpiHrTrend",c.hr,p.hr,`${periodTitle} : ${Math.round(c.hr||0)} BPM contre ${Math.round(p.hr||0)} BPM`);
+  setPercentTrend("kpiCaloriesTrend",c.calories,p.calories,`${periodTitle} : ${Math.round(c.calories)} kcal contre ${Math.round(p.calories)} kcal`);
+
+  renderToday();renderRoutine();renderGoal();renderWeekSummary();renderBackupInfo();
+  renderLastSession(); renderDailyChart(); renderCalendar();
+}
+function renderLastSession(){
+  const el=document.getElementById("lastSession"), last=sortDesc(sessions)[0];
+  if(!last){el.innerHTML=`<div class="empty"><b>Aucune séance</b>Ajoute ta première séance.</div>`;el.onclick=()=>openForm();return}
+  el.innerHTML=`<div class="activity-dot ${activityClass(last.activity)}">${activityShort(last.activity)}</div>
+    <div class="last-main"><b>${esc(last.activity)} · ${last.time?esc(last.time):"heure non renseignée"}</b>
+    <p>${fmtDate(last.date,{weekday:"long",day:"numeric",month:"long"})} · ${num(last.distance,2)} km · ${fmtDuration(last.duration)}</p></div><div class="chev">›</div>`;
+  el.onclick=()=>showDetail(last.id);
+}
+function dailyMap(key){
+  const map={};
+  const ordered=monthSessions(key).slice().sort((a,b)=>{
+    const dateCmp=a.date.localeCompare(b.date);
+    if(dateCmp!==0) return dateCmp;
+    return (a.time||"00:00").localeCompare(b.time||"00:00");
+  });
+  ordered.forEach(s=>{
+    if(!map[s.date])map[s.date]={distance:0,count:0,types:[]};
+    map[s.date].distance+=+s.distance||0;
+    map[s.date].count++;
+    map[s.date].types.push(activityClass(s.activity));
+  });
+  return map;
+}
+const CALENDAR_COLORS={walk:"#2a9d8f","light-run":"#7182ee",run:"#5364d8",mixed:"#e79547"};
+function calendarBackground(types=[]){
+  const colors=types.map(t=>CALENDAR_COLORS[t]).filter(Boolean);
+  if(!colors.length) return "";
+  if(colors.every(c=>c===colors[0])) return colors[0];
+
+  // Ordre diagonal chronologique : première séance en bas à gauche, dernière en haut à droite.
+  if(colors.length===2){
+    return `linear-gradient(to top right, ${colors[0]} 0%, ${colors[0]} 18%, ${colors[1]} 82%, ${colors[1]} 100%)`;
+  }
+
+  // Pour 3 séances ou plus, on garde le même ordre du bas-gauche vers le haut-droit.
+  const stops=[];
+  colors.forEach((c,i)=>{
+    const pos=(i/(colors.length-1))*100;
+    stops.push(`${c} ${pos.toFixed(2)}%`);
+  });
+  return `linear-gradient(to top right, ${stops.join(",")})`;
+}
+function renderDailyChart(){
+  const [y,m]=selectedMonth.split("-").map(Number), days=new Date(y,m,0).getDate(), map=dailyMap(selectedMonth);
+  const vals=Array.from({length:days},(_,i)=>map[`${selectedMonth}-${pad(i+1)}`]?.distance||0);
+  const rawMax=Math.max(...vals,1);
+  const tickStep=rawMax<=3?0.5:rawMax<=7?1:2;
+  const yMax=Math.max(tickStep,Math.ceil(rawMax/tickStep)*tickStep);
+  const w=660,h=190,left=48,right=16,top=18,base=152,barGap=4,plotW=w-left-right,plotH=base-top,bw=plotW/days-barGap;
+  let bars="", labels="", grid="";
+
+  for(let v=0;v<=yMax+0.0001;v+=tickStep){
+    const yy=base-(v/yMax)*plotH;
+    grid+=`<line x1="${left}" y1="${yy.toFixed(1)}" x2="${w-right}" y2="${yy.toFixed(1)}" stroke="${v===0?'#e3e9ed':'#eef2f4'}" stroke-width="1"/>`;
+    grid+=`<text x="${left-8}" y="${(yy+3).toFixed(1)}" text-anchor="end" font-size="8.5" fill="#7f8d98">${Number.isInteger(v)?v:num(v,1)}</text>`;
+  }
+  grid+=`<text x="10" y="${top-2}" font-size="8" font-weight="700" fill="#8a98a3">KM</text>`;
+
+  vals.forEach((v,i)=>{
+    const bh=(v/yMax)*plotH,x=left+i*(plotW/days)+barGap/2,yv=base-bh;
+    bars+=`<rect x="${x.toFixed(1)}" y="${yv.toFixed(1)}" width="${Math.max(bw,2).toFixed(1)}" height="${bh.toFixed(1)}" rx="3.5" fill="${v?'#2a9d8f':'#edf1f3'}"><title>${i+1} : ${num(v,2)} km</title></rect>`;
+    if((i+1)%5===0 || i===0) labels+=`<text x="${(x+bw/2).toFixed(1)}" y="174" text-anchor="middle" font-size="8" fill="#8a98a3">${i+1}</text>`;
+  });
+  document.getElementById("dailyChartTitle").textContent=cap(fmtMonth(selectedMonth));
+  document.getElementById("dailyChartTotal").textContent=`Total ${num(vals.reduce((a,b)=>a+b,0),1)} km`;
+  document.getElementById("dailyChart").innerHTML=`<svg class="svg-chart" viewBox="0 0 ${w} ${h}" aria-label="Distance quotidienne">${grid}${bars}${labels}</svg>`;
+}
+function renderCalendar(){
+  const [y,m]=calendarMonth.split("-").map(Number), first=new Date(y,m-1,1), days=new Date(y,m,0).getDate(), start=(first.getDay()+6)%7, map=dailyMap(calendarMonth), max=Math.max(...Object.values(map).map(v=>v.distance),1);
+  const names=["L","M","M","J","V","S","D"];let html=names.map(d=>`<div class="dow">${d}</div>`).join("");
+  for(let i=0;i<start;i++)html+=`<div></div>`;
+  const today=new Date(), todayIso=`${today.getFullYear()}-${pad(today.getMonth()+1)}-${pad(today.getDate())}`;
+  for(let d=1;d<=days;d++){
+    const iso=`${calendarMonth}-${pad(d)}`, info=map[iso];
+    const bg=info?calendarBackground(info.types):"";
+    html+=`<button class="day ${info?"has":""} ${iso===todayIso?"today":""}" data-day="${iso}" style="${bg?`background:${bg}`:""}">${d}${info&&info.count>1?`<span class="multi-count">${info.count}</span>`:""}</button>`;
+  }
+  document.getElementById("calendarTitle").textContent=cap(fmtMonth(calendarMonth));
+  document.getElementById("calendar").innerHTML=html;
+  document.querySelectorAll(".day[data-day]").forEach(b=>b.onclick=()=>{
+    const matches=sessions.filter(s=>s.date===b.dataset.day);
+    if(matches.length===1)showDetail(matches[0].id);
+    else if(matches.length>1)showDaySessions(b.dataset.day,matches);
+  });
+}
+function renderSessions(){
+  const q=(document.getElementById("sessionSearch")?.value||"").trim().toLowerCase();
+  let arr=sortDesc(sessions).filter(s=>filter==="all"||filterClass(s.activity)===filter);
+  if(q)arr=arr.filter(s=>{
+    const numericDate=fmtDate(s.date,{day:"2-digit",month:"2-digit",year:"numeric"});
+    const hay=[s.date,fmtDate(s.date),numericDate,s.time,s.activity,s.notes,s.source,s.status].join(" ").toLowerCase();
+    return hay.includes(q);
+  });
+  const root=document.getElementById("sessionsList");
+  if(!arr.length){root.innerHTML=`<div class="empty"><b>Aucun résultat</b>Essaie un autre filtre ou ajoute une séance.</div>`;return}
+  const groups={};arr.forEach(s=>{const k=monthKey(s.date);(groups[k]??=[]).push(s)});
+  root.innerHTML=Object.keys(groups).sort().reverse().map(k=>`<div class="month-group"><div class="month-label">${esc(cap(fmtMonth(k)))}</div><div class="session-list">${groups[k].map(sessionCard).join("")}</div></div>`).join("");
+  root.querySelectorAll("[data-session]").forEach(b=>b.onclick=()=>showDetail(b.dataset.session));
+}
+function sessionCard(s){
+  const d=dateObj(s.date), day=d.getDate(), mon=new Intl.DateTimeFormat("fr-FR",{month:"short"}).format(d).replace(".","");
+  return `<button class="card session-card" data-session="${esc(s.id)}"><div class="session-date"><b>${day}</b><span>${mon}</span></div>
+  <div class="activity-dot ${activityClass(s.activity)}" style="width:38px;height:38px;border-radius:13px;font-size:11px">${activityShort(s.activity)}</div>
+  <div class="session-info"><div class="title">${esc(s.activity)}${s.time?` · ${esc(s.time)}`:""}</div><div class="meta">${fmtDuration(s.duration)} · ${num(s.avgSpeed||(+s.distance/+s.duration*60),2)} km/h${s.hrAvg?` · ${Math.round(s.hrAvg)} BPM`:""}</div></div>
+  <div class="session-km"><b>${num(s.distance,2)}</b><span>KM</span></div></button>`;
+}
+function renderProgress(){
+  const select=document.getElementById("progressPeriod");
+  const months=[...new Set(sessions.map(s=>monthKey(s.date)))].sort().reverse();
+  const current=select.value||selectedMonth||months[0]||"all";
+  select.innerHTML=`<option value="all">Tout</option>`+months.map(m=>`<option value="${m}">${esc(cap(fmtMonth(m)))}</option>`).join("");
+  select.value=(current==="all"||months.includes(current))?current:(months[0]||"all");
+  const periodArr=select.value==="all"?sessions:monthSessions(select.value);
+  const arr=progressActivity==="all"?periodArr:periodArr.filter(s=>activityClass(s.activity)===progressActivity),sum=summary(arr);
+  document.querySelectorAll("[data-progress-filter]").forEach(b=>b.classList.toggle("active",b.dataset.progressFilter===progressActivity));
+  document.getElementById("pDistance").textContent=`${num(sum.distance,1)} km`;
+  document.getElementById("pTime").textContent=fmtTotal(sum.duration);
+  const longest=[...arr].sort((a,b)=>(b.distance||0)-(a.distance||0))[0],fastest=[...arr].sort((a,b)=>(b.avgSpeed||0)-(a.avgSpeed||0))[0];
+  document.getElementById("pLongest").textContent=longest?`${num(longest.distance,2)} km`:"—";
+  document.getElementById("pLongestDate").textContent=longest?fmtDate(longest.date,{day:"numeric",month:"short"}):"—";
+  document.getElementById("pFastest").textContent=fastest?`${num(fastest.avgSpeed,2)} km/h`:"—";
+  document.getElementById("pFastestDate").textContent=fastest?fmtDate(fastest.date,{day:"numeric",month:"short"}):"—";
+  renderBetaProgress(arr);renderRecordsByType(periodArr);renderWeekly(arr);renderActivityBars(periodArr);renderHeatmap();renderMonthlySummary();
+}
+function weekMonday(iso){const d=dateObj(iso),day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
+function renderWeekly(arr){
+  const buckets={};arr.forEach(s=>{const k=weekMonday(s.date);if(!buckets[k])buckets[k]=[];buckets[k].push(s)});
+  const keys=Object.keys(buckets).sort(), vals=keys.map(k=>summary(buckets[k]).distance),max=Math.max(...vals,1);
+  const root=document.getElementById("weeklyBars");
+  if(!keys.length){root.innerHTML=`<div class="empty"><b>Aucune semaine</b>Pas encore de données.</div>`;return}
+  root.innerHTML=keys.map((k,i)=>{
+    const d=dateObj(k),end=new Date(d);end.setDate(end.getDate()+6);
+    const label=`${d.getDate()} ${new Intl.DateTimeFormat("fr-FR",{month:"short"}).format(d).replace(".","")} – ${end.getDate()} ${new Intl.DateTimeFormat("fr-FR",{month:"short"}).format(end).replace(".","")}`;
+    return `<div class="week-row"><div class="week-label">${label}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(vals[i]/max*100,2)}%"></div></div><div class="week-value">${num(vals[i],1)} km</div></div>`;
+  }).join("");
+}
+function renderActivityBars(arr){
+  const types=[
+    ["Marche","walk",arr.filter(s=>s.activity==="Marche rapide")],
+    ["Course légère","light-run",arr.filter(s=>s.activity==="Course légère")],
+    ["Course","run",arr.filter(s=>s.activity==="Course")],
+    ["Mixte","mixed",arr.filter(s=>s.activity==="Mixte")]
+  ];
+  const data=types.map(t=>[...t,summary(t[2]).distance]),max=Math.max(...data.map(x=>x[3]),1);
+  const colors={walk:"var(--walk)","light-run":"var(--light-run)",run:"var(--run)",mixed:"var(--mixed)"};
+  document.getElementById("activityBars").innerHTML=data.map(([name,cl,a,dist])=>`<div class="activity-row"><div class="activity-line"><b>${name}</b><span>${a.length} séance${a.length!==1?"s":""} · ${num(dist,1)} km</span></div><div class="bar-track"><div class="bar-fill" style="width:${dist?Math.max(dist/max*100,2):0}%;background:${colors[cl]}"></div></div></div>`).join("");
+}
+function renderLegend(){document.getElementById("speedLegend").innerHTML=SPEED_BANDS.map(b=>`<div class="legend-item"><div class="legend-color" style="background:${b.color}"></div>${b.label}</div>`).join("")}
+function renderMonthChoices(){
+  const months=[...new Set(sessions.map(s=>monthKey(s.date)))].sort().reverse();
+  document.getElementById("monthChoices").innerHTML=months.map(m=>`<button class="manager-btn month-choice" data-month="${m}"><b>${esc(cap(fmtMonth(m)))}</b><span>${monthSessions(m).length} séance${monthSessions(m).length!==1?"s":""}</span></button>`).join("");
+  document.querySelectorAll(".month-choice").forEach(b=>b.onclick=()=>{selectedMonth=b.dataset.month;calendarMonth=b.dataset.month;closeModal("monthModal");renderHome()});
+}
+
+function chronologicalSessions(){
+  return [...sessions].sort((a,b)=>{
+    const dateCmp=(a.date||"").localeCompare(b.date||"");
+    if(dateCmp!==0)return dateCmp;
+    const timeCmp=(a.time||"00:00").localeCompare(b.time||"00:00");
+    if(timeCmp!==0)return timeCmp;
+    return String(a.id||"").localeCompare(String(b.id||""));
+  });
+}
+function detailNavLabel(s){
+  if(!s)return "";
+  const d=dateObj(s.date);
+  const dateLabel=new Intl.DateTimeFormat("fr-FR",{day:"numeric",month:"short"}).format(d).replace(".","");
+  return s.time?`${dateLabel} · ${s.time}`:dateLabel;
+}
+let currentDetailSessionId=null;
+let detailTouchStart=null;
+function animateDetail(direction){
+  const body=document.getElementById("detailBody");
+  body.classList.remove("detail-slide-left","detail-slide-right");
+  void body.offsetWidth;
+  body.classList.add(direction>0?"detail-slide-left":"detail-slide-right");
+}
+function navigateDetail(step){
+  const ordered=chronologicalSessions();
+  const idx=ordered.findIndex(x=>x.id===currentDetailSessionId);
+  const target=ordered[idx+step];
+  if(!target)return;
+  showDetail(target.id,step);
+}
+
+function showDetail(id,direction=0){
+  const s=sessions.find(x=>x.id===id);if(!s)return;
+  currentDetailSessionId=s.id;
+  const ordered=chronologicalSessions(),detailIndex=ordered.findIndex(x=>x.id===s.id);
+  const prevSession=detailIndex>0?ordered[detailIndex-1]:null;
+  const nextSession=detailIndex>=0&&detailIndex<ordered.length-1?ordered[detailIndex+1]:null;
+  const speedSvg=makeSpeedChart(s.speeds||[]);
+  const quality=dataQuality(s);
+  document.getElementById("detailBody").innerHTML=`<div class="detail-hero ${activityClass(s.activity)}"><div class="detail-hero-top"><span class="badge">${esc(s.activity)}${s.status?` · ${esc(s.status)}`:""}</span><span class="quality-badge ${quality.score<6?"partial":""}" title="${quality.missing.length?`Manque : ${esc(quality.missing.join(" · "))}`:"Données principales renseignées"}">${quality.label}</span></div>
+    <h2>${fmtDate(s.date,{weekday:"long",day:"numeric",month:"long"})}</h2><p>${s.time?`Fin à ${esc(s.time)} · `:""}${num(s.distance,2)} km en ${fmtDuration(s.duration)}</p></div>
+    <div class="detail-session-nav">
+      <button type="button" class="detail-nav-btn prev" id="detailPrevBtn" ${prevSession?"":"disabled"} aria-label="Séance précédente">
+        <span class="nav-arrow">‹</span><span class="nav-label">${prevSession?esc(detailNavLabel(prevSession)):"Première"}</span>
+      </button>
+      <div class="detail-position">${detailIndex+1} / ${ordered.length}</div>
+      <button type="button" class="detail-nav-btn next" id="detailNextBtn" ${nextSession?"":"disabled"} aria-label="Séance suivante">
+        <span class="nav-label">${nextSession?esc(detailNavLabel(nextSession)):"Dernière"}</span><span class="nav-arrow">›</span>
+      </button>
+    </div>
+    <div class="detail-grid">
+      ${detailMetric("Distance",`${num(s.distance,2)} km`)}${detailMetric("Durée",fmtDuration(s.duration))}
+      ${detailMetric("Vitesse moy.",`${num(s.avgSpeed||(+s.distance/+s.duration*60),2)} km/h`)}${detailMetric("Allure",fmtPace(s.pace||(+s.duration/+s.distance)))}
+      ${detailMetric("FC moyenne",s.hrAvg?`${Math.round(s.hrAvg)} BPM`:"—")}${detailMetric("FC maximum",s.hrMax?`${Math.round(s.hrMax)} BPM`:"—")}
+      ${detailMetric("Calories",s.calories!=null?`${Math.round(s.calories)} kcal`:"—")}${detailMetric("Inclinaison",s.incline!=null?`${num(s.incline,1)} %`:"—")}
+      ${detailMetric("Effort",s.effort?`${num(s.effort,0)}/10`:"—")}${detailMetric("Pouls affiché",s.pulse?`${Math.round(s.pulse)} BPM`:"—")}
+    </div>
+    ${habitComparisonHtml(s)}
+    <div class="section-title"><h3>Vitesse minute par minute</h3><span></span></div>
+    <div class="card chart-card">${speedSvg}<div class="speed-legend" style="margin-top:8px">${SPEED_BANDS.map(b=>`<div class="legend-item"><div class="legend-color" style="background:${b.color}"></div>${b.label}</div>`).join("")}</div></div>
+    ${s.speedSource?`<div style="font-size:9px;color:var(--muted);line-height:1.45;margin:8px 4px 0">${esc(s.speedSource)}</div>`:""}
+    ${(s.feeling||s.tags?.length)?`<div class="detail-tags">${s.feeling?`<span class="detail-tag">${esc(s.feeling)}</span>`:""}${(s.tags||[]).map(t=>`<span class="detail-tag">${esc(t)}</span>`).join("")}</div>`:""}
+    <div class="section-title"><h3>Détails</h3><span></span></div>
+    <div class="card note-card"><b>Notes</b><p>${esc(s.notes||"Aucune note.")}</p></div>
+    <div class="card note-card" style="margin-top:9px"><b>Source</b><p>${esc(s.source||"Non renseignée")}</p></div>
+    <div class="detail-actions"><button class="btn secondary" id="editSessionBtn">Modifier</button><button class="btn danger" id="deleteSessionBtn">Supprimer</button></div>`;
+  const prevBtn=document.getElementById("detailPrevBtn"),nextBtn=document.getElementById("detailNextBtn");
+  if(prevBtn&&!prevBtn.disabled)prevBtn.onclick=()=>navigateDetail(-1);
+  if(nextBtn&&!nextBtn.disabled)nextBtn.onclick=()=>navigateDetail(1);
+  if(direction)animateDetail(direction);
+  document.getElementById("editSessionBtn").onclick=()=>{closeModal("detailModal");openForm(s.id)};
+  document.getElementById("deleteSessionBtn").onclick=()=>{if(confirm("Supprimer cette séance ?")){sessions=sessions.filter(x=>x.id!==s.id);saveSessions();closeModal("detailModal");toast("Séance supprimée")}};
+  openModal("detailModal");
+}
+function detailMetric(label,value){return `<div class="card detail-metric"><span>${label}</span><b>${value}</b></div>`}
+function makeSpeedChart(points){
+  if(!points?.length)return `<div class="empty"><b>Pas de courbe</b>Aucune vitesse minute par minute renseignée.</div>`;
+  const w=650,h=245,left=34,right=12,top=16,bottom=34,plotW=w-left-right,plotH=h-top-bottom;
+  const times=points.map(p=>timeToMin(p.t)),maxX=Math.max(...times,1),maxV=Math.max(9,...points.map(p=>+p.v||0)),minV=0;
+  const xy=points.map((p,i)=>({x:left+(times[i]/maxX)*plotW,y:top+(1-(+p.v-minV)/(maxV-minV))*plotH,v:+p.v,t:p.t}));
+  let grid="",labels="";
+  [0,2,4,6,8].forEach(v=>{const y=top+(1-v/maxV)*plotH;grid+=`<line x1="${left}" y1="${y}" x2="${w-right}" y2="${y}" stroke="#edf1f3"/><text x="${left-7}" y="${y+3}" text-anchor="end" font-size="8" fill="#8a98a3">${v}</text>`});
+  for(let t=0;t<=maxX;t+=5){const x=left+(t/maxX)*plotW;labels+=`<text x="${x}" y="${h-10}" text-anchor="middle" font-size="8" fill="#8a98a3">${t}</text>`}
+  let seg="",dots="";
+  for(let i=1;i<xy.length;i++){seg+=`<line x1="${xy[i-1].x}" y1="${xy[i-1].y}" x2="${xy[i].x}" y2="${xy[i].y}" stroke="${speedColor((xy[i-1].v+xy[i].v)/2)}" stroke-width="3.5" stroke-linecap="round"/>`}
+  xy.forEach(p=>dots+=`<circle cx="${p.x}" cy="${p.y}" r="3.2" fill="${speedColor(p.v)}" stroke="white" stroke-width="1"><title>${p.t} · ${num(p.v,1)} km/h</title></circle>`);
+  return `<svg class="svg-chart" viewBox="0 0 ${w} ${h}" aria-label="Vitesse minute par minute">${grid}${seg}${dots}${labels}<text x="${w/2}" y="${h-1}" text-anchor="middle" font-size="8" fill="#8a98a3">minutes</text></svg>`;
+}
+function timeToMin(t){const [m,s]=String(t).split(":").map(Number);return (m||0)+(s||0)/60}
+
+function openForm(id=null){
+  editingId=id;const s=id?sessions.find(x=>x.id===id):null;
+  document.getElementById("formTitle").textContent=s?"Modifier la séance":"Ajouter une séance";
+  const now=new Date();
+  document.getElementById("fDate").value=s?.date||`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  document.getElementById("fTime").value=s?.time||`${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  document.getElementById("fActivity").value=s?.activity||"Marche rapide";
+  document.getElementById("fStatus").value=s?.status||"Confirmé";
+  const totalSec=s?Math.round((+s.duration||0)*60):0;
+  document.getElementById("fMinutes").value=s?Math.floor(totalSec/60):"";
+  document.getElementById("fSeconds").value=s?totalSec%60:0;
+  document.getElementById("fDistance").value=s?.distance??"";
+  document.getElementById("fIncline").value=s?.incline??"";
+  document.getElementById("fHrAvg").value=s?.hrAvg??"";
+  document.getElementById("fHrMax").value=s?.hrMax??"";
+  document.getElementById("fPulse").value=s?.pulse??"";
+  document.getElementById("fCalories").value=s?.calories??"";
+  document.getElementById("fEffort").value=s?.effort??"";
+  document.getElementById("fFeeling").value=s?.feeling??"";
+  document.querySelectorAll('input[name="sessionTag"]').forEach(x=>x.checked=(s?.tags||[]).includes(x.value));
+  document.getElementById("fSource").value=s?.source??"";
+  document.getElementById("fNotes").value=s?.notes??"";
+  renderSpeedRows(s?.speeds||[]);updateAutoPreview();openModal("formModal")
+}
+function renderSpeedRows(points){
+  const root=document.getElementById("speedRows");
+  root.innerHTML=points.map((p,i)=>speedRowHtml(p,i)).join("");
+  document.getElementById("speedCount").textContent=points.length?`(${points.length} points)`:"";
+  bindSpeedRows();
+}
+function speedRowHtml(p={t:"",v:""},i=0){return `<div class="speed-row" data-i="${i}"><input class="sp-time" placeholder="0:00" value="${esc(p.t)}"><input class="sp-val" type="number" step="0.1" min="0" placeholder="km/h" value="${p.v??""}"><button type="button" class="remove-point">×</button></div>`}
+function bindSpeedRows(){document.querySelectorAll(".remove-point").forEach(b=>b.onclick=()=>{b.parentElement.remove();updateSpeedCount()})}
+function updateSpeedCount(){document.getElementById("speedCount").textContent=`(${document.querySelectorAll(".speed-row").length} points)`}
+function collectSpeedRows(){return [...document.querySelectorAll(".speed-row")].map(r=>({t:r.querySelector(".sp-time").value.trim(),v:+r.querySelector(".sp-val").value})).filter(p=>p.t&&isFinite(p.v))}
+function formDuration(){return (+document.getElementById("fMinutes").value||0)+(+document.getElementById("fSeconds").value||0)/60}
+function updateAutoPreview(){
+  const dur=formDuration(),dist=+document.getElementById("fDistance").value||0,el=document.getElementById("autoPreview");
+  if(dur>0&&dist>0){const sp=dist/dur*60,pace=dur/dist;el.textContent=`Vitesse moyenne : ${num(sp,2)} km/h · Allure : ${fmtPace(pace)}`}
+  else el.textContent="Vitesse et allure calculées automatiquement."
+}
+function nullable(id){const v=document.getElementById(id).value;return v===""?null:+v}
+
+function parseFrenchNumber(v){
+  if(v==null)return null;
+  const m=String(v).replace(/\u00a0/g," ").replace(",",".").match(/-?\d+(?:\.\d+)?/);
+  return m?+m[0]:null;
+}
+function parseDateValue(v){
+  const raw=String(v||"").trim();
+  if(/^\d{4}-\d{2}-\d{2}$/.test(raw))return raw;
+  let m=raw.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+  if(m)return `${m[3]}-${pad(m[2])}-${pad(m[1])}`;
+  const months={janvier:1,fevrier:2,"février":2,mars:3,avril:4,mai:5,juin:6,juillet:7,aout:8,"août":8,septembre:9,octobre:10,novembre:11,decembre:12,"décembre":12};
+  m=raw.toLowerCase().match(/(\d{1,2})\s+([a-zàâäéèêëîïôöùûüç]+)\s+(\d{4})/i);
+  if(m&&months[m[2]])return `${m[3]}-${pad(months[m[2]])}-${pad(m[1])}`;
+  return "";
+}
+function parseDurationValue(v){
+  const raw=String(v||"").trim();
+  let m=raw.match(/(\d+)\s*:\s*(\d{1,2})/);
+  if(m)return {minutes:+m[1],seconds:+m[2]};
+  const n=parseFrenchNumber(raw);if(n==null)return {minutes:"",seconds:0};
+  const whole=Math.floor(n),secs=Math.round((n-whole)*60);return {minutes:whole,seconds:secs};
+}
+function normalizeActivity(v){
+  const x=String(v||"").toLowerCase();
+  if(x.includes("mix"))return "Mixte";
+  if(x.includes("course")&&x.includes("lég"))return "Course légère";
+  if(x.includes("course"))return "Course";
+  return "Marche rapide";
+}
+function parseSpeedText(text){
+  const out=[];
+  String(text||"").split(/[;\n]+/).forEach(part=>{
+    const m=part.trim().match(/(\d{1,3}:\d{2})\s*(?:@|=|:|—|-|–)\s*([0-9]+(?:[.,][0-9]+)?)/);
+    if(m)out.push({t:m[1],v:+m[2].replace(",",".")});
+  });
+  return out;
+}
+function parsePastedSession(text){
+  const lines=String(text||"").replace(/\r/g,"").split("\n"), data={}, speedLines=[];
+  let inSpeeds=false;
+  const aliases={
+    date:"date",jour:"date",time:"time",heure:"time","heure de fin":"time",fin:"time",
+    activity:"activity","activité":"activity",activite:"activity",type:"activity",
+    duration:"duration","durée":"duration",duree:"duration",distance:"distance",
+    hravg:"hrAvg","fc moyenne":"hrAvg","fréquence cardiaque moyenne":"hrAvg","frequence cardiaque moyenne":"hrAvg",
+    hrmax:"hrMax","fc max":"hrMax","fc maximum":"hrMax","fréquence cardiaque max":"hrMax","frequence cardiaque max":"hrMax",
+    pulse:"pulse",pouls:"pulse",incline:"incline",inclinaison:"incline",calories:"calories",kcal:"calories",
+    effort:"effort",feeling:"feeling",ressenti:"feeling",tags:"tags",source:"source",notes:"notes",note:"notes",status:"status",statut:"status",speeds:"speeds",vitesses:"speeds"
+  };
+  for(const line0 of lines){
+    const line=line0.trim();if(!line||/^stride-seance/i.test(line))continue;
+    if(inSpeeds){
+      if(/^\d{1,3}:\d{2}\s*(?:@|=|:|—|-|–)/.test(line)){speedLines.push(line);continue}else inSpeeds=false;
+    }
+    const m=line.match(/^([^:=]+?)\s*[:=]\s*(.*)$/);if(!m)continue;
+    const rawKey=m[1].trim().toLowerCase(), val=m[2].trim(), key=aliases[rawKey]||rawKey;
+    if(key==="speeds"){
+      if(val)speedLines.push(val);else inSpeeds=true;
+    }else data[key]=val;
+  }
+  data.speeds=parseSpeedText(speedLines.join(";"));
+  return data;
+}
+function fillFormFromPasted(data){
+  const date=parseDateValue(data.date), dur=parseDurationValue(data.duration), distance=parseFrenchNumber(data.distance);
+  if(!date||!dur.minutes&&dur.minutes!==0||distance==null)throw new Error("Le bloc doit contenir au minimum date, duration et distance.");
+  editingId=null;document.getElementById("formTitle").textContent="Ajouter une séance";
+  document.getElementById("fDate").value=date;
+  document.getElementById("fTime").value=(data.time||"").match(/\d{1,2}:\d{2}/)?.[0]||"";
+  document.getElementById("fActivity").value=normalizeActivity(data.activity);
+  document.getElementById("fStatus").value=data.status&&String(data.status).toLowerCase().includes("vér")?"À vérifier":"Confirmé";
+  document.getElementById("fMinutes").value=dur.minutes;
+  document.getElementById("fSeconds").value=dur.seconds;
+  document.getElementById("fDistance").value=distance;
+  const setters=[["fIncline","incline"],["fHrAvg","hrAvg"],["fHrMax","hrMax"],["fPulse","pulse"],["fCalories","calories"],["fEffort","effort"]];
+  setters.forEach(([id,key])=>document.getElementById(id).value=data[key]!=null&&data[key]!==""?(parseFrenchNumber(data[key])??""):"");
+  document.getElementById("fFeeling").value=data.feeling||"";
+  const pastedTags=String(data.tags||"").split(/[,;]+/).map(x=>x.trim()).filter(Boolean);
+  document.querySelectorAll('input[name="sessionTag"]').forEach(x=>x.checked=pastedTags.includes(x.value));
+  document.getElementById("fSource").value=data.source||"Photos tapis + Apple Watch";
+  document.getElementById("fNotes").value=data.notes||"";
+  renderSpeedRows(data.speeds||[]);updateAutoPreview();
+}
+
+document.getElementById("sessionForm").addEventListener("submit",e=>{
+  e.preventDefault();const dur=formDuration(),dist=+document.getElementById("fDistance").value;
+  if(!(dur>0&&dist>0)){toast("Renseigne une durée et une distance");return}
+  const old=editingId?sessions.find(x=>x.id===editingId):null;
+  const rec={
+    id:editingId||`local-${Date.now()}`,date:document.getElementById("fDate").value,time:document.getElementById("fTime").value,
+    activity:document.getElementById("fActivity").value,duration:+dur.toFixed(4),distance:+dist.toFixed(3),
+    avgSpeed:+(dist/dur*60).toFixed(4),pace:+(dur/dist).toFixed(4),hrAvg:nullable("fHrAvg"),hrMax:nullable("fHrMax"),pulse:nullable("fPulse"),
+    incline:nullable("fIncline"),calories:nullable("fCalories"),effort:nullable("fEffort"),source:document.getElementById("fSource").value.trim(),
+    notes:document.getElementById("fNotes").value.trim(),status:document.getElementById("fStatus").value,speeds:collectSpeedRows(),
+    feeling:document.getElementById("fFeeling").value,tags:[...document.querySelectorAll('input[name="sessionTag"]:checked')].map(x=>x.value),
+    speedSource:old?.speedSource||"Vitesses renseignées dans l’app."
+  };
+  if(editingId)sessions=sessions.map(x=>x.id===editingId?rec:x);else sessions.push(rec);
+  selectedMonth=monthKey(rec.date);calendarMonth=selectedMonth;saveSessions();closeModal("formModal");toast(editingId?"Séance modifiée":"Séance ajoutée")
+});
+
+document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>goPage(b.dataset.page));
+
+// Navigation interne : délégation unique, plus fiable sur mobile/Safari.
+document.addEventListener("click",e=>{
+  const go=e.target.closest("[data-go]");
+  if(!go)return;
+  e.preventDefault();
+  e.stopPropagation();
+  goPage(go.dataset.go);
+});
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>closeModal(b.dataset.close));
+document.querySelectorAll(".modal").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)closeModal(m.id)}));
+document.getElementById("logoHomeBtn").onclick=()=>{
+  document.querySelectorAll(".modal.open").forEach(m=>m.classList.remove("open"));
+  document.body.style.overflow="";
+  goPage("home");
+};
+const detailBodyEl=document.getElementById("detailBody");
+detailBodyEl.addEventListener("touchstart",e=>{
+  if(e.touches.length!==1)return;
+  const t=e.touches[0];
+  detailTouchStart={x:t.clientX,y:t.clientY,time:Date.now()};
+},{passive:true});
+detailBodyEl.addEventListener("touchend",e=>{
+  if(!detailTouchStart||!e.changedTouches.length)return;
+  const t=e.changedTouches[0],dx=t.clientX-detailTouchStart.x,dy=t.clientY-detailTouchStart.y,elapsed=Date.now()-detailTouchStart.time;
+  detailTouchStart=null;
+  if(elapsed>700||Math.abs(dx)<65||Math.abs(dx)<Math.abs(dy)*1.35)return;
+  // Swipe vers la gauche = séance suivante ; vers la droite = séance précédente.
+  navigateDetail(dx<0?1:-1);
+},{passive:true});
+
+document.getElementById("addBtn").onclick=()=>openForm();
+document.getElementById("pasteSessionBtn").onclick=()=>{pendingPastedSession=null;document.getElementById("pasteDataInput").value="";document.getElementById("pastePreview").style.display="none";document.getElementById("usePasteBtn").style.display="none";openModal("pasteModal");setTimeout(()=>document.getElementById("pasteDataInput").focus(),120)};
+document.getElementById("parsePasteBtn").onclick=()=>{
+  try{const data=parsePastedSession(document.getElementById("pasteDataInput").value);const date=parseDateValue(data.date),dur=parseDurationValue(data.duration),distance=parseFrenchNumber(data.distance);if(!date||distance==null)throw new Error("Bloc STRIDE-SEANCE incomplet.");pendingPastedSession=data;const preview=document.getElementById("pastePreview");preview.style.display="block";preview.innerHTML=`<b>1 nouvelle séance détectée</b><p>${fmtDate(date,{day:"numeric",month:"long",year:"numeric"})}${data.time?` · ${esc(data.time)}`:""}<br>${esc(normalizeActivity(data.activity))} · ${num(distance,2)} km · ${dur.minutes}:${pad(dur.seconds)}${data.speeds?.length?`<br>${data.speeds.length} points de vitesse détectés`:""}</p>`;document.getElementById("usePasteBtn").style.display="block"}
+  catch(err){alert(err.message||"Bloc STRIDE-SEANCE invalide.")}
+};
+document.getElementById("usePasteBtn").onclick=()=>{if(!pendingPastedSession)return;fillFormFromPasted(pendingPastedSession);const n=pendingPastedSession.speeds?.length||0;pendingPastedSession=null;closeModal("pasteModal");toast(`Données prêtes${n?` · ${n} vitesses`:""}`)};
+document.getElementById("editGoalBtn").onclick=()=>{const g=loadGoals();document.getElementById("goalWeekKmInput").value=g.week.km;document.getElementById("goalWeekSessionsInput").value=g.week.sessions;document.getElementById("goalWeekMinutesInput").value=g.week.minutes;document.getElementById("goalMonthKmInput").value=g.month.km;document.getElementById("goalMonthSessionsInput").value=g.month.sessions;document.getElementById("goalMonthMinutesInput").value=g.month.minutes;openModal("goalModal")};
+document.getElementById("saveGoalBtn").onclick=()=>{const g={week:{km:+document.getElementById("goalWeekKmInput").value,sessions:+document.getElementById("goalWeekSessionsInput").value,minutes:+document.getElementById("goalWeekMinutesInput").value},month:{km:+document.getElementById("goalMonthKmInput").value,sessions:+document.getElementById("goalMonthSessionsInput").value,minutes:+document.getElementById("goalMonthMinutesInput").value}};if(!(g.week.km>0&&g.week.sessions>0&&g.week.minutes>0&&g.month.km>0&&g.month.sessions>0&&g.month.minutes>0)){toast("Objectifs invalides");return}g.week.sessions=Math.round(g.week.sessions);g.month.sessions=Math.round(g.month.sessions);saveGoals(g);closeModal("goalModal");toast("Objectifs mis à jour")};
+document.getElementById("manageBtn").onclick=()=>{renderBackupInfo();openModal("manageModal")};
+document.getElementById("homeMonthBtn").onclick=()=>openModal("monthModal");
+document.getElementById("sessionSearch").addEventListener("input",renderSessions);
+document.getElementById("filterChips").addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;filter=b.dataset.filter;document.querySelectorAll(".chip").forEach(x=>x.classList.toggle("active",x===b));renderSessions()});
+document.getElementById("progressPeriod").addEventListener("change",()=>{const v=document.getElementById("progressPeriod").value;if(v!=="all")summarySelectedMonth=v;renderProgress()});
+document.getElementById("progressFilterChips").addEventListener("click",e=>{const b=e.target.closest("[data-progress-filter]");if(!b)return;progressActivity=b.dataset.progressFilter;renderProgress()});
+document.getElementById("rollingToolbar").addEventListener("click",e=>{const b=e.target.closest("[data-window]");if(!b)return;rollingWindow=+b.dataset.window;renderProgress()});
+document.getElementById("heatmapYear").addEventListener("change",e=>{heatmapSelectedYear=e.target.value;renderHeatmap()});
+document.getElementById("summaryMonthSelect").addEventListener("change",e=>{summarySelectedMonth=e.target.value;renderMonthlySummary()});
+["fMinutes","fSeconds","fDistance"].forEach(id=>document.getElementById(id).addEventListener("input",updateAutoPreview));
+document.getElementById("addSpeedPoint").onclick=()=>{const root=document.getElementById("speedRows");root.insertAdjacentHTML("beforeend",speedRowHtml({},root.children.length));bindSpeedRows();updateSpeedCount();root.lastElementChild.querySelector(".sp-time").focus()};
+document.getElementById("calPrev").onclick=()=>{const [y,m]=calendarMonth.split("-").map(Number),d=new Date(y,m-2,1);calendarMonth=`${d.getFullYear()}-${pad(d.getMonth()+1)}`;renderCalendar()};
+document.getElementById("calNext").onclick=()=>{const [y,m]=calendarMonth.split("-").map(Number),d=new Date(y,m,1);calendarMonth=`${d.getFullYear()}-${pad(d.getMonth()+1)}`;renderCalendar()};
+
+document.getElementById("exportBtn").onclick=()=>{
+  const blob=new Blob([JSON.stringify(sessions,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+  a.href=url;a.download=`BetaTEST-stride-sauvegarde-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(url);localStorage.setItem(BACKUP_KEY,JSON.stringify({date:isoDate(new Date()),count:sessions.length}));renderBackupInfo();toast("Sauvegarde BetaTEST exportée")
+};
+document.getElementById("importBtn").onclick=()=>document.getElementById("importFile").click();
+document.getElementById("importFile").addEventListener("change",async e=>{
+  const file=e.target.files[0];if(!file)return;
+  try{const data=JSON.parse(await file.text());if(!Array.isArray(data))throw new Error();if(!confirm(`Importer ${data.length} séance(s) et remplacer les données locales ?`))return;sessions=data;saveSessions();closeModal("manageModal");toast("Sauvegarde importée")}
+  catch(err){alert("Fichier de sauvegarde invalide.")}finally{e.target.value=""}
+});
+document.getElementById("resetBtn").onclick=()=>{if(confirm("Rétablir les séances intégrées ? Les modifications locales seront remplacées.")){sessions=clone(INITIAL_SESSIONS);selectedMonth=latestMonthKey();calendarMonth=selectedMonth;saveSessions();closeModal("manageModal");toast("Données du tableur restaurées")}};
+document.getElementById("clearBtn").onclick=()=>{if(confirm("Effacer toutes les séances locales ?")){sessions=[];localStorage.setItem(STORAGE_KEY,"[]");selectedMonth=new Date().toISOString().slice(0,7);calendarMonth=selectedMonth;renderAll();closeModal("manageModal");toast("Données effacées")}};
+
+let touchStart=null;
+document.getElementById("main").addEventListener("touchstart",e=>{if(e.target.closest("input,textarea,select,button,.card"))return;touchStart={x:e.touches[0].clientX,y:e.touches[0].clientY}},{passive:true});
+document.getElementById("main").addEventListener("touchend",e=>{
+  if(!touchStart)return;const dx=e.changedTouches[0].clientX-touchStart.x,dy=e.changedTouches[0].clientY-touchStart.y;touchStart=null;
+  if(Math.abs(dx)>75&&Math.abs(dx)>Math.abs(dy)*1.4){const pages=["home","sessions","progress"],i=pages.indexOf(currentPage),n=dx<0?i+1:i-1;if(n>=0&&n<pages.length)goPage(pages[n])}
+},{passive:true});
+
+renderAll();
+</script>
+</body>
+</html>
