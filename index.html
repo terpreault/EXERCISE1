@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
   <meta name="theme-color" content="#F5F7FA">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -632,10 +632,94 @@
       --orange-mixte:#F59E0B;
     }
 
+
+    /* ============================================================
+       SILTRIDE — Accueil V2 refinements
+       ============================================================ */
+    html{-webkit-text-size-adjust:100%}
+    body{overscroll-behavior-y:none}
+    input,select,textarea{font-size:16px}
+
+    .hero{min-height:auto!important}
+    .hero-top{align-items:center!important}
+    .hero .eyebrow{margin:2px 0!important}
+    .hero-metrics{margin-top:18px!important}
+    .hero-metric{
+      width:100%;text-align:left;color:inherit;cursor:pointer;
+      appearance:none;-webkit-appearance:none;
+      font:inherit;
+    }
+    .hero-metric:active{transform:scale(.975);background:rgba(255,255,255,.16)}
+    .month-pill{flex:0 0 auto}
+
+    .today-session{
+      width:100%;border:0;text-align:left;appearance:none;-webkit-appearance:none;
+      position:relative;overflow:hidden;cursor:pointer;
+    }
+    .today-session:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px}
+    .today-session.walk{background:rgba(14,163,127,.075)} .today-session.walk:before{background:var(--vert-marche)}
+    .today-session.run,.today-session.light-run{background:rgba(99,102,241,.075)}
+    .today-session.run:before,.today-session.light-run:before{background:var(--violet-course)}
+    .today-session.mixed{background:rgba(245,158,11,.09)} .today-session.mixed:before{background:var(--orange-mixte)}
+    .today-session:active{transform:scale(.985)}
+
+    .period-switch{display:flex;align-items:center;gap:5px}
+    .period-btn{
+      width:27px;height:27px;border:1px solid var(--line);border-radius:9px;background:white;
+      color:var(--ink);display:grid;place-items:center;padding:0;font-size:15px
+    }
+    .period-btn:disabled{opacity:.25}
+    .regularity-week{margin-top:6px}
+    .regularity-day.multi .regularity-dot{
+      background:var(--orange-mixte)!important;border-color:var(--orange-mixte)!important;color:white!important;
+      box-shadow:0 5px 14px rgba(245,158,11,.18)!important
+    }
+    .regularity-stats{grid-template-columns:repeat(3,1fr);gap:6px;margin-top:13px}
+    .regularity-stat{
+      display:flex;align-items:center;justify-content:center;gap:5px;
+      min-height:39px;padding:8px 6px;text-align:center
+    }
+    .regularity-stat b{display:inline;font-size:15px;line-height:1}
+    .regularity-stat span{display:inline;margin:0;font-size:8px;line-height:1.1}
+
+    .week-summary{padding:15px;touch-action:pan-y}
+    .week-summary-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px}
+    .week-summary-head b{font-size:13px}
+    .week-summary-head span{font-size:9px;color:var(--muted);font-weight:700;text-align:right}
+    .week-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+    .week-stat{padding:10px 8px;border-radius:13px;background:#f7f9fa;min-width:0}
+    .week-stat b{display:block;font-size:14px;letter-spacing:-.3px;white-space:nowrap}
+    .week-stat span{display:block;margin-top:3px;font-size:8px;color:var(--muted);font-weight:750}
+    .week-stat small{display:block;margin-top:3px;font-size:7.5px;color:#8a98a3;font-weight:700;white-space:nowrap}
+
+    .weight-card{padding:14px 14px 8px;overflow:hidden}
+    .weight-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:2px 3px 7px}
+    .weight-head strong{display:block;font-size:23px;letter-spacing:-.7px}
+    .weight-head p{margin:4px 0 0;color:var(--muted);font-size:9px}
+    .weight-delta{font-size:9px;font-weight:800;padding:6px 8px;border-radius:999px;background:#f2f4f7;color:var(--muted);white-space:nowrap}
+    .weight-history{margin-top:18px}
+    .weight-history h4{font-size:12px;margin:0 0 8px}
+    .weight-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 0;border-top:1px solid var(--line)}
+    .weight-row:first-of-type{border-top:0}
+    .weight-row b{font-size:11px}.weight-row span{font-size:9px;color:var(--muted)}
+    .weight-delete{border:0;background:#fff0f1;color:var(--danger);border-radius:9px;padding:6px 8px;font-size:9px;font-weight:800}
+
+    .metric-popup-summary{display:flex;justify-content:space-between;gap:10px;padding:0 3px 12px}
+    .metric-popup-summary strong{font-size:23px;letter-spacing:-.7px}
+    .metric-popup-summary span{color:var(--muted);font-size:10px;font-weight:700;align-self:flex-end}
+    .compact-sheet{max-height:82vh}
+    .swipe-card{touch-action:pan-y}
+
+    @media(max-width:390px){
+      .week-stats{grid-template-columns:repeat(2,1fr)}
+      .regularity-stat{gap:3px}
+      .regularity-stat span{font-size:7.5px}
+    }
+
   </style>
 </head>
 <body>
-<!-- Build codename: BETANOUVELLEVAGUE | App name: SILTRIDE | tricolor logo integrated -->
+<!-- Build codename: BETANOUVELLEVAGUE | App name: SILTRIDE | ACCUEIL V2 -->
 <!-- Logo asset: teal_ribbon_s_logo.png -->
 <div class="app">
   <header class="topbar">
@@ -655,25 +739,25 @@
     <section class="page active" id="homePage">
       <div class="hero">
         <div class="hero-top">
-          <div><div class="eyebrow">Move · Track · Progress</div><h2 id="heroTitle">Mon suivi</h2><p id="heroSubtitle"></p></div>
+          <div class="eyebrow">Move · Track · Progress</div>
           <button class="month-pill" id="homeMonthBtn">Mois ▾</button>
         </div>
         <div class="hero-metrics">
-          <div class="hero-metric km">
+          <button type="button" class="hero-metric km" data-hero-metric="distance" aria-label="Voir le détail de la distance">
             <div class="metric-head"><span class="metric-label">Distance</span></div>
             <b id="heroKm">0</b>
             <div class="hero-trend none" id="heroKmTrend">—</div>
-          </div>
-          <div class="hero-metric time">
+          </button>
+          <button type="button" class="hero-metric time" data-hero-metric="duration" aria-label="Voir le détail du temps">
             <div class="metric-head"><span class="metric-label">Temps</span></div>
             <b id="heroTime">0</b>
             <div class="hero-trend none" id="heroTimeTrend">—</div>
-          </div>
-          <div class="hero-metric sessions">
+          </button>
+          <button type="button" class="hero-metric sessions" data-hero-metric="count" aria-label="Voir le détail des séances">
             <div class="metric-head"><span class="metric-label">Séances</span></div>
             <b id="heroCount">0</b>
             <div class="hero-trend none" id="heroCountTrend">—</div>
-          </div>
+          </button>
         </div>
       </div>
 
@@ -683,8 +767,15 @@
 
       <div class="section-title"><h3>Régularité & objectif</h3><span></span></div>
       <div class="beta-grid">
-        <div class="card beta-panel regularity-panel">
-          <div class="beta-panel-head"><b>Régularité</b><span class="beta-subtle" id="activeMonthLabel"></span></div>
+        <div class="card beta-panel regularity-panel" id="regularityPanel">
+          <div class="beta-panel-head">
+            <b>Régularité</b>
+            <div class="period-switch">
+              <button type="button" class="period-btn" id="regularityPrev" aria-label="Semaine précédente">‹</button>
+              <span class="beta-subtle" id="activeWeekLabel">Semaine</span>
+              <button type="button" class="period-btn" id="regularityNext" aria-label="Semaine suivante">›</button>
+            </div>
+          </div>
           <div id="regularityContent"></div>
         </div>
         <div class="card beta-panel">
@@ -693,8 +784,11 @@
         </div>
       </div>
 
-      <div class="section-title"><h3>Cette semaine</h3><span class="beta-subtle">vs semaine précédente</span></div>
+      <div class="section-title"><h3>Cette semaine</h3><span></span></div>
       <div class="card week-summary" id="weekSummary"></div>
+
+      <div class="section-title"><h3>Suivi du poids</h3><button type="button" id="addWeightBtn">+ Ajouter</button></div>
+      <div class="card weight-card" id="weightCard"></div>
 
       <div class="section-title"><h3>Vue rapide</h3><button type="button" id="viewProgressBtn" data-go="progress">Voir progression</button></div>
       <div class="kpi-grid">
@@ -704,14 +798,11 @@
         <div class="kpi"><div class="label">Calories</div><strong id="kpiCalories">—</strong><small>total du mois</small><div class="kpi-trend none" id="kpiCaloriesTrend">—</div></div>
       </div>
 
-      <div class="section-title"><h3>Dernière séance</h3><button type="button" id="viewAllSessionsBtn" data-go="sessions">Toutes</button></div>
-      <button class="card last-card" id="lastSession"></button>
-
       <div class="section-title"><h3>Distance quotidienne</h3><span></span></div>
-      <div class="card chart-card"><div class="chart-head"><b id="dailyChartTitle"></b><span id="dailyChartTotal"></span></div><div id="dailyChart"></div></div>
+      <div class="card chart-card swipe-card" id="dailyChartCard"><div class="chart-head"><b id="dailyChartTitle"></b><span id="dailyChartTotal"></span></div><div id="dailyChart"></div></div>
 
       <div class="section-title"><h3>Calendrier</h3><span></span></div>
-      <div class="card calendar-card">
+      <div class="card calendar-card swipe-card" id="calendarCard">
         <div class="calendar-head"><b id="calendarTitle"></b><div class="cal-nav"><button class="mini-btn" id="calPrev">‹</button><button class="mini-btn" id="calNext">›</button></div></div>
         <div class="calendar-grid" id="calendar"></div>
       </div>
@@ -870,7 +961,7 @@ speeds=0:00@3,2;1:00@4,4;2:00@5,1"></textarea></div>
   <div class="sheet-body">
     <div class="card backup-status" id="backupStatus"><b>État de la sauvegarde</b><p>Calcul en cours…</p></div>
     <div class="manager-grid">
-      <button class="manager-btn" id="exportBtn"><b>Exporter une sauvegarde</b><span>Télécharge toutes les séances et les vitesses en JSON.</span></button>
+      <button class="manager-btn" id="exportBtn"><b>Exporter une sauvegarde</b><span>Télécharge les séances, vitesses et relevés de poids en JSON.</span></button>
       <button class="manager-btn" id="importBtn"><b>Importer une sauvegarde</b><span>Remplace les données locales par un fichier JSON exporté depuis l’app.</span></button>
       <button class="manager-btn" id="resetBtn"><b>Rétablir les données du tableur</b><span>Recharge toutes les séances intégrées dans cette version.</span></button>
       <button class="manager-btn" id="clearBtn" style="color:var(--danger)"><b>Effacer toutes les données locales</b><span>Action irréversible sans sauvegarde.</span></button>
@@ -906,6 +997,28 @@ speeds=0:00@3,2;1:00@4,4;2:00@5,1"></textarea></div>
   </div>
 </div></div>
 
+<div class="modal" id="metricModal"><div class="sheet compact-sheet">
+  <div class="sheet-head"><div class="grab"></div><b id="metricModalTitle">Détail</b><button class="close-btn" data-close="metricModal">×</button></div>
+  <div class="sheet-body">
+    <div class="metric-popup-summary" id="metricPopupSummary"></div>
+    <div class="card chart-card" id="metricPopupChart"></div>
+  </div>
+</div></div>
+
+<div class="modal" id="weightModal"><div class="sheet compact-sheet">
+  <div class="sheet-head"><div class="grab"></div><b>Enregistrer le poids</b><button class="close-btn" data-close="weightModal">×</button></div>
+  <div class="sheet-body">
+    <form id="weightForm">
+      <div class="form-grid">
+        <div class="field half"><label>Date</label><input type="date" id="weightDate" required></div>
+        <div class="field half"><label>Poids (kg)</label><input type="number" id="weightKg" min="20" max="400" step="0.1" inputmode="decimal" required></div>
+      </div>
+      <div class="form-actions"><button type="button" class="btn secondary" data-close="weightModal">Annuler</button><button class="btn primary" type="submit">Enregistrer</button></div>
+    </form>
+    <div class="weight-history" id="weightHistory"></div>
+  </div>
+</div></div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -914,6 +1027,7 @@ const STORAGE_KEY = "siltride_betanouvellevague_v1";
 const SOURCE_STORAGE_KEY = "stride_treadmill_BetaTEST_v1";
 const GOAL_KEY = "siltride_betanouvellevague_goals_v1";
 const BACKUP_KEY = "siltride_betanouvellevague_backup_v1";
+const WEIGHT_KEY = "siltride_weights_v1";
 const SPEED_BANDS = [
   {max:2.5,label:"≤ 2,5",color:"#1B8F5A"},
   {max:4.0,label:"2,6–4,0",color:"#65B741"},
@@ -935,8 +1049,23 @@ let editingId = null;
 let pendingPastedSession = null;
 let calendarMonth = latestMonthKey();
 let selectedMonth = latestMonthKey();
+let dailyChartMonth = selectedMonth;
+let regularityWeekOffset = 0;
+let weekSummaryOffset = 0;
+let weights = loadWeights();
 
 function clone(v){return JSON.parse(JSON.stringify(v))}
+function loadWeights(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(WEIGHT_KEY)||"[]");
+    return Array.isArray(raw)?raw.filter(x=>x&&x.date&&isFinite(+x.kg)).map(x=>({...x,kg:+x.kg})).sort((a,b)=>a.date.localeCompare(b.date)):[];
+  }catch(e){return []}
+}
+function saveWeights(){
+  weights=[...weights].sort((a,b)=>a.date.localeCompare(b.date));
+  localStorage.setItem(WEIGHT_KEY,JSON.stringify(weights));
+  renderWeight();
+}
 function loadSessions(){
   try{
     let raw=localStorage.getItem(STORAGE_KEY);
@@ -1128,48 +1257,58 @@ function currentWeekWindow(){
   const prevStart=addDays(start,-7),prevEnd=addDays(prevStart,elapsed);
   return {start,end:now,prevStart,prevEnd};
 }
+function weekRange(offset=0){
+  const now=new Date(),dow=(now.getDay()+6)%7,currentStart=addDays(now,-dow),start=addDays(currentStart,offset*7),end=addDays(start,6);
+  return {start,end};
+}
+function isoWeekNumber(date){
+  const d=new Date(Date.UTC(date.getFullYear(),date.getMonth(),date.getDate()));
+  const day=d.getUTCDay()||7;
+  d.setUTCDate(d.getUTCDate()+4-day);
+  const yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  return Math.ceil((((d-yearStart)/86400000)+1)/7);
+}
+function shortRangeLabel(start,end){
+  const f=d=>new Intl.DateTimeFormat("fr-FR",{day:"numeric",month:"short"}).format(d).replace(".","");
+  return `${f(start)} – ${f(end)}`;
+}
+function shiftMonthKey(key,delta){
+  const [y,m]=key.split("-").map(Number),d=new Date(y,m-1+delta,1);
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}`;
+}
 function renderToday(){
   const now=new Date(),iso=isoDate(now),arr=sortDesc(sessions.filter(s=>s.date===iso)),sum=summary(arr);
   document.getElementById("todayDateLabel").textContent=new Intl.DateTimeFormat("fr-FR",{weekday:"short",day:"numeric",month:"short"}).format(now).replace(".","");
   const root=document.getElementById("todayCard");
   if(!arr.length){root.innerHTML=`<div class="today-top"><div><strong>Aucune séance</strong><p>La journée est encore libre.</p></div><span class="today-badge">Aujourd’hui</span></div>`;return}
-  root.innerHTML=`<div class="today-top"><div><strong>${num(sum.distance,2)} km</strong><p>${arr.length} séance${arr.length>1?"s":""} · ${fmtTotal(sum.duration)} · ${sum.calories?Math.round(sum.calories)+" kcal":"calories —"}</p></div><span class="today-badge">${arr.length} séance${arr.length>1?"s":""}</span></div><div class="today-sessions">${arr.map(s=>`<div class="today-session"><b>${esc(s.time||"—")} · ${esc(s.activity)}</b><span>${num(s.distance,2)} km · ${fmtDuration(s.duration)}</span></div>`).join("")}</div>`;
+  root.innerHTML=`<div class="today-top"><div><strong>${num(sum.distance,2)} km</strong><p>${arr.length} séance${arr.length>1?"s":""} · ${fmtTotal(sum.duration)} · ${sum.calories?Math.round(sum.calories)+" kcal":"calories —"}</p></div><span class="today-badge">${arr.length} séance${arr.length>1?"s":""}</span></div><div class="today-sessions">${arr.map(s=>`<button type="button" class="today-session ${activityClass(s.activity)}" data-today-session="${esc(s.id)}"><b>${esc(s.time||"—")} · ${esc(s.activity)}</b><span>${num(s.distance,2)} km · ${fmtDuration(s.duration)}</span></button>`).join("")}</div>`;
+  root.querySelectorAll("[data-today-session]").forEach(b=>b.onclick=()=>showDetail(b.dataset.todaySession));
 }
 function renderRoutine(){
   const st=streakStats(),
-        activeMonth=activeDateSet(monthSessions(selectedMonth)).length,
-        w=currentWeekWindow(),
-        g=loadGoals(),
+        range=weekRange(regularityWeekOffset),
+        weekSessions=sessionsBetween(range.start,range.end),
+        byDay=dayAggregates(weekSessions),
         todayIso=isoDate(new Date()),
-        weekDays=["L","M","M","J","V","S","D"],
-        activeSet=new Set(activeDateSet(sessionsBetween(w.start,w.end)));
+        weekDays=["L","M","M","J","V","S","D"];
 
-  const weekList=Array.from({length:7},(_,i)=>addDays(w.start,i))
+  const weekList=Array.from({length:7},(_,i)=>addDays(range.start,i))
     .map((d,i)=>{
-      const iso=isoDate(d), active=activeSet.has(iso), current=iso===todayIso;
-      return `<div class="regularity-day ${active?"active":""} ${current?"current":""}">
-        <div class="regularity-dot">${active?"✓":""}</div>
+      const iso=isoDate(d),count=(byDay[iso]||[]).length,active=count>0,current=iso===todayIso,multi=count>=2;
+      return `<div class="regularity-day ${active?"active":""} ${multi?"multi":""} ${current?"current":""}">
+        <div class="regularity-dot">${multi?count:(active?"✓":"")}</div>
         <span class="regularity-name">${weekDays[i]}</span>
       </div>`;
     }).join("");
 
-  const weekActive=[...activeSet].length;
-  const weekGoal=Math.max(1, Math.round(g.week.sessions||5));
-  const subtitle=weekActive===1 ? "jour cette semaine" : "jours cette semaine";
-
-  document.getElementById("activeMonthLabel").textContent=cap(fmtMonth(selectedMonth).split(" ")[0]);
+  const activeDays=Object.keys(byDay).length;
+  document.getElementById("activeWeekLabel").textContent=`Semaine ${isoWeekNumber(range.start)}`;
+  document.getElementById("regularityNext").disabled=regularityWeekOffset>=0;
   document.getElementById("regularityContent").innerHTML = `
-    <div class="regularity-summary">
-      <div class="regularity-main">
-        <strong>${weekActive}/${weekGoal} ${subtitle}</strong>
-        <p>Cases vertes = au moins une séance ce jour-là</p>
-      </div>
-      <div class="regularity-mini">${st.current} j. de série</div>
-    </div>
     <div class="regularity-week">${weekList}</div>
     <div class="regularity-stats">
       <div class="regularity-stat"><b>${st.current}</b><span>Série actuelle</span></div>
-      <div class="regularity-stat"><b>${activeMonth}</b><span>Jours actifs</span></div>
+      <div class="regularity-stat"><b>${activeDays}</b><span>Jours actifs</span></div>
       <div class="regularity-stat"><b>${st.best}</b><span>Meilleure série</span></div>
     </div>`;
 }
@@ -1188,10 +1327,68 @@ function renderGoal(){
   document.getElementById("goalContent").innerHTML=`<div class="goal-scope-label"><span>Semaine</span><span>${week.count} séance${week.count!==1?"s":""}</span></div>${goalLine("Distance",week.distance,g.week.km,"km")}${goalLine("Temps",week.duration,g.week.minutes,"min")}${goalLine("Séances",week.count,g.week.sessions)}<div class="goal-scope-label"><span>Mois</span><span>${cap(fmtMonth(mk).split(" ")[0])}</span></div>${goalLine("Distance",month.distance,g.month.km,"km")}${goalLine("Temps",month.duration,g.month.minutes,"min")}${goalLine("Séances",month.count,g.month.sessions)}`;
 }
 function renderWeekSummary(){
-  const w=currentWeekWindow(),cur=summary(sessionsBetween(w.start,w.end)),prev=summary(sessionsBetween(w.prevStart,w.prevEnd));
-  const delta=percentChange(cur.distance,prev.distance);let dtext="—";if(delta!=null)dtext=`${trendArrow(delta)} ${num(Math.abs(delta),1)} %`;
-  document.getElementById("weekSummary").innerHTML=`<div class="week-main"><div><strong>${num(cur.distance,1)} km</strong><p>${new Intl.DateTimeFormat("fr-FR",{day:"numeric",month:"short"}).format(w.start).replace(".","")} → aujourd’hui</p></div><span class="week-delta">${dtext}</span></div><div class="week-mini"><div><b>${cur.count}</b><span>Séances</span></div><div><b>${fmtTotal(cur.duration)}</b><span>Temps</span></div><div><b>${cur.speed?num(cur.speed,2):"—"}</b><span>km/h moy.</span></div></div>`;
+  const range=weekRange(weekSummaryOffset),arr=sessionsBetween(range.start,range.end),sum=summary(arr);
+  const now=new Date(),currentDow=(now.getDay()+6)%7;
+  const divisor=weekSummaryOffset===0?Math.max(1,currentDow+1):7;
+  const avgDuration=sum.duration/divisor,avgDistance=sum.distance/divisor,avgCalories=sum.calories/divisor;
+  const weekNo=isoWeekNumber(range.start);
+  document.getElementById("weekSummary").innerHTML=`
+    <div class="week-summary-head">
+      <b>Semaine ${weekNo}</b>
+      <span>${shortRangeLabel(range.start,range.end)}</span>
+    </div>
+    <div class="week-stats">
+      <div class="week-stat"><b>${sum.count}</b><span>Séances</span><small>${activeDateSet(arr).length} jour${activeDateSet(arr).length!==1?"s":""} actif${activeDateSet(arr).length!==1?"s":""}</small></div>
+      <div class="week-stat"><b>${fmtTotal(sum.duration)}</b><span>Temps total</span><small>${fmtTotal(avgDuration)} / jour</small></div>
+      <div class="week-stat"><b>${num(sum.distance,1)} km</b><span>Distance</span><small>${num(avgDistance,2)} km / jour</small></div>
+      <div class="week-stat"><b>${sum.speed?num(sum.speed,2):"—"}</b><span>km/h moy.</span><small>pondérée par le temps</small></div>
+      <div class="week-stat"><b>${sum.hr?Math.round(sum.hr):"—"}</b><span>FC moyenne</span><small>${sum.hr?"BPM":"aucune donnée"}</small></div>
+      <div class="week-stat"><b>${Math.round(sum.calories||0)}</b><span>kcal total</span><small>${Math.round(avgCalories||0)} kcal / jour</small></div>
+    </div>`;
 }
+function renderWeight(){
+  const root=document.getElementById("weightCard");
+  if(!root)return;
+  const arr=[...weights].sort((a,b)=>a.date.localeCompare(b.date));
+  if(!arr.length){
+    root.innerHTML=`<div class="empty"><b>Aucun poids enregistré</b>Utilise “+ Ajouter” pour commencer la courbe.</div>`;
+    renderWeightHistory();
+    return;
+  }
+  const latest=arr.at(-1),previous=arr.length>1?arr.at(-2):null,delta=previous?latest.kg-previous.kg:null;
+  const w=650,h=190,left=38,right=14,top=18,bottom=30,plotW=w-left-right,plotH=h-top-bottom;
+  const vals=arr.map(x=>x.kg),rawMin=Math.min(...vals),rawMax=Math.max(...vals),padV=Math.max(1,(rawMax-rawMin)*.25),min=Math.floor((rawMin-padV)*2)/2,max=Math.ceil((rawMax+padV)*2)/2;
+  const range=Math.max(.5,max-min);
+  const xy=arr.map((p,i)=>({x:left+(arr.length===1?.5:i/(arr.length-1))*plotW,y:top+(1-(p.kg-min)/range)*plotH,...p}));
+  let grid="",labels="";
+  for(let i=0;i<=4;i++){const v=min+range*(i/4),y=top+plotH-(i/4)*plotH;grid+=`<line x1="${left}" y1="${y}" x2="${w-right}" y2="${y}" stroke="#edf1f3"/><text x="${left-6}" y="${y+3}" text-anchor="end" font-size="8" fill="#8a98a3">${num(v,1)}</text>`}
+  xy.forEach((p,i)=>{if(i===0||i===xy.length-1||i%Math.max(1,Math.ceil(xy.length/5))===0)labels+=`<text x="${p.x}" y="${h-9}" text-anchor="middle" font-size="8" fill="#8a98a3">${fmtDate(p.date,{day:"numeric",month:"short"}).replace(".","")}</text>`});
+  const path=xy.map((p,i)=>`${i?"L":"M"}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
+  const deltaText=delta==null?"Premier relevé":`${delta>0?"+":""}${num(delta,1)} kg`;
+  root.innerHTML=`<div class="weight-head"><div><strong>${num(latest.kg,1)} kg</strong><p>Dernier relevé · ${fmtDate(latest.date,{day:"numeric",month:"long"})}</p></div><span class="weight-delta">${deltaText}</span></div>
+    <svg class="svg-chart" viewBox="0 0 ${w} ${h}" aria-label="Évolution du poids">${grid}<path d="${path}" fill="none" stroke="#6366F1" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>${xy.map(p=>`<circle cx="${p.x}" cy="${p.y}" r="3.3" fill="#0EA37F" stroke="white" stroke-width="1"><title>${fmtDate(p.date)} · ${num(p.kg,1)} kg</title></circle>`).join("")}${labels}</svg>`;
+  renderWeightHistory();
+}
+function renderWeightHistory(){
+  const root=document.getElementById("weightHistory");
+  if(!root)return;
+  const recent=[...weights].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
+  root.innerHTML=recent.length?`<h4>Derniers relevés</h4>${recent.map(x=>`<div class="weight-row"><div><b>${num(x.kg,1)} kg</b><br><span>${fmtDate(x.date,{day:"numeric",month:"long",year:"numeric"})}</span></div><button type="button" class="weight-delete" data-weight-delete="${esc(x.id)}">Supprimer</button></div>`).join("")}`:"";
+  root.querySelectorAll("[data-weight-delete]").forEach(b=>b.onclick=()=>{
+    if(!confirm("Supprimer ce relevé de poids ?"))return;
+    weights=weights.filter(x=>x.id!==b.dataset.weightDelete);saveWeights();renderWeightHistory();toast("Relevé supprimé");
+  });
+}
+function openWeightModal(){
+  const now=new Date();
+  document.getElementById("weightDate").value=isoDate(now);
+  const latest=[...weights].sort((a,b)=>a.date.localeCompare(b.date)).at(-1);
+  document.getElementById("weightKg").value=latest?latest.kg:"";
+  renderWeightHistory();
+  openModal("weightModal");
+  requestAnimationFrame(()=>document.getElementById("weightModal").querySelector(".sheet").scrollTop=0);
+}
+
 function renderBackupInfo(){
   const meta=getBackupMeta(),seedBase=INITIAL_SESSIONS.length,baseCount=meta?.count??seedBase,delta=Math.max(0,sessions.length-baseCount),status=document.getElementById("backupStatus"),rem=document.getElementById("backupReminder");
   if(status){status.innerHTML=meta?`<b>Dernière sauvegarde : ${fmtDate(meta.date,{day:"numeric",month:"long",year:"numeric"})}</b><p>${meta.count} séances au moment de l’export · ${delta} nouvelle${delta!==1?"s":""} depuis.</p>`:`<b>Aucune sauvegarde SILTRIDE exportée</b><p>Cette version conserve ses données localement. Exporte un JSON lorsque tu veux garder un point de restauration.</p>`}
@@ -1351,10 +1548,54 @@ function renderAll(){
 }
 function getExistingOrLatest(key){return key || latestMonthKey()}
 function renderBrand(){}
+function metricDailyValues(monthKeyValue,metric){
+  const [y,m]=monthKeyValue.split("-").map(Number),days=new Date(y,m,0).getDate();
+  const rows=Array.from({length:days},(_,i)=>({day:i+1,value:0}));
+  monthSessions(monthKeyValue).forEach(s=>{
+    const d=+s.date.slice(-2);
+    if(!rows[d-1])return;
+    if(metric==="distance")rows[d-1].value+=+s.distance||0;
+    else if(metric==="duration")rows[d-1].value+=+s.duration||0;
+    else rows[d-1].value+=1;
+  });
+  return rows;
+}
+function threeBrandBarColor(v,max){
+  if(!v)return "#edf1f3";
+  const r=v/Math.max(max,1);
+  if(r<=.34)return "#0EA37F";
+  if(r<=.68)return "#6366F1";
+  return "#F59E0B";
+}
+function openHeroMetric(metric){
+  const conf={
+    distance:{title:"Distance quotidienne",unit:"km",dec:2,total:arr=>arr.reduce((a,b)=>a+b.value,0)},
+    duration:{title:"Temps quotidien",unit:"min",dec:0,total:arr=>arr.reduce((a,b)=>a+b.value,0)},
+    count:{title:"Séances par jour",unit:"séance",dec:0,total:arr=>arr.reduce((a,b)=>a+b.value,0)}
+  }[metric];
+  if(!conf)return;
+  const rows=metricDailyValues(selectedMonth,metric),maxV=Math.max(...rows.map(x=>x.value),1),total=conf.total(rows);
+  const w=660,h=225,left=45,right=14,top=18,base=183,plotW=w-left-right,plotH=base-top,gap=4,bw=plotW/rows.length-gap;
+  const yMax=metric==="count"?Math.max(1,Math.ceil(maxV)):Math.max(1,maxV*1.12);
+  let bars="",labels="",grid="";
+  for(let i=0;i<=4;i++){
+    const v=yMax*i/4,y=base-(v/yMax)*plotH;
+    grid+=`<line x1="${left}" y1="${y}" x2="${w-right}" y2="${y}" stroke="#eef2f4"/><text x="${left-7}" y="${y+3}" text-anchor="end" font-size="8" fill="#7f8d98">${metric==="count"?Math.round(v):num(v,metric==="distance"?1:0)}</text>`;
+  }
+  rows.forEach((r,i)=>{
+    const bh=(r.value/yMax)*plotH,x=left+i*(plotW/rows.length)+gap/2,y=base-bh;
+    bars+=`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${Math.max(2,bw).toFixed(1)}" height="${bh.toFixed(1)}" rx="3" fill="${threeBrandBarColor(r.value,maxV)}"><title>${r.day} · ${num(r.value,conf.dec)} ${conf.unit}</title></rect>`;
+    if(r.day===1||r.day%5===0)labels+=`<text x="${(x+bw/2).toFixed(1)}" y="207" text-anchor="middle" font-size="8" fill="#8a98a3">${r.day}</text>`;
+  });
+  document.getElementById("metricModalTitle").textContent=conf.title;
+  let totalText=metric==="duration"?fmtTotal(total):metric==="count"?`${Math.round(total)} séance${total!==1?"s":""}`:`${num(total,1)} km`;
+  document.getElementById("metricPopupSummary").innerHTML=`<strong>${totalText}</strong><span>${cap(fmtMonth(selectedMonth))}</span>`;
+  document.getElementById("metricPopupChart").innerHTML=`<svg class="svg-chart" viewBox="0 0 ${w} ${h}">${grid}${bars}${labels}</svg>`;
+  openModal("metricModal");
+}
+
 function renderHome(){
   const arr=monthSessions(selectedMonth), s=summary(arr);
-  document.getElementById("heroTitle").textContent=cap(fmtMonth(selectedMonth));
-  document.getElementById("heroSubtitle").textContent=arr.length?`${num(s.distance,1)} km suivis ce mois-ci`:"Aucune séance sur ce mois";
   document.getElementById("heroKm").textContent=num(s.distance,1);
   document.getElementById("heroTime").textContent=fmtTotal(s.duration);
   document.getElementById("heroCount").textContent=s.count;
@@ -1382,8 +1623,8 @@ function renderHome(){
   setPercentTrend("kpiHrTrend",c.hr,p.hr,`${periodTitle} : ${Math.round(c.hr||0)} BPM contre ${Math.round(p.hr||0)} BPM`);
   setPercentTrend("kpiCaloriesTrend",c.calories,p.calories,`${periodTitle} : ${Math.round(c.calories)} kcal contre ${Math.round(p.calories)} kcal`);
 
-  renderToday();renderRoutine();renderGoal();renderWeekSummary();renderBackupInfo();
-  renderLastSession(); renderDailyChart(); renderCalendar();
+  renderToday();renderRoutine();renderGoal();renderWeekSummary();renderWeight();renderBackupInfo();
+  renderDailyChart(); renderCalendar();
 }
 function renderLastSession(){
   const el=document.getElementById("lastSession"), last=sortDesc(sessions)[0];
@@ -1428,7 +1669,8 @@ function calendarBackground(types=[]){
   return `linear-gradient(to top right, ${stops.join(",")})`;
 }
 function renderDailyChart(){
-  const [y,m]=selectedMonth.split("-").map(Number), days=new Date(y,m,0).getDate(), map=dailyMap(selectedMonth);
+  const chartMonth=dailyChartMonth||selectedMonth;
+  const [y,m]=chartMonth.split("-").map(Number), days=new Date(y,m,0).getDate(), map=dailyMap(chartMonth);
   const vals=Array.from({length:days},(_,i)=>map[`${selectedMonth}-${pad(i+1)}`]?.distance||0);
   const rawMax=Math.max(...vals,1);
   const tickStep=rawMax<=3?0.5:rawMax<=7?1:2;
@@ -1448,7 +1690,7 @@ function renderDailyChart(){
     bars+=`<rect x="${x.toFixed(1)}" y="${yv.toFixed(1)}" width="${Math.max(bw,2).toFixed(1)}" height="${bh.toFixed(1)}" rx="3.5" fill="${dailyBarColor(v,rawMax)}"><title>${i+1} : ${num(v,2)} km</title></rect>`;
     if((i+1)%5===0 || i===0) labels+=`<text x="${(x+bw/2).toFixed(1)}" y="174" text-anchor="middle" font-size="8" fill="#8a98a3">${i+1}</text>`;
   });
-  document.getElementById("dailyChartTitle").textContent=cap(fmtMonth(selectedMonth));
+  document.getElementById("dailyChartTitle").textContent=cap(fmtMonth(chartMonth));
   document.getElementById("dailyChartTotal").textContent=`Total ${num(vals.reduce((a,b)=>a+b,0),1)} km`;
   document.getElementById("dailyChart").innerHTML=`<svg class="svg-chart" viewBox="0 0 ${w} ${h}" aria-label="Distance quotidienne">${grid}${bars}${labels}</svg>`;
 }
@@ -1536,7 +1778,7 @@ function renderLegend(){document.getElementById("speedLegend").innerHTML=SPEED_B
 function renderMonthChoices(){
   const months=[...new Set(sessions.map(s=>monthKey(s.date)))].sort().reverse();
   document.getElementById("monthChoices").innerHTML=months.map(m=>`<button class="manager-btn month-choice" data-month="${m}"><b>${esc(cap(fmtMonth(m)))}</b><span>${monthSessions(m).length} séance${monthSessions(m).length!==1?"s":""}</span></button>`).join("");
-  document.querySelectorAll(".month-choice").forEach(b=>b.onclick=()=>{selectedMonth=b.dataset.month;calendarMonth=b.dataset.month;closeModal("monthModal");renderHome()});
+  document.querySelectorAll(".month-choice").forEach(b=>b.onclick=()=>{selectedMonth=b.dataset.month;calendarMonth=b.dataset.month;dailyChartMonth=b.dataset.month;closeModal("monthModal");renderHome()});
 }
 
 function chronologicalSessions(){
@@ -1651,7 +1893,7 @@ function openForm(id=null){
   document.querySelectorAll('input[name="sessionTag"]').forEach(x=>x.checked=(s?.tags||[]).includes(x.value));
   document.getElementById("fSource").value=s?.source??"";
   document.getElementById("fNotes").value=s?.notes??"";
-  renderSpeedRows(s?.speeds||[]);updateAutoPreview();openModal("formModal")
+  renderSpeedRows(s?.speeds||[]);updateAutoPreview();openModal("formModal");requestAnimationFrame(()=>{const sh=document.getElementById("formModal").querySelector(".sheet");if(sh)sh.scrollTop=0})
 }
 function renderSpeedRows(points){
   const root=document.getElementById("speedRows");
@@ -1769,7 +2011,7 @@ document.getElementById("sessionForm").addEventListener("submit",e=>{
     speedSource:old?.speedSource||"Vitesses renseignées dans l’app."
   };
   if(editingId)sessions=sessions.map(x=>x.id===editingId?rec:x);else sessions.push(rec);
-  selectedMonth=monthKey(rec.date);calendarMonth=selectedMonth;saveSessions();closeModal("formModal");toast(editingId?"Séance modifiée":"Séance ajoutée")
+  selectedMonth=monthKey(rec.date);calendarMonth=selectedMonth;dailyChartMonth=selectedMonth;saveSessions();closeModal("formModal");toast(editingId?"Séance modifiée":"Séance ajoutée")
 });
 
 document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>goPage(b.dataset.page));
@@ -1784,6 +2026,47 @@ document.addEventListener("click",e=>{
 });
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>closeModal(b.dataset.close));
 document.querySelectorAll(".modal").forEach(m=>m.addEventListener("click",e=>{if(e.target===m)closeModal(m.id)}));
+// Fermer les fenêtres par geste sur leur poignée / en-tête.
+document.querySelectorAll(".sheet-head").forEach(head=>{
+  let sy=null;
+  head.addEventListener("touchstart",e=>{if(e.touches.length===1)sy=e.touches[0].clientY},{passive:true});
+  head.addEventListener("touchend",e=>{
+    if(sy==null||!e.changedTouches.length)return;
+    const dy=e.changedTouches[0].clientY-sy;sy=null;
+    if(Math.abs(dy)>70){const modal=head.closest(".modal");if(modal)closeModal(modal.id)}
+  },{passive:true});
+});
+function bindHorizontalSwipe(el,onRight,onLeft){
+  if(!el)return;
+  let start=null;
+  el.addEventListener("touchstart",e=>{
+    if(e.touches.length!==1||e.target.closest("button,input,select,textarea"))return;
+    start={x:e.touches[0].clientX,y:e.touches[0].clientY};
+  },{passive:true});
+  el.addEventListener("touchend",e=>{
+    if(!start||!e.changedTouches.length)return;
+    const dx=e.changedTouches[0].clientX-start.x,dy=e.changedTouches[0].clientY-start.y;start=null;
+    if(Math.abs(dx)<65||Math.abs(dx)<Math.abs(dy)*1.35)return;
+    if(dx>0)onRight();else onLeft();
+  },{passive:true});
+}
+bindHorizontalSwipe(document.getElementById("regularityPanel"),
+  ()=>{regularityWeekOffset--;renderRoutine()},
+  ()=>{if(regularityWeekOffset<0){regularityWeekOffset++;renderRoutine()}}
+);
+bindHorizontalSwipe(document.getElementById("weekSummary"),
+  ()=>{weekSummaryOffset--;renderWeekSummary()},
+  ()=>{if(weekSummaryOffset<0){weekSummaryOffset++;renderWeekSummary()}}
+);
+bindHorizontalSwipe(document.getElementById("dailyChartCard"),
+  ()=>{dailyChartMonth=shiftMonthKey(dailyChartMonth,-1);renderDailyChart()},
+  ()=>{dailyChartMonth=shiftMonthKey(dailyChartMonth,1);renderDailyChart()}
+);
+bindHorizontalSwipe(document.getElementById("calendarCard"),
+  ()=>{calendarMonth=shiftMonthKey(calendarMonth,-1);renderCalendar()},
+  ()=>{calendarMonth=shiftMonthKey(calendarMonth,1);renderCalendar()}
+);
+
 document.getElementById("logoHomeBtn").onclick=()=>{
   document.querySelectorAll(".modal.open").forEach(m=>m.classList.remove("open"));
   document.body.style.overflow="";
@@ -1793,18 +2076,24 @@ const detailBodyEl=document.getElementById("detailBody");
 detailBodyEl.addEventListener("touchstart",e=>{
   if(e.touches.length!==1)return;
   const t=e.touches[0];
-  detailTouchStart={x:t.clientX,y:t.clientY,time:Date.now()};
+  const sheet=document.getElementById("detailModal").querySelector(".sheet");
+  detailTouchStart={x:t.clientX,y:t.clientY,time:Date.now(),scrollTop:sheet?sheet.scrollTop:0};
 },{passive:true});
 detailBodyEl.addEventListener("touchend",e=>{
   if(!detailTouchStart||!e.changedTouches.length)return;
   const t=e.changedTouches[0],dx=t.clientX-detailTouchStart.x,dy=t.clientY-detailTouchStart.y,elapsed=Date.now()-detailTouchStart.time;
+  const startState=detailTouchStart;
   detailTouchStart=null;
-  if(elapsed>700||Math.abs(dx)<65||Math.abs(dx)<Math.abs(dy)*1.35)return;
+  if(elapsed>700)return;
+  if(dy>85&&Math.abs(dy)>Math.abs(dx)*1.2&&(startState.scrollTop||0)<8){closeModal("detailModal");return}
+  if(Math.abs(dx)<65||Math.abs(dx)<Math.abs(dy)*1.35)return;
   // Swipe vers la gauche = séance suivante ; vers la droite = séance précédente.
   navigateDetail(dx<0?1:-1);
 },{passive:true});
 
 document.getElementById("addBtn").onclick=()=>openForm();
+document.querySelectorAll("[data-hero-metric]").forEach(b=>b.onclick=()=>openHeroMetric(b.dataset.heroMetric));
+document.getElementById("addWeightBtn").onclick=openWeightModal;
 document.getElementById("pasteSessionBtn").onclick=()=>{pendingPastedSession=null;document.getElementById("pasteDataInput").value="";document.getElementById("pastePreview").style.display="none";document.getElementById("usePasteBtn").style.display="none";openModal("pasteModal");setTimeout(()=>document.getElementById("pasteDataInput").focus(),120)};
 document.getElementById("parsePasteBtn").onclick=()=>{
   try{const data=parsePastedSession(document.getElementById("pasteDataInput").value);const date=parseDateValue(data.date),dur=parseDurationValue(data.duration),distance=parseFrenchNumber(data.distance);if(!date||distance==null)throw new Error("Bloc STRIDE-SEANCE incomplet.");pendingPastedSession=data;const preview=document.getElementById("pastePreview");preview.style.display="block";preview.innerHTML=`<b>1 nouvelle séance détectée</b><p>${fmtDate(date,{day:"numeric",month:"long",year:"numeric"})}${data.time?` · ${esc(data.time)}`:""}<br>${esc(normalizeActivity(data.activity))} · ${num(distance,2)} km · ${dur.minutes}:${pad(dur.seconds)}${data.speeds?.length?`<br>${data.speeds.length} points de vitesse détectés`:""}</p>`;document.getElementById("usePasteBtn").style.display="block"}
@@ -1813,6 +2102,18 @@ document.getElementById("parsePasteBtn").onclick=()=>{
 document.getElementById("usePasteBtn").onclick=()=>{if(!pendingPastedSession)return;fillFormFromPasted(pendingPastedSession);const n=pendingPastedSession.speeds?.length||0;pendingPastedSession=null;closeModal("pasteModal");toast(`Données prêtes${n?` · ${n} vitesses`:""}`)};
 document.getElementById("editGoalBtn").onclick=()=>{const g=loadGoals();document.getElementById("goalWeekKmInput").value=g.week.km;document.getElementById("goalWeekSessionsInput").value=g.week.sessions;document.getElementById("goalWeekMinutesInput").value=g.week.minutes;document.getElementById("goalMonthKmInput").value=g.month.km;document.getElementById("goalMonthSessionsInput").value=g.month.sessions;document.getElementById("goalMonthMinutesInput").value=g.month.minutes;openModal("goalModal")};
 document.getElementById("saveGoalBtn").onclick=()=>{const g={week:{km:+document.getElementById("goalWeekKmInput").value,sessions:+document.getElementById("goalWeekSessionsInput").value,minutes:+document.getElementById("goalWeekMinutesInput").value},month:{km:+document.getElementById("goalMonthKmInput").value,sessions:+document.getElementById("goalMonthSessionsInput").value,minutes:+document.getElementById("goalMonthMinutesInput").value}};if(!(g.week.km>0&&g.week.sessions>0&&g.week.minutes>0&&g.month.km>0&&g.month.sessions>0&&g.month.minutes>0)){toast("Objectifs invalides");return}g.week.sessions=Math.round(g.week.sessions);g.month.sessions=Math.round(g.month.sessions);saveGoals(g);closeModal("goalModal");toast("Objectifs mis à jour")};
+document.getElementById("regularityPrev").onclick=()=>{regularityWeekOffset--;renderRoutine()};
+document.getElementById("regularityNext").onclick=()=>{if(regularityWeekOffset<0){regularityWeekOffset++;renderRoutine()}};
+document.getElementById("weightForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const date=document.getElementById("weightDate").value,kg=+document.getElementById("weightKg").value;
+  if(!date||!(kg>0)){toast("Poids invalide");return}
+  const existing=weights.find(x=>x.date===date);
+  if(existing)existing.kg=kg;
+  else weights.push({id:`weight-${Date.now()}`,date,kg});
+  saveWeights();renderWeightHistory();closeModal("weightModal");toast("Poids enregistré");
+});
+
 document.getElementById("manageBtn").onclick=()=>{renderBackupInfo();openModal("manageModal")};
 document.getElementById("homeMonthBtn").onclick=()=>openModal("monthModal");
 document.getElementById("sessionSearch").addEventListener("input",renderSessions);
@@ -1830,21 +2131,29 @@ document.getElementById("heatmapYear").addEventListener("change",e=>{heatmapSele
 document.getElementById("summaryMonthSelect").addEventListener("change",e=>{summarySelectedMonth=e.target.value;renderMonthlySummary()});
 ["fMinutes","fSeconds","fDistance"].forEach(id=>document.getElementById(id).addEventListener("input",updateAutoPreview));
 document.getElementById("addSpeedPoint").onclick=()=>{const root=document.getElementById("speedRows");root.insertAdjacentHTML("beforeend",speedRowHtml({},root.children.length));bindSpeedRows();updateSpeedCount();root.lastElementChild.querySelector(".sp-time").focus()};
-document.getElementById("calPrev").onclick=()=>{const [y,m]=calendarMonth.split("-").map(Number),d=new Date(y,m-2,1);calendarMonth=`${d.getFullYear()}-${pad(d.getMonth()+1)}`;renderCalendar()};
-document.getElementById("calNext").onclick=()=>{const [y,m]=calendarMonth.split("-").map(Number),d=new Date(y,m,1);calendarMonth=`${d.getFullYear()}-${pad(d.getMonth()+1)}`;renderCalendar()};
+document.getElementById("calPrev").onclick=()=>{calendarMonth=shiftMonthKey(calendarMonth,-1);renderCalendar()};
+document.getElementById("calNext").onclick=()=>{calendarMonth=shiftMonthKey(calendarMonth,1);renderCalendar()};
 
 document.getElementById("exportBtn").onclick=()=>{
-  const blob=new Blob([JSON.stringify(sessions,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+  const backup={version:2,exportedAt:new Date().toISOString(),sessions,weights};
+  const blob=new Blob([JSON.stringify(backup,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
   a.href=url;a.download=`SILTRIDE-sauvegarde-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(url);localStorage.setItem(BACKUP_KEY,JSON.stringify({date:isoDate(new Date()),count:sessions.length}));renderBackupInfo();toast("Sauvegarde SILTRIDE exportée")
 };
 document.getElementById("importBtn").onclick=()=>document.getElementById("importFile").click();
 document.getElementById("importFile").addEventListener("change",async e=>{
   const file=e.target.files[0];if(!file)return;
-  try{const data=JSON.parse(await file.text());if(!Array.isArray(data))throw new Error();if(!confirm(`Importer ${data.length} séance(s) et remplacer les données locales ?`))return;sessions=data;saveSessions();closeModal("manageModal");toast("Sauvegarde importée")}
+  try{
+    const data=JSON.parse(await file.text());
+    const importedSessions=Array.isArray(data)?data:data?.sessions;
+    const importedWeights=Array.isArray(data)?weights:(Array.isArray(data?.weights)?data.weights:[]);
+    if(!Array.isArray(importedSessions))throw new Error();
+    if(!confirm(`Importer ${importedSessions.length} séance(s)${importedWeights.length?` et ${importedWeights.length} relevé(s) de poids`:""} et remplacer les données locales ?`))return;
+    sessions=importedSessions;weights=importedWeights;localStorage.setItem(WEIGHT_KEY,JSON.stringify(weights));saveSessions();closeModal("manageModal");toast("Sauvegarde importée");
+  }
   catch(err){alert("Fichier de sauvegarde invalide.")}finally{e.target.value=""}
 });
 document.getElementById("resetBtn").onclick=()=>{if(confirm("Rétablir les séances intégrées ? Les modifications locales seront remplacées.")){sessions=clone(INITIAL_SESSIONS);selectedMonth=latestMonthKey();calendarMonth=selectedMonth;saveSessions();closeModal("manageModal");toast("Données du tableur restaurées")}};
-document.getElementById("clearBtn").onclick=()=>{if(confirm("Effacer toutes les séances locales ?")){sessions=[];localStorage.setItem(STORAGE_KEY,"[]");selectedMonth=new Date().toISOString().slice(0,7);calendarMonth=selectedMonth;renderAll();closeModal("manageModal");toast("Données effacées")}};
+document.getElementById("clearBtn").onclick=()=>{if(confirm("Effacer toutes les données locales ?")){sessions=[];weights=[];localStorage.setItem(STORAGE_KEY,"[]");localStorage.setItem(WEIGHT_KEY,"[]");selectedMonth=new Date().toISOString().slice(0,7);calendarMonth=selectedMonth;dailyChartMonth=selectedMonth;renderAll();closeModal("manageModal");toast("Données effacées")}};
 
 let touchStart=null;
 document.getElementById("main").addEventListener("touchstart",e=>{if(e.target.closest("input,textarea,select,button,.card"))return;touchStart={x:e.touches[0].clientX,y:e.touches[0].clientY}},{passive:true});
