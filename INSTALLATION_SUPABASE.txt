@@ -1,0 +1,54 @@
+SILTRIDE CLOUD — INSTALLATION SUPABASE
+
+1. SUPABASE
+- Crée un projet Supabase ou utilise un projet existant.
+- Ouvre SQL Editor.
+- Copie/colle tout le fichier supabase_setup.sql puis Run.
+
+2. AUTHENTIFICATION
+- Authentication > Providers > Email.
+- Garde Email activé.
+- Comme pour tes autres apps, désactive la confirmation e-mail si tu veux pouvoir créer le compte et te connecter immédiatement.
+- Après avoir créé ton compte SILTRIDE, tu peux désactiver les nouvelles inscriptions dans Supabase si tu veux que personne d'autre ne puisse créer de compte.
+
+3. PROJECT URL + PUBLISHABLE KEY
+- Dans Supabase, ouvre Connect / Project API.
+- Copie le Project URL.
+- Copie la publishable key (ou anon key si ton projet affiche encore cette appellation).
+- Ouvre config.js et remplace :
+  PASTE_SUPABASE_PROJECT_URL_HERE
+  PASTE_SUPABASE_PUBLISHABLE_KEY_HERE
+
+IMPORTANT :
+- La publishable key peut être dans config.js côté navigateur.
+- Ne mets JAMAIS la service_role key dans GitHub ou dans l'app.
+
+4. PREMIERE MIGRATION
+- Fais d'abord une sauvegarde JSON de ta version actuelle de SILTRIDE.
+- Sur l'appareil qui contient actuellement toutes tes séances dans SILTRIDE, déploie cette version CLOUD sur la MEME URL GitHub Pages.
+- Ouvre SILTRIDE puis crée/connecte ton compte.
+- Au premier login, l'app fusionne la copie locale existante avec Supabase puis l'envoie au cloud.
+- Vérifie dans Supabase Table Editor que siltride_sessions et siltride_weights contiennent les lignes attendues.
+- Garde aussi le JSON de sécurité.
+
+5. AUTRES APPAREILS
+- Ouvre la même URL SILTRIDE.
+- Connecte-toi avec le même e-mail/mot de passe.
+- Les séances et poids sont téléchargés depuis Supabase.
+- Les ajouts/modifications/suppressions sont synchronisés en Realtime.
+
+6. GITHUB
+- Déploie tous les fichiers du ZIP, y compris config.js.
+- Cette version ne contient plus les séances personnelles intégrées directement dans index.html.
+
+PRIVACY IMPORTANTE
+Les anciennes versions de SILTRIDE avaient des séances intégrées dans le code HTML. Si ton dépôt GitHub était public,
+ces anciennes données peuvent encore exister dans l'historique Git. Pour repartir avec un historique propre, crée un
+nouveau dépôt propre (ou réécris/supprime l'ancien historique) avant de considérer que les anciennes données ne sont
+plus exposées dans GitHub.
+
+FONCTIONNEMENT
+- Supabase = source cloud privée.
+- localStorage = cache local et file d'attente si une modification doit encore être envoyée.
+- Realtime = mise à jour entre iPhone/Mac/autres appareils.
+- JSON = sauvegarde manuelle supplémentaire.

@@ -1,12 +1,25 @@
 {
   "name": "SILTRIDE",
   "short_name": "SILTRIDE",
+  "description": "SILTRIDE — Move. Track. Progress.",
+  "id": "./",
   "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#F5F7FA",
-  "theme_color": "#0EA37F",
+  "theme_color": "#F5F7FA",
   "icons": [
-    {"src":"icon-192.png","sizes":"192x192","type":"image/png"},
-    {"src":"icon-512.png","sizes":"512x512","type":"image/png"}
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
   ]
 }

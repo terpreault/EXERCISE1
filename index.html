@@ -716,10 +716,84 @@
       .regularity-stat span{font-size:7.5px}
     }
 
+
+    /* ============================================================
+       SILTRIDE CLOUD — Supabase Auth + sync
+       ============================================================ */
+    .cloud-gate{
+      position:fixed;inset:0;z-index:1000;
+      display:grid;place-items:center;
+      padding:24px max(18px,env(safe-area-inset-right)) max(24px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left));
+      background:#F5F7FA;
+    }
+    .cloud-gate.hidden{display:none}
+    .cloud-auth-card{
+      width:min(420px,100%);background:#fff;border:1px solid #E8EEF3;border-radius:30px;
+      padding:26px 22px 22px;box-shadow:0 20px 60px rgba(15,23,42,.10);text-align:center
+    }
+    .cloud-auth-logo{width:78px;height:78px;object-fit:contain;display:block;margin:0 auto 12px}
+    .cloud-auth-card h1{margin:0;color:#0F172A;font-size:26px;letter-spacing:.045em}
+    .cloud-auth-tagline{margin:7px 0 0;color:#6B7A90;font-size:11px;font-weight:750;letter-spacing:.06em}
+    .cloud-auth-copy{margin:18px auto 17px;color:#6B7A90;font-size:12px;line-height:1.5;max-width:310px}
+    .cloud-login-form{display:grid;gap:10px;text-align:left}
+    .cloud-login-form label{font-size:10px;font-weight:800;color:#6B7A90}
+    .cloud-login-form input{
+      width:100%;margin-top:6px;padding:13px 14px;border:1px solid #DCE5EB;border-radius:14px;
+      background:#FBFCFD;color:#0F172A;outline:none
+    }
+    .cloud-login-form input:focus{border-color:#0EA37F;box-shadow:0 0 0 3px rgba(14,163,127,.10)}
+    .cloud-main-btn{width:100%;margin-top:2px}
+    .cloud-auth-message{min-height:18px;margin-top:10px;color:#6B7A90;font-size:10px;line-height:1.4}
+    .cloud-auth-message.error{color:#c8434f}
+    .cloud-auth-message.success{color:#0EA37F}
+    .cloud-config-warning{
+      margin:14px 0;padding:11px;border-radius:14px;background:#FFF7E8;color:#8A6110;
+      font-size:10px;line-height:1.45;text-align:left;border:1px solid #F5E1B9
+    }
+
+    .cloud-status-card{padding:14px;margin-bottom:11px}
+    .cloud-status-line{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .cloud-status-line b{font-size:12px}
+    .cloud-status-line p{margin:4px 0 0;color:var(--muted);font-size:9px;word-break:break-all}
+    .cloud-status-pill{
+      display:inline-flex;align-items:center;gap:6px;padding:6px 8px;border-radius:999px;
+      background:#F1F4F6;color:#6B7A90;font-size:8.5px;font-weight:800;white-space:nowrap
+    }
+    .cloud-status-pill i{width:7px;height:7px;border-radius:50%;background:#AAB4BC}
+    .cloud-status-pill.synced{background:#EAF8F3;color:#0EA37F}
+    .cloud-status-pill.synced i{background:#0EA37F}
+    .cloud-status-pill.syncing{background:#F1EEFF;color:#6366F1}
+    .cloud-status-pill.syncing i{background:#6366F1}
+    .cloud-status-pill.offline{background:#FFF4E5;color:#B76A00}
+    .cloud-status-pill.offline i{background:#F59E0B}
+    .cloud-status-pill.error{background:#FFF0F1;color:#c8434f}
+    .cloud-status-pill.error i{background:#c8434f}
+    .cloud-status-actions{display:flex;justify-content:space-between;gap:8px;margin-top:12px;padding-top:10px;border-top:1px solid var(--line)}
+    .cloud-status-actions .text-btn{border:0;background:none;color:var(--brand);font-size:9px;font-weight:800;padding:0}
+    .cloud-status-actions .danger-text{color:var(--danger)}
+
   </style>
 </head>
 <body>
-<!-- Build codename: BETANOUVELLEVAGUE | App name: SILTRIDE | ACCUEIL V2 -->
+<div class="cloud-gate" id="cloudGate">
+  <div class="cloud-auth-card">
+    <img class="cloud-auth-logo" src="siltride-logo-tricolor.png" alt="SILTRIDE">
+    <h1>SILTRIDE</h1>
+    <p class="cloud-auth-tagline">Move. Track. Progress.</p>
+    <div class="cloud-auth-copy" id="cloudAuthCopy">Connecte-toi pour retrouver tes données sur tous tes appareils.</div>
+    <div class="cloud-config-warning" id="cloudConfigWarning" hidden>
+      Supabase n’est pas encore configuré. Renseigne <b>config.js</b> avec ton Project URL et ta publishable key.
+    </div>
+    <form id="cloudLoginForm" class="cloud-login-form">
+      <label>E-mail<input id="cloudEmail" type="email" autocomplete="email" required placeholder="ton@email.com"></label>
+      <label>Mot de passe<input id="cloudPassword" type="password" autocomplete="current-password" minlength="6" required placeholder="••••••••"></label>
+      <button type="submit" class="btn primary cloud-main-btn">Se connecter</button>
+      <button type="button" class="btn secondary cloud-main-btn" id="cloudSignupBtn">Créer mon compte</button>
+    </form>
+    <div class="cloud-auth-message" id="cloudAuthMessage"></div>
+  </div>
+</div>
+<!-- App name: SILTRIDE | ACCUEIL V2 + SUPABASE CLOUD -->
 <!-- Logo asset: teal_ribbon_s_logo.png -->
 <div class="app">
   <header class="topbar">
@@ -959,12 +1033,22 @@ speeds=0:00@3,2;1:00@4,4;2:00@5,1"></textarea></div>
 <div class="modal" id="manageModal"><div class="sheet">
   <div class="sheet-head"><div class="grab"></div><b>Données & sauvegarde</b><button class="close-btn" data-close="manageModal">×</button></div>
   <div class="sheet-body">
-    <div class="card backup-status" id="backupStatus"><b>État de la sauvegarde</b><p>Calcul en cours…</p></div>
+    <div class="card cloud-status-card">
+      <div class="cloud-status-line">
+        <div><b>Cloud SILTRIDE</b><p id="cloudAccountEmail">Non connecté</p></div>
+        <span class="cloud-status-pill" id="cloudStatusPill"><i></i><span id="cloudStatusText">Initialisation…</span></span>
+      </div>
+      <div class="cloud-status-actions">
+        <button type="button" class="text-btn" id="cloudSyncNowBtn">Synchroniser maintenant</button>
+        <button type="button" class="text-btn danger-text" id="cloudLogoutBtn">Déconnexion</button>
+      </div>
+    </div>
+    <div class="card backup-status" id="backupStatus"><b>Sauvegarde JSON</b><p>Calcul en cours…</p></div>
     <div class="manager-grid">
       <button class="manager-btn" id="exportBtn"><b>Exporter une sauvegarde</b><span>Télécharge les séances, vitesses et relevés de poids en JSON.</span></button>
       <button class="manager-btn" id="importBtn"><b>Importer une sauvegarde</b><span>Remplace les données locales par un fichier JSON exporté depuis l’app.</span></button>
-      <button class="manager-btn" id="resetBtn"><b>Rétablir les données du tableur</b><span>Recharge toutes les séances intégrées dans cette version.</span></button>
-      <button class="manager-btn" id="clearBtn" style="color:var(--danger)"><b>Effacer toutes les données locales</b><span>Action irréversible sans sauvegarde.</span></button>
+      <button class="manager-btn" id="resetBtn"><b>Recharger depuis le cloud</b><span>Récupère la copie Supabase et remplace le cache local.</span></button>
+      <button class="manager-btn" id="clearBtn"><b>Vider le cache local</b><span>Les données cloud restent intactes et seront rechargées à la prochaine synchronisation.</span></button>
     </div>
     <input class="file-input" type="file" accept=".json,application/json" id="importFile">
   </div>
@@ -1021,13 +1105,25 @@ speeds=0:00@3,2;1:00@4,4;2:00@5,1"></textarea></div>
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
 <script>
-const INITIAL_SESSIONS = [{"id":"seed-01","date":"2026-08-14","time":"12:26","activity":"Marche rapide","duration":30.05,"distance":2.1,"avgSpeed":4.193,"pace":14.3095,"hrAvg":110.0,"hrMax":127.0,"pulse":null,"incline":2.0,"calories":158.0,"effort":3.0,"source":"IMG_1812 à IMG_1819","notes":"Fin déclarée : 12:26. Tapis : 30:03, 2,10 km, vitesse affichée moy. 4,1 km/h (max. 6,0 ; min. 1,0), inclinaison moy. 2 % (max. 15 ; min. 0), 140 kcal, 4,8 MET, FC moy. 78 BPM. Apple Watch : 30:17, 1,50 km, allure 20:07/km, FC 110 BPM (90–127), 158 kcal actives et 217 kcal totales, effort 3/10 Facile. Distance et durée retenues : tapis ; FC, calories actives et effort retenus : Apple Watch.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":3.1},{"t":"2:00","v":3.1},{"t":"3:00","v":3.1},{"t":"4:00","v":3.5},{"t":"5:00","v":3.5},{"t":"6:00","v":4.0},{"t":"7:00","v":4.0},{"t":"8:00","v":4.0},{"t":"9:00","v":4.4},{"t":"10:00","v":4.5},{"t":"11:00","v":4.5},{"t":"12:00","v":4.6},{"t":"13:00","v":4.9},{"t":"14:00","v":4.9},{"t":"15:00","v":5.0},{"t":"16:00","v":4.9},{"t":"17:00","v":4.9},{"t":"18:00","v":4.9},{"t":"19:00","v":4.5},{"t":"20:00","v":3.7},{"t":"21:00","v":3.6},{"t":"22:00","v":3.7},{"t":"23:00","v":3.4},{"t":"24:00","v":4.7},{"t":"25:00","v":5.0},{"t":"26:00","v":5.9},{"t":"27:00","v":4.1},{"t":"28:00","v":4.0},{"t":"29:00","v":3.5},{"t":"30:00","v":1.3},{"t":"30:03","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-02","date":"2026-08-15","time":"12:58","activity":"Marche rapide","duration":20.9167,"distance":1.6,"avgSpeed":4.5896,"pace":13.0729,"hrAvg":113.0,"hrMax":135.0,"pulse":null,"incline":2.0,"calories":110.0,"effort":3.0,"source":"IMG_1822 à IMG_1829","notes":"Fin : 12:58. Tapis : 20:55, 1,60 km, vitesse affichée moy. 4,6 km/h (max. 6,0 ; min. 1,0), inclinaison moy. 2 % (max. 15 ; min. 0), 106 kcal, 4,2 MET, FC non mesurée. Apple Watch : 12:37–12:58, durée 20:56, 1,28 km, allure 16:20/km, FC moy. 113 BPM (96–135), 110 kcal actives et 151 kcal totales, effort 3/10 Facile. Distance et durée retenues : tapis ; FC, calories actives et effort retenus : Apple Watch.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":3.4},{"t":"2:00","v":3.7},{"t":"3:00","v":4.1},{"t":"4:00","v":4.1},{"t":"5:00","v":4.2},{"t":"6:00","v":5.0},{"t":"7:00","v":5.1},{"t":"8:00","v":5.3},{"t":"9:00","v":5.7},{"t":"10:00","v":5.8},{"t":"11:00","v":6.0},{"t":"12:00","v":4.2},{"t":"13:00","v":4.3},{"t":"14:00","v":4.6},{"t":"15:00","v":4.7},{"t":"16:00","v":4.7},{"t":"17:00","v":5.6},{"t":"18:00","v":6.0},{"t":"19:00","v":4.6},{"t":"20:00","v":4.2},{"t":"20:55","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-03","date":"2026-08-17","time":"13:22","activity":"Marche rapide","duration":21.05,"distance":1.5,"avgSpeed":4.2755,"pace":14.0333,"hrAvg":111.0,"hrMax":135.0,"pulse":null,"incline":2.0,"calories":136.0,"effort":3.0,"source":"Photos séance 17 août","notes":"Fin : 13:22. Tapis : 21:03, 1,50 km, vitesse affichée moy. 4,3 km/h (max. 6,0 ; min. 1,0), inclinaison moy. 2 % (max. 15 ; min. 0), 98 kcal, 4,2 MET, FC moy. 105 BPM et max. 141 BPM. Apple Watch : durée 25:43, 1,28 km, allure 20:02/km, FC moy. 111 BPM (87–135), 136 kcal actives et 186 kcal totales, effort 3/10 Facile. Distance et durée retenues : tapis ; FC, calories actives et effort retenus : Apple Watch.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":3.6},{"t":"2:00","v":3.7},{"t":"3:00","v":4.3},{"t":"4:00","v":4.5},{"t":"5:00","v":4.7},{"t":"6:00","v":5.0},{"t":"7:00","v":5.2},{"t":"8:00","v":5.2},{"t":"9:00","v":4.7},{"t":"10:00","v":5.1},{"t":"11:00","v":5.0},{"t":"12:00","v":4.9},{"t":"13:00","v":4.0},{"t":"14:00","v":3.6},{"t":"15:00","v":3.4},{"t":"16:00","v":3.9},{"t":"17:00","v":4.4},{"t":"18:00","v":5.0},{"t":"19:00","v":6.0},{"t":"20:00","v":3.3},{"t":"21:00","v":1.2},{"t":"21:03","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-04","date":"2026-08-19","time":"19:45","activity":"Marche rapide","duration":23.0667,"distance":1.8,"avgSpeed":4.6821,"pace":12.8148,"hrAvg":117.0,"hrMax":141.0,"pulse":null,"incline":2.0,"calories":118.0,"effort":3.0,"source":"Photos séance 19 août","notes":"Fin déclarée : 19:45. Tapis : 23:04, 1,80 km, vitesse affichée moy. 4,8 km/h (max. 6,5 ; min. 1,0), inclinaison moy. 2 % (max. 15 ; min. 0), 122 kcal, 4,3 MET, FC moy. 82 BPM. Apple Watch : durée 23:37, 1,35 km, allure 17:26/km, FC moy. 117 BPM (100–141), 118 kcal actives et 164 kcal totales, effort 3/10 Facile. Distance et durée retenues : tapis ; FC, calories actives et effort retenus : Apple Watch.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.9},{"t":"2:00","v":5.4},{"t":"3:00","v":5.4},{"t":"4:00","v":5.4},{"t":"5:00","v":5.4},{"t":"6:00","v":5.4},{"t":"7:00","v":5.3},{"t":"8:00","v":5.3},{"t":"9:00","v":5.9},{"t":"10:00","v":6.0},{"t":"11:00","v":4.2},{"t":"12:00","v":4.0},{"t":"13:00","v":4.0},{"t":"14:00","v":3.9},{"t":"15:00","v":4.4},{"t":"16:00","v":5.6},{"t":"17:00","v":5.8},{"t":"18:00","v":3.8},{"t":"19:00","v":4.7},{"t":"20:00","v":3.6},{"t":"21:00","v":3.3},{"t":"22:00","v":2.4},{"t":"23:00","v":5.7},{"t":"23:04","v":5.7}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-05","date":"2026-08-20","time":"13:00","activity":"Marche rapide","duration":16.4667,"distance":1.3,"avgSpeed":4.7368,"pace":12.6667,"hrAvg":87.0,"hrMax":null,"pulse":null,"incline":2.0,"calories":90.0,"effort":null,"source":"Photos séance 20 août","notes":"Fin déclarée : 13:00. Tapis : 16:28, 1,30 km, vitesse affichée moy. 4,9 km/h (max. 6,5 ; min. 1,0), inclinaison moy. 2 % (max. 15 ; min. 0), 90 kcal, 4,7 MET, FC moy. 87 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.8},{"t":"2:00","v":5.0},{"t":"3:00","v":5.0},{"t":"4:00","v":5.1},{"t":"5:00","v":5.2},{"t":"6:00","v":5.8},{"t":"7:00","v":6.5},{"t":"8:00","v":5.5},{"t":"9:00","v":5.5},{"t":"10:00","v":5.5},{"t":"11:00","v":6.2},{"t":"12:00","v":6.4},{"t":"13:00","v":5.3},{"t":"14:00","v":4.7},{"t":"15:00","v":4.1},{"t":"16:00","v":3.4},{"t":"16:28","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-06","date":"2026-08-21","time":"12:49","activity":"Marche rapide","duration":20.9167,"distance":1.6,"avgSpeed":4.5896,"pace":13.0729,"hrAvg":89.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":93.0,"effort":null,"source":"Photos séance 21 août","notes":"Fin déclarée : 12:49. Tapis : 20:55, 1,60 km, vitesse affichée moy. 4,5 km/h (max. 6,5 ; min. 1,0), inclinaison moy. 0 % (aucune inclinaison visible), 93 kcal, 2,2 MET, FC moy. 89 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.2},{"t":"2:00","v":4.2},{"t":"3:00","v":4.5},{"t":"4:00","v":4.7},{"t":"5:00","v":5.0},{"t":"6:00","v":5.1},{"t":"7:00","v":5.5},{"t":"8:00","v":5.8},{"t":"9:00","v":6.0},{"t":"10:00","v":4.4},{"t":"11:00","v":4.3},{"t":"12:00","v":4.0},{"t":"13:00","v":4.0},{"t":"14:00","v":4.1},{"t":"15:00","v":4.5},{"t":"16:00","v":5.2},{"t":"17:00","v":5.3},{"t":"18:00","v":6.5},{"t":"19:00","v":4.4},{"t":"20:00","v":3.0},{"t":"20:55","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-07","date":"2026-08-21","time":"20:00","activity":"Marche rapide","duration":10.2333,"distance":0.8,"avgSpeed":4.6906,"pace":12.7917,"hrAvg":85.0,"hrMax":null,"pulse":null,"incline":2.0,"calories":63.0,"effort":null,"source":"Photos séance 21 août - séance 2 + inclinaison","notes":"Deuxième séance du 21 août. Fin déclarée : 20:00. Tapis : 10:14, 0,80 km, vitesse affichée moy. 5,0 km/h (max. 6,5 ; min. 1,0), inclinaison moy. 2 % (max. 15 % ; min. 0 %), 63 kcal, 5,3 MET, FC moy. 85 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.0},{"t":"2:00","v":4.5},{"t":"3:00","v":5.2},{"t":"4:00","v":5.8},{"t":"5:00","v":6.0},{"t":"6:00","v":6.5},{"t":"7:00","v":4.5},{"t":"8:00","v":5.1},{"t":"9:00","v":4.4},{"t":"10:00","v":3.7},{"t":"10:14","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-08","date":"2026-08-22","time":"13:45","activity":"Marche rapide","duration":31.0333,"distance":2.5,"avgSpeed":4.8335,"pace":12.4133,"hrAvg":124.0,"hrMax":150.0,"pulse":null,"incline":2.0,"calories":213.0,"effort":4.0,"source":"Photos séance 22 août","notes":"Fin déclarée : 13:45. Tapis : 31:02, 2,50 km, vitesse affichée moy. 4,9 km/h (max. 7,0 ; min. 1,0), inclinaison moy. 2 % (max. 15 % ; min. 0 %), 168 kcal, 4,4 MET, FC tapis moy. 82 BPM et max. 115 BPM. Apple Watch : 13:14–13:45, durée 31:17, 2,08 km, allure 15:03/km, FC moy. 124 BPM (100–150), 213 kcal actives et 274 kcal totales, effort 4/10 Modéré. Distance et durée retenues : tapis ; FC, calories actives et effort retenus : Apple Watch.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.2},{"t":"2:00","v":4.2},{"t":"3:00","v":4.6},{"t":"4:00","v":5.0},{"t":"5:00","v":5.2},{"t":"6:00","v":5.2},{"t":"7:00","v":5.2},{"t":"8:00","v":5.2},{"t":"9:00","v":5.4},{"t":"10:00","v":5.4},{"t":"11:00","v":5.7},{"t":"12:00","v":5.9},{"t":"13:00","v":4.4},{"t":"14:00","v":4.3},{"t":"15:00","v":5.5},{"t":"16:00","v":5.8},{"t":"17:00","v":5.0},{"t":"18:00","v":5.0},{"t":"19:00","v":4.3},{"t":"20:00","v":4.3},{"t":"21:00","v":4.4},{"t":"22:00","v":5.0},{"t":"23:00","v":5.5},{"t":"24:00","v":6.2},{"t":"25:00","v":7.0},{"t":"26:00","v":4.2},{"t":"27:00","v":4.2},{"t":"28:00","v":6.3},{"t":"29:00","v":4.0},{"t":"30:00","v":2.5},{"t":"31:00","v":1.2},{"t":"31:02","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-09","date":"2026-08-22","time":"20:00","activity":"Marche rapide","duration":12.3,"distance":1.1,"avgSpeed":5.3659,"pace":11.1818,"hrAvg":83.0,"hrMax":null,"pulse":null,"incline":1.0,"calories":72.0,"effort":null,"source":"Photos séance 22 août - séance 2","notes":"Deuxième séance du 22 août. Fin déclarée : 20:00. Tapis : 12:18, 1,10 km, vitesse affichée moy. 5,4 km/h (max. 6,5 ; min. 1,0), inclinaison moy. 1 % (max. 10 % ; min. 0 %), 72 kcal, 2,8 MET, FC moy. 83 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.0},{"t":"2:00","v":4.8},{"t":"3:00","v":5.4},{"t":"4:00","v":5.8},{"t":"5:00","v":6.2},{"t":"6:00","v":6.5},{"t":"7:00","v":5.3},{"t":"8:00","v":5.5},{"t":"9:00","v":5.5},{"t":"10:00","v":6.2},{"t":"11:00","v":5.2},{"t":"12:00","v":3.2},{"t":"12:18","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-10","date":"2026-08-24","time":"13:33","activity":"Course légère","duration":35.15,"distance":2.8,"avgSpeed":4.7795,"pace":12.5536,"hrAvg":74.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":163.0,"effort":null,"source":"Photos séance 24 août","notes":"Fin déclarée : 13:33. Tapis : 35:09, 2,80 km, vitesse affichée moy. 4,7 km/h (max. 7,0 ; min. 1,0), inclinaison moy. 0 % (max. 11 % ; min. 0 %), 163 kcal, 2,2 MET, FC moy. 74 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":3.8},{"t":"2:00","v":4.3},{"t":"3:00","v":4.4},{"t":"4:00","v":4.9},{"t":"5:00","v":5.0},{"t":"6:00","v":5.5},{"t":"7:00","v":5.6},{"t":"8:00","v":7.0},{"t":"9:00","v":5.3},{"t":"10:00","v":4.7},{"t":"11:00","v":4.8},{"t":"12:00","v":7.0},{"t":"13:00","v":4.8},{"t":"14:00","v":4.7},{"t":"15:00","v":7.0},{"t":"16:00","v":4.4},{"t":"17:00","v":4.3},{"t":"18:00","v":4.3},{"t":"19:00","v":4.3},{"t":"20:00","v":4.3},{"t":"21:00","v":4.3},{"t":"22:00","v":4.3},{"t":"23:00","v":4.3},{"t":"24:00","v":4.3},{"t":"25:00","v":4.4},{"t":"26:00","v":4.8},{"t":"27:00","v":5.2},{"t":"28:00","v":5.2},{"t":"29:00","v":5.3},{"t":"30:00","v":7.0},{"t":"31:00","v":5.4},{"t":"32:00","v":4.8},{"t":"33:00","v":3.5},{"t":"34:00","v":2.2},{"t":"35:00","v":1.2},{"t":"35:09","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-11","date":"2026-08-25","time":"19:44","activity":"Course légère","duration":30.1333,"distance":2.5,"avgSpeed":4.9779,"pace":12.0533,"hrAvg":124.0,"hrMax":150.0,"pulse":null,"incline":2.0,"calories":225.0,"effort":4.0,"source":"Photos séance 25 août + Apple Watch","notes":"Fin déclarée : 19:44. Tapis : 30:08, 2,50 km, vitesse affichée moy. 5,0 km/h (max. 7,0 ; min. 1,0), inclinaison moy. 2 % (max. 15 % ; min. 0 %), 168 kcal, 4,9 MET, FC tapis moy. 127 BPM et max. 178 BPM. Apple Watch : Indoor Run, durée 30:38, 2,01 km, allure 15:11/km, cadence moyenne 95 pas/min, FC moy. 124 BPM (106–150), 225 kcal actives et 285 kcal totales, effort 4/10 Modéré. Distance et durée retenues : tapis ; FC, calories actives et effort retenus : Apple Watch.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.1},{"t":"2:00","v":4.5},{"t":"3:00","v":4.5},{"t":"4:00","v":4.5},{"t":"5:00","v":5.0},{"t":"6:00","v":5.2},{"t":"7:00","v":5.5},{"t":"8:00","v":6.3},{"t":"9:00","v":5.0},{"t":"10:00","v":4.9},{"t":"11:00","v":5.4},{"t":"12:00","v":5.6},{"t":"13:00","v":7.0},{"t":"14:00","v":5.0},{"t":"15:00","v":4.9},{"t":"16:00","v":4.9},{"t":"17:00","v":4.9},{"t":"18:00","v":4.9},{"t":"19:00","v":4.9},{"t":"20:00","v":5.1},{"t":"21:00","v":6.4},{"t":"22:00","v":5.0},{"t":"23:00","v":4.8},{"t":"24:00","v":4.8},{"t":"25:00","v":5.3},{"t":"26:00","v":6.3},{"t":"27:00","v":6.3},{"t":"28:00","v":5.1},{"t":"29:00","v":4.4},{"t":"30:00","v":1.3},{"t":"30:08","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-12","date":"2026-08-26","time":"12:10","activity":"Course légère","duration":15.3667,"distance":1.4,"avgSpeed":5.4664,"pace":10.9762,"hrAvg":null,"hrMax":null,"pulse":null,"incline":1.0,"calories":95.0,"effort":null,"source":"Photos séance 26 août","notes":"Fin déclarée : 12:10. Tapis : 15:22, 1,40 km, vitesse affichée moy. 5,4 km/h (max. 8,0 ; min. 1,0), inclinaison moy. 1 % (max. 15 % ; min. 0 %), 95 kcal, 3,7 MET, FC tapis non mesurée (0 BPM). Apple Watch : données non fournies pour cette séance. Distance, durée et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.5},{"t":"2:00","v":5.1},{"t":"3:00","v":5.6},{"t":"4:00","v":6.0},{"t":"5:00","v":6.5},{"t":"6:00","v":5.4},{"t":"7:00","v":5.6},{"t":"8:00","v":7.2},{"t":"9:00","v":7.8},{"t":"10:00","v":5.8},{"t":"11:00","v":5.8},{"t":"12:00","v":7.0},{"t":"13:00","v":7.2},{"t":"14:00","v":5.4},{"t":"15:00","v":4.5},{"t":"15:22","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-13","date":"2026-08-26","time":"20:00","activity":"Course légère","duration":15.9667,"distance":1.5,"avgSpeed":5.6367,"pace":10.6444,"hrAvg":102.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":89.0,"effort":null,"source":"Photos séance 26 août - séance 2","notes":"Deuxième séance du 26 août. Fin déclarée : 20:00. Tapis : 15:58, 1,50 km, vitesse affichée moy. 5,5 km/h (max. 7,5 ; min. 1,0), inclinaison moy. 0 % (max. 11 % ; min. 0 %), 89 kcal, 2,3 MET, FC moy. 102 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.5},{"t":"2:00","v":5.2},{"t":"3:00","v":5.5},{"t":"4:00","v":5.5},{"t":"5:00","v":5.0},{"t":"6:00","v":5.8},{"t":"7:00","v":6.5},{"t":"8:00","v":7.5},{"t":"9:00","v":5.5},{"t":"10:00","v":6.8},{"t":"11:00","v":5.5},{"t":"12:00","v":5.5},{"t":"13:00","v":7.3},{"t":"14:00","v":5.6},{"t":"15:00","v":4.8},{"t":"15:58","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-14","date":"2026-08-27","time":"13:00","activity":"Course légère","duration":21.9167,"distance":2.0,"avgSpeed":5.4753,"pace":10.9583,"hrAvg":142.0,"hrMax":null,"pulse":null,"incline":2.0,"calories":129.0,"effort":null,"source":"Photos séance 27 août","notes":"Fin déclarée : 13:00. Tapis : 21:55, 2,00 km, vitesse affichée moy. 5,4 km/h (max. 7,8 ; min. 1,0), inclinaison moy. 2 % (max. 15 % ; min. 0 %), 129 kcal, 4,6 MET, FC moy. 142 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.1},{"t":"2:00","v":4.6},{"t":"3:00","v":4.7},{"t":"4:00","v":4.8},{"t":"5:00","v":4.8},{"t":"6:00","v":5.0},{"t":"7:00","v":5.1},{"t":"8:00","v":6.7},{"t":"9:00","v":5.2},{"t":"10:00","v":5.0},{"t":"11:00","v":5.0},{"t":"12:00","v":5.0},{"t":"13:00","v":5.1},{"t":"14:00","v":7.0},{"t":"15:00","v":5.0},{"t":"16:00","v":4.6},{"t":"17:00","v":4.6},{"t":"18:00","v":4.8},{"t":"19:00","v":7.2},{"t":"20:00","v":7.0},{"t":"21:00","v":4.0},{"t":"21:55","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-15","date":"2026-08-27","time":"20:00","activity":"Course légère","duration":16.0333,"distance":1.5,"avgSpeed":5.6133,"pace":10.6889,"hrAvg":null,"hrMax":null,"pulse":null,"incline":0.0,"calories":91.0,"effort":null,"source":"Photos séance 27 août - séance 2","notes":"Deuxième séance du 27 août. Fin déclarée : 20:00. Tapis : 16:02, 1,50 km, vitesse affichée moy. 5,7 km/h (max. 8,5 ; min. 1,0), inclinaison moy. 0 % (max. 0 % ; min. 0 %), 91 kcal, 1,1 MET, FC tapis non mesurée (0 BPM). Apple Watch : données non fournies pour cette séance. Distance, durée et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.8},{"t":"2:00","v":5.2},{"t":"3:00","v":5.4},{"t":"4:00","v":6.4},{"t":"5:00","v":7.3},{"t":"6:00","v":5.3},{"t":"7:00","v":6.2},{"t":"8:00","v":7.5},{"t":"9:00","v":5.2},{"t":"10:00","v":6.0},{"t":"11:00","v":7.7},{"t":"12:00","v":5.1},{"t":"13:00","v":5.8},{"t":"14:00","v":8.5},{"t":"15:00","v":5.3},{"t":"16:00","v":2.0},{"t":"16:02","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-16","date":"2026-08-28","time":"13:10","activity":"Course","duration":16.3167,"distance":1.6,"avgSpeed":5.8836,"pace":10.1979,"hrAvg":91.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":103.0,"effort":null,"source":"Photos séance 28 août","notes":"Fin déclarée : 13:10. Tapis : 16:19, 1,60 km, vitesse affichée moy. 5,8 km/h (max. 8,6 ; min. 1,0), inclinaison moy. 0 % (max. 10 % ; min. 0 %), 103 kcal, 2,5 MET, FC moy. 91 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.5},{"t":"2:00","v":5.1},{"t":"3:00","v":5.5},{"t":"4:00","v":6.2},{"t":"5:00","v":7.0},{"t":"6:00","v":5.2},{"t":"7:00","v":5.1},{"t":"8:00","v":7.8},{"t":"9:00","v":5.1},{"t":"10:00","v":5.0},{"t":"11:00","v":7.9},{"t":"12:00","v":5.1},{"t":"13:00","v":5.0},{"t":"14:00","v":8.2},{"t":"15:00","v":5.0},{"t":"16:00","v":2.0},{"t":"16:19","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-17","date":"2026-08-28","time":"20:00","activity":"Course","duration":16.3333,"distance":1.6,"avgSpeed":5.8776,"pace":10.2083,"hrAvg":null,"hrMax":null,"pulse":null,"incline":0.0,"calories":98.0,"effort":null,"source":"Photos séance 28 août - séance 2","notes":"Deuxième séance du 28 août. Fin déclarée : 20:00. Tapis : 16:20, 1,60 km, vitesse affichée moy. 5,9 km/h (max. 9,1 ; min. 1,0), inclinaison moy. 0 % (max. 0 % ; min. 0 %), 98 kcal, 1,1 MET, FC tapis non mesurée (0 BPM). Apple Watch : données non fournies pour cette séance. Distance, durée et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.8},{"t":"2:00","v":5.2},{"t":"3:00","v":5.7},{"t":"4:00","v":6.2},{"t":"5:00","v":7.7},{"t":"6:00","v":8.7},{"t":"7:00","v":4.7},{"t":"8:00","v":5.2},{"t":"9:00","v":7.8},{"t":"10:00","v":4.8},{"t":"11:00","v":5.4},{"t":"12:00","v":8.6},{"t":"13:00","v":4.8},{"t":"14:00","v":5.8},{"t":"15:00","v":8.5},{"t":"16:00","v":4.2},{"t":"16:20","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-18","date":"2026-08-29","time":"13:23","activity":"Mixte","duration":11.75,"distance":1.1,"avgSpeed":5.617,"pace":10.6818,"hrAvg":117.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":65.0,"effort":null,"source":"Photos séance 29 août","notes":"Fin déclarée : 13:23. Tapis : 11:45, 1,10 km, vitesse affichée moy. 5,6 km/h (max. 8,2 ; min. 1,0), inclinaison moy. 0 %, 65 kcal, 1,2 MET, FC moy. 117 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.5},{"t":"2:00","v":4.7},{"t":"3:00","v":4.9},{"t":"4:00","v":5.4},{"t":"5:00","v":5.8},{"t":"6:00","v":7.6},{"t":"7:00","v":7.8},{"t":"8:00","v":5.2},{"t":"9:00","v":5.1},{"t":"10:00","v":8.0},{"t":"11:00","v":5.0},{"t":"11:45","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-19","date":"2026-08-29","time":"20:25","activity":"Mixte","duration":30.8667,"distance":3.1,"avgSpeed":6.0259,"pace":9.957,"hrAvg":83.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":198.0,"effort":null,"source":"Photos séance 29 août - séance 2","notes":"Deuxième séance du 29 août. Fin déclarée : 20:25. Tapis : 30:52, 3,10 km, vitesse affichée moy. 6,0 km/h (max. 8,0 ; min. 1,0), inclinaison moy. 0 %, 198 kcal, 1,2 MET, FC moy. 83 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.5},{"t":"2:00","v":5.2},{"t":"3:00","v":5.5},{"t":"4:00","v":6.6},{"t":"5:00","v":6.6},{"t":"6:00","v":5.0},{"t":"7:00","v":6.0},{"t":"8:00","v":7.2},{"t":"9:00","v":5.0},{"t":"10:00","v":6.0},{"t":"11:00","v":7.2},{"t":"12:00","v":5.0},{"t":"13:00","v":5.5},{"t":"14:00","v":7.3},{"t":"15:00","v":5.0},{"t":"16:00","v":6.0},{"t":"17:00","v":7.2},{"t":"18:00","v":5.0},{"t":"19:00","v":5.4},{"t":"20:00","v":7.0},{"t":"21:00","v":5.0},{"t":"22:00","v":5.5},{"t":"23:00","v":6.8},{"t":"24:00","v":5.0},{"t":"25:00","v":5.6},{"t":"26:00","v":6.8},{"t":"27:00","v":5.0},{"t":"28:00","v":5.8},{"t":"29:00","v":7.4},{"t":"30:00","v":5.0},{"t":"30:52","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-20","date":"2026-08-30","time":"19:40","activity":"Mixte","duration":30.9667,"distance":3.0,"avgSpeed":5.8127,"pace":10.3222,"hrAvg":82.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":184.0,"effort":null,"source":"Photos séance 30 août","notes":"Fin déclarée : 19:40. Tapis : 30:58, 3,00 km, vitesse affichée moy. 5,8 km/h (max. 8,0 ; min. 1,0), inclinaison moy. 0 %, 184 kcal, 1,1 MET, FC moy. 82 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.5},{"t":"2:00","v":5.2},{"t":"3:00","v":5.5},{"t":"4:00","v":6.7},{"t":"5:00","v":6.7},{"t":"6:00","v":5.1},{"t":"7:00","v":6.0},{"t":"8:00","v":7.3},{"t":"9:00","v":5.0},{"t":"10:00","v":6.0},{"t":"11:00","v":7.4},{"t":"12:00","v":5.0},{"t":"13:00","v":5.8},{"t":"14:00","v":7.2},{"t":"15:00","v":5.0},{"t":"16:00","v":6.1},{"t":"17:00","v":7.1},{"t":"18:00","v":5.0},{"t":"19:00","v":5.8},{"t":"20:00","v":7.0},{"t":"21:00","v":5.0},{"t":"22:00","v":5.8},{"t":"23:00","v":6.9},{"t":"24:00","v":5.0},{"t":"25:00","v":5.8},{"t":"26:00","v":6.9},{"t":"27:00","v":5.0},{"t":"28:00","v":5.8},{"t":"29:00","v":7.0},{"t":"30:00","v":4.5},{"t":"30:58","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-21","date":"2026-09-01","time":"13:20","activity":"Mixte","duration":21.5667,"distance":2.1,"avgSpeed":5.8423,"pace":10.2698,"hrAvg":87.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":132.0,"effort":null,"source":"Photos séance 1er septembre","notes":"Fin déclarée : 13:20. Tapis : 21:34, 2,10 km, vitesse affichée moy. 5,9 km/h (max. 9,0 ; min. 1,0), inclinaison moy. 0 %, 132 kcal, 1,1 MET, FC moy. 87 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.4},{"t":"2:00","v":5.0},{"t":"3:00","v":5.4},{"t":"4:00","v":5.8},{"t":"5:00","v":6.2},{"t":"6:00","v":6.2},{"t":"7:00","v":5.0},{"t":"8:00","v":6.0},{"t":"9:00","v":6.8},{"t":"10:00","v":6.8},{"t":"11:00","v":5.0},{"t":"12:00","v":6.0},{"t":"13:00","v":6.9},{"t":"14:00","v":6.9},{"t":"15:00","v":5.0},{"t":"16:00","v":6.0},{"t":"17:00","v":7.4},{"t":"18:00","v":7.4},{"t":"19:00","v":5.2},{"t":"20:00","v":4.0},{"t":"21:00","v":2.2},{"t":"21:34","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-22","date":"2026-09-01","time":"19:20","activity":"Mixte","duration":21.65,"distance":2.1,"avgSpeed":5.8199,"pace":10.3095,"hrAvg":85.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":133.0,"effort":null,"source":"Photos séance 1er septembre - séance 2","notes":"Deuxième séance du 1er septembre. Fin déclarée : 19:20. Tapis : 21:39, 2,10 km, vitesse affichée moy. 5,8 km/h (max. 9,0 ; min. 1,0), inclinaison moy. 0 %, 133 kcal, 1,1 MET, FC moy. 85 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.5},{"t":"2:00","v":5.1},{"t":"3:00","v":5.5},{"t":"4:00","v":6.2},{"t":"5:00","v":6.2},{"t":"6:00","v":5.0},{"t":"7:00","v":6.0},{"t":"8:00","v":7.2},{"t":"9:00","v":7.2},{"t":"10:00","v":5.0},{"t":"11:00","v":6.0},{"t":"12:00","v":7.4},{"t":"13:00","v":7.4},{"t":"14:00","v":5.0},{"t":"15:00","v":6.0},{"t":"16:00","v":7.7},{"t":"17:00","v":7.7},{"t":"18:00","v":5.2},{"t":"19:00","v":8.2},{"t":"20:00","v":5.0},{"t":"21:00","v":3.8},{"t":"21:39","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-23","date":"2026-09-02","time":"13:08","activity":"Course","duration":23.0167,"distance":2.3,"avgSpeed":5.9957,"pace":10.0072,"hrAvg":87.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":148.0,"effort":null,"source":"Photos séance 2 septembre","notes":"Fin déclarée : 13:08. Tapis : 23:01, 2,30 km, vitesse affichée moy. 6,0 km/h (max. 9,0 ; min. 1,0), inclinaison moy. 0 %, 148 kcal, 1,1 MET, FC moy. 87 BPM. Valeurs max/min d’inclinaison non fournies sur les photos. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.3},{"t":"2:00","v":4.9},{"t":"3:00","v":5.3},{"t":"4:00","v":6.2},{"t":"5:00","v":6.2},{"t":"6:00","v":6.2},{"t":"7:00","v":6.8},{"t":"8:00","v":7.8},{"t":"9:00","v":7.8},{"t":"10:00","v":5.2},{"t":"11:00","v":5.2},{"t":"12:00","v":5.2},{"t":"13:00","v":5.2},{"t":"14:00","v":6.8},{"t":"15:00","v":7.4},{"t":"16:00","v":7.4},{"t":"17:00","v":5.2},{"t":"18:00","v":5.2},{"t":"19:00","v":7.5},{"t":"20:00","v":7.5},{"t":"21:00","v":5.1},{"t":"22:00","v":4.4},{"t":"23:00","v":1.5},{"t":"23:01","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-24","date":"2026-09-03","time":"19:30","activity":"Marche rapide","duration":24.5667,"distance":2.1,"avgSpeed":5.1289,"pace":11.6984,"hrAvg":null,"hrMax":null,"pulse":null,"incline":0.0,"calories":97.0,"effort":null,"source":"Photos séance 3 septembre","notes":"Fin déclarée : 19:30. Tapis : 24:34, 2,10 km, vitesse affichée moy. 5,0 km/h (max. 5,6 ; min. 1,0), inclinaison moy. 0 %, 97 kcal, 1,1 MET, FC tapis non mesurée (0 BPM). Apple Watch : données non fournies pour cette séance. Distance, durée et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.6},{"t":"2:00","v":4.8},{"t":"3:00","v":4.9},{"t":"4:00","v":5.0},{"t":"5:00","v":5.0},{"t":"6:00","v":5.1},{"t":"7:00","v":5.1},{"t":"8:00","v":5.2},{"t":"9:00","v":5.2},{"t":"10:00","v":5.2},{"t":"11:00","v":5.2},{"t":"12:00","v":5.2},{"t":"13:00","v":5.2},{"t":"14:00","v":5.2},{"t":"15:00","v":5.2},{"t":"16:00","v":5.2},{"t":"17:00","v":5.2},{"t":"18:00","v":5.3},{"t":"19:00","v":5.3},{"t":"20:00","v":5.3},{"t":"21:00","v":5.4},{"t":"22:00","v":5.4},{"t":"23:00","v":5.5},{"t":"24:00","v":5.4},{"t":"24:34","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-25","date":"2026-09-04","time":"20:00","activity":"Marche rapide","duration":30.1333,"distance":2.4,"avgSpeed":4.7788,"pace":12.5556,"hrAvg":106.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":121.0,"effort":null,"source":"Photos séance 4 septembre","notes":"Fin déclarée : 20:00. Tapis : 30:08, 2,40 km, vitesse affichée moy. 4,9 km/h (max. 6,0 ; min. 1,0), inclinaison moy. 0 %, 121 kcal, 1,1 MET, FC moy. 106 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.0},{"t":"2:00","v":4.3},{"t":"3:00","v":4.5},{"t":"4:00","v":4.7},{"t":"5:00","v":4.8},{"t":"6:00","v":4.8},{"t":"7:00","v":4.8},{"t":"8:00","v":4.8},{"t":"9:00","v":4.8},{"t":"10:00","v":4.8},{"t":"11:00","v":4.8},{"t":"12:00","v":4.8},{"t":"13:00","v":4.8},{"t":"14:00","v":4.8},{"t":"15:00","v":4.8},{"t":"16:00","v":4.8},{"t":"17:00","v":4.8},{"t":"18:00","v":4.8},{"t":"19:00","v":4.9},{"t":"20:00","v":5.0},{"t":"21:00","v":5.0},{"t":"22:00","v":5.0},{"t":"23:00","v":5.0},{"t":"24:00","v":5.1},{"t":"25:00","v":5.2},{"t":"26:00","v":5.3},{"t":"27:00","v":5.4},{"t":"28:00","v":5.5},{"t":"29:00","v":5.6},{"t":"30:00","v":5.4},{"t":"30:08","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-26","date":"2026-09-05","time":"13:40","activity":"Marche rapide","duration":17.3833,"distance":1.4,"avgSpeed":4.8322,"pace":12.4167,"hrAvg":95.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":67.0,"effort":null,"source":"Photos séance 5 septembre","notes":"Fin déclarée : 13:40. Tapis : 17:23, 1,40 km, vitesse affichée moy. 4,9 km/h (max. 5,8 ; min. 1,0), inclinaison moy. 0 %, 67 kcal, 1,1 MET, FC moy. 95 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.1},{"t":"2:00","v":4.2},{"t":"3:00","v":4.3},{"t":"4:00","v":4.6},{"t":"5:00","v":4.6},{"t":"6:00","v":5.0},{"t":"7:00","v":5.1},{"t":"8:00","v":5.1},{"t":"9:00","v":5.1},{"t":"10:00","v":5.1},{"t":"11:00","v":5.1},{"t":"12:00","v":5.1},{"t":"13:00","v":5.2},{"t":"14:00","v":5.2},{"t":"15:00","v":5.1},{"t":"16:00","v":5.0},{"t":"17:00","v":4.7},{"t":"17:23","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-27","date":"2026-09-05","time":"20:26","activity":"Marche rapide","duration":24.3667,"distance":2.1,"avgSpeed":5.171,"pace":11.6032,"hrAvg":78.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":108.0,"effort":null,"source":"Photos séance 5 septembre - séance 2","notes":"Deuxième séance du 5 septembre. Fin déclarée : 20:26. Tapis : 24:22, 2,10 km, vitesse affichée moy. 5,1 km/h (max. 6,4 ; min. 1,0), inclinaison moy. 0 %, 108 kcal, 1,1 MET, FC moy. 78 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.2},{"t":"2:00","v":4.5},{"t":"3:00","v":4.6},{"t":"4:00","v":5.0},{"t":"5:00","v":5.0},{"t":"6:00","v":5.4},{"t":"7:00","v":5.8},{"t":"8:00","v":5.8},{"t":"9:00","v":5.0},{"t":"10:00","v":4.4},{"t":"11:00","v":4.4},{"t":"12:00","v":5.0},{"t":"13:00","v":5.5},{"t":"14:00","v":6.0},{"t":"15:00","v":5.8},{"t":"16:00","v":5.8},{"t":"17:00","v":4.4},{"t":"18:00","v":4.4},{"t":"19:00","v":5.0},{"t":"20:00","v":5.5},{"t":"21:00","v":5.8},{"t":"22:00","v":5.8},{"t":"23:00","v":5.0},{"t":"24:00","v":4.8},{"t":"24:22","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-28","date":"2026-09-06","time":"12:40","activity":"Marche rapide","duration":29.7333,"distance":2.6,"avgSpeed":5.2466,"pace":11.4359,"hrAvg":122.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":148.0,"effort":null,"source":"Photos séance 6 septembre","notes":"Fin déclarée : 12:40. Tapis : 29:44, 2,60 km, vitesse affichée moy. 5,2 km/h (max. 6,1 ; min. 1,0), inclinaison moy. 0 %, 148 kcal, 1,1 MET, FC moy. 122 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":3.8},{"t":"2:00","v":4.0},{"t":"3:00","v":4.1},{"t":"4:00","v":4.2},{"t":"5:00","v":4.3},{"t":"6:00","v":4.5},{"t":"7:00","v":4.6},{"t":"8:00","v":4.6},{"t":"9:00","v":4.7},{"t":"10:00","v":4.7},{"t":"11:00","v":4.7},{"t":"12:00","v":4.8},{"t":"13:00","v":4.9},{"t":"14:00","v":5.0},{"t":"15:00","v":5.1},{"t":"16:00","v":5.2},{"t":"17:00","v":5.3},{"t":"18:00","v":5.1},{"t":"19:00","v":4.2},{"t":"20:00","v":4.6},{"t":"21:00","v":5.0},{"t":"22:00","v":5.0},{"t":"23:00","v":5.0},{"t":"24:00","v":5.0},{"t":"25:00","v":5.0},{"t":"26:00","v":4.8},{"t":"27:00","v":4.5},{"t":"28:00","v":4.1},{"t":"29:00","v":3.2},{"t":"29:44","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-29","date":"2026-09-06","time":"19:52","activity":"Marche rapide","duration":31.8167,"distance":2.7,"avgSpeed":5.0917,"pace":11.784,"hrAvg":102.0,"hrMax":null,"pulse":null,"incline":0.0,"calories":166.0,"effort":null,"source":"Photos séance 6 septembre - séance 2","notes":"Deuxième séance du 6 septembre. Fin déclarée : 19:52. Tapis : 31:49, 2,70 km, vitesse affichée moy. 5,1 km/h (max. 6,0 ; min. 1,0), inclinaison moy. 0 %, 166 kcal, 1,1 MET, FC moy. 102 BPM. Apple Watch : données non fournies pour cette séance. Distance, durée, FC et calories retenues : tapis.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.0},{"t":"2:00","v":4.1},{"t":"3:00","v":4.2},{"t":"4:00","v":4.4},{"t":"5:00","v":4.5},{"t":"6:00","v":4.6},{"t":"7:00","v":4.7},{"t":"8:00","v":4.8},{"t":"9:00","v":4.8},{"t":"10:00","v":4.8},{"t":"11:00","v":4.9},{"t":"12:00","v":5.0},{"t":"13:00","v":5.0},{"t":"14:00","v":5.1},{"t":"15:00","v":5.2},{"t":"16:00","v":5.3},{"t":"17:00","v":5.2},{"t":"18:00","v":4.0},{"t":"19:00","v":4.2},{"t":"20:00","v":4.6},{"t":"21:00","v":4.9},{"t":"22:00","v":5.0},{"t":"23:00","v":5.0},{"t":"24:00","v":5.0},{"t":"25:00","v":5.0},{"t":"26:00","v":5.0},{"t":"27:00","v":4.9},{"t":"28:00","v":4.7},{"t":"29:00","v":4.3},{"t":"30:00","v":3.7},{"t":"31:00","v":2.0},{"t":"31:49","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-30","date":"2026-09-07","time":"12:32","activity":"Marche rapide","duration":28.2333,"distance":2.4,"avgSpeed":5.1004,"pace":11.7639,"hrAvg":109.0,"hrMax":114.0,"pulse":null,"incline":0.0,"calories":114.0,"effort":3.0,"source":"Photos tapis + Apple Watch 7 septembre - séance 1","notes":"Première séance du 7 septembre. Fin déclarée : 12:32. Tapis : 28:14, 2,40 km, vitesse affichée moy. 5,0 km/h (max. 6,2 ; min. 1,0), inclinaison moy. 0 %, 121 kcal, FC moy. 132 BPM. Apple Watch : Marche en intérieur, 12:04–12:32, 28:09, 2,00 km, allure moyenne 14:03 min/km, 114 kcal actives, 169 kcal totales, FC moyenne 109 BPM, plage visible environ 101–114 BPM, effort 3 (Facile). Splits Watch : km 1 en 14:21 à 108 BPM ; km 2 en 13:44 à 109 BPM ; reste 0:03 à 17:12 min/km. Zone 1 : 25:52 sous 135 BPM ; zones 2 à 5 : 0:00. FC post-exercice visible : 103 BPM à l'arrêt, 75 BPM à 1 min, 76 BPM à 2 min. Référence retenue : durée et distance du tapis ; FC, calories et effort de l’Apple Watch.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.0},{"t":"2:00","v":4.2},{"t":"3:00","v":4.4},{"t":"4:00","v":4.6},{"t":"5:00","v":4.7},{"t":"6:00","v":4.8},{"t":"7:00","v":4.9},{"t":"8:00","v":4.9},{"t":"9:00","v":5.0},{"t":"10:00","v":5.0},{"t":"11:00","v":5.0},{"t":"12:00","v":5.0},{"t":"13:00","v":5.0},{"t":"14:00","v":5.0},{"t":"15:00","v":5.0},{"t":"16:00","v":5.1},{"t":"17:00","v":5.2},{"t":"18:00","v":5.2},{"t":"19:00","v":5.2},{"t":"20:00","v":5.2},{"t":"21:00","v":5.2},{"t":"22:00","v":5.2},{"t":"23:00","v":5.3},{"t":"24:00","v":5.3},{"t":"25:00","v":5.2},{"t":"26:00","v":5.0},{"t":"27:00","v":4.3},{"t":"28:00","v":2.2},{"t":"28:14","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-31","date":"2026-09-07","time":"20:12","activity":"Marche rapide","duration":28.8167,"distance":2.5,"avgSpeed":5.2053,"pace":11.5267,"hrAvg":109.0,"hrMax":118.0,"pulse":null,"incline":0.0,"calories":156.0,"effort":3.0,"source":"Photos tapis + Apple Watch 7 septembre - séance 2","notes":"Deuxième séance du 7 septembre. Fin déclarée : 20:12. Tapis : 28:49, 2,50 km, vitesse affichée moy. 5,2 km/h (max. 6,0 ; min. 1,0), inclinaison moy. 0 %, 144 kcal, FC moy. 117 BPM. Apple Watch : Marche en intérieur, 28:45, 2,13 km, allure moyenne 13:30 min/km, 156 kcal actives, 212 kcal totales, FC moyenne 109 BPM, plage 91–118 BPM, effort 3 (Facile), environ 19:43–20:12. Référence retenue : durée et distance du tapis ; FC, calories et effort de l’Apple Watch.","status":"Confirmé","speeds":[{"t":"0:00","v":1.0},{"t":"1:00","v":4.0},{"t":"2:00","v":4.2},{"t":"3:00","v":4.3},{"t":"4:00","v":4.5},{"t":"5:00","v":4.7},{"t":"6:00","v":4.8},{"t":"7:00","v":5.0},{"t":"8:00","v":5.1},{"t":"9:00","v":5.2},{"t":"10:00","v":5.2},{"t":"11:00","v":5.2},{"t":"12:00","v":5.3},{"t":"13:00","v":5.4},{"t":"14:00","v":5.5},{"t":"15:00","v":4.8},{"t":"16:00","v":4.7},{"t":"17:00","v":4.8},{"t":"18:00","v":5.0},{"t":"19:00","v":5.4},{"t":"20:00","v":5.5},{"t":"21:00","v":5.5},{"t":"22:00","v":5.5},{"t":"23:00","v":4.8},{"t":"24:00","v":4.7},{"t":"25:00","v":5.0},{"t":"26:00","v":5.4},{"t":"27:00","v":5.2},{"t":"28:00","v":3.0},{"t":"28:49","v":1.0}],"speedSource":"Courbe reconstruite depuis la photo du tapis : vitesses minute par minute estimées (pas un export numérique brut)."},{"id":"seed-2026-09-14-1956","date":"2026-09-14","time":"19:56","activity":"Marche rapide","duration":20.033333333333335,"distance":1.7,"avgSpeed":5.091514143094842,"pace":11.784313725490197,"hrAvg":108,"hrMax":null,"pulse":93,"incline":null,"calories":110,"effort":3,"source":"Photos tapis + Apple Watch 14 septembre","notes":"Fin déclarée : 19:56. Tapis : 20:02, 1,70 km, vitesse moyenne affichée 5,2 km/h (max. 6,0 ; min. 1,0), 94 kcal, FC moyenne 93 BPM. Apple Watch : Marche en intérieur, 20:05, 1,40 km, allure moyenne 14:17 min/km, 110 kcal actives, 149 kcal totales, FC moyenne 108 BPM, effort 3 (Facile). Référence retenue dans l'app : durée et distance du tapis ; FC, calories actives et effort de l’Apple Watch.","status":"Confirmé","speeds":[],"speedSource":"Courbe minute par minute non ajoutée : valeurs détaillées non disponibles dans le contexte accessible."}];
+const INITIAL_SESSIONS = [];
 const STORAGE_KEY = "siltride_betanouvellevague_v1";
 const SOURCE_STORAGE_KEY = "stride_treadmill_BetaTEST_v1";
 const GOAL_KEY = "siltride_betanouvellevague_goals_v1";
 const BACKUP_KEY = "siltride_betanouvellevague_backup_v1";
 const WEIGHT_KEY = "siltride_weights_v1";
+const CLOUD_PENDING_KEY = "siltride_cloud_pending_v1";
+const CLOUD_SHADOW_KEY = "siltride_cloud_shadow_v1";
+const CLOUD_CONFIG = window.SILTRIDE_CONFIG || {};
+let supabaseClient = null;
+let cloudUser = null;
+let cloudChannel = null;
+let cloudApplyingRemote = false;
+let cloudBusy = false;
+let cloudFlushTimer = null;
+let cloudPullTimer = null;
 const SPEED_BANDS = [
   {max:2.5,label:"≤ 2,5",color:"#1B8F5A"},
   {max:4.0,label:"2,6–4,0",color:"#65B741"},
@@ -1065,6 +1161,7 @@ function saveWeights(){
   weights=[...weights].sort((a,b)=>a.date.localeCompare(b.date));
   localStorage.setItem(WEIGHT_KEY,JSON.stringify(weights));
   renderWeight();
+  if(!cloudApplyingRemote)cloudLocalChanged("weights");
 }
 function loadSessions(){
   try{
@@ -1085,7 +1182,241 @@ function loadSessions(){
   }catch(e){}
   const initial=clone(INITIAL_SESSIONS); localStorage.setItem(STORAGE_KEY,JSON.stringify(initial)); return initial;
 }
-function saveSessions(){localStorage.setItem(STORAGE_KEY,JSON.stringify(sessions)); renderAll()}
+function saveSessions(){
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(sessions));
+  renderAll();
+  if(!cloudApplyingRemote)cloudLocalChanged("sessions");
+}
+
+function cloudIsConfigured(){
+  const u=String(CLOUD_CONFIG.supabaseUrl||"").trim();
+  const k=String(CLOUD_CONFIG.supabasePublishableKey||"").trim();
+  return /^https:\/\/.+\.supabase\.co$/i.test(u) && k.length>20 && !u.includes("PASTE_") && !k.includes("PASTE_");
+}
+function cloudTable(kind){return kind==="sessions"?"siltride_sessions":"siltride_weights"}
+function cloudIdKey(kind){return kind==="sessions"?"session_id":"weight_id"}
+function cloudItems(kind){return kind==="sessions"?sessions:weights}
+function cloudFingerprint(v){try{return JSON.stringify(v)}catch(e){return String(v)}}
+function cloudLoadPending(){
+  try{const x=JSON.parse(localStorage.getItem(CLOUD_PENDING_KEY)||"[]");return Array.isArray(x)?x:[]}catch(e){return []}
+}
+function cloudSavePending(q){localStorage.setItem(CLOUD_PENDING_KEY,JSON.stringify(q))}
+function cloudLoadShadow(){
+  try{
+    const x=JSON.parse(localStorage.getItem(CLOUD_SHADOW_KEY)||"null");
+    return x&&typeof x==="object"?x:{sessions:{},weights:{}};
+  }catch(e){return {sessions:{},weights:{}}}
+}
+function cloudMakeShadow(){
+  const make=arr=>Object.fromEntries(arr.map(x=>[String(x.id),cloudFingerprint(x)]));
+  return {sessions:make(sessions),weights:make(weights),updatedAt:new Date().toISOString()};
+}
+function cloudSetShadowFromLocal(){localStorage.setItem(CLOUD_SHADOW_KEY,JSON.stringify(cloudMakeShadow()))}
+function cloudQueueOp(kind,action,id,payload=null){
+  if(!cloudUser||!id)return;
+  let q=cloudLoadPending().filter(x=>!(x.kind===kind&&x.id===String(id)));
+  q.push({kind,action,id:String(id),payload:payload?clone(payload):null,queuedAt:new Date().toISOString()});
+  cloudSavePending(q);
+}
+function cloudCaptureDiff(kind){
+  if(!cloudUser||cloudApplyingRemote)return;
+  const shadow=cloudLoadShadow()[kind]||{};
+  const arr=cloudItems(kind);
+  const current={};
+  arr.forEach(item=>{
+    const id=String(item.id),fp=cloudFingerprint(item);current[id]=fp;
+    if(shadow[id]!==fp)cloudQueueOp(kind,"upsert",id,item);
+  });
+  Object.keys(shadow).forEach(id=>{if(!(id in current))cloudQueueOp(kind,"delete",id,null)});
+}
+function cloudLocalChanged(kind){
+  if(!cloudUser)return;
+  cloudCaptureDiff(kind);
+  cloudScheduleFlush();
+}
+function cloudScheduleFlush(){
+  clearTimeout(cloudFlushTimer);
+  cloudFlushTimer=setTimeout(()=>cloudFlushPending(),350);
+}
+function cloudStatus(state,text){
+  const pill=document.getElementById("cloudStatusPill"),label=document.getElementById("cloudStatusText");
+  if(pill){pill.className=`cloud-status-pill ${state||""}`.trim()}
+  if(label)label.textContent=text||"";
+  const email=document.getElementById("cloudAccountEmail");
+  if(email)email.textContent=cloudUser?.email||"Non connecté";
+}
+function cloudSetAuthMessage(text="",type=""){
+  const el=document.getElementById("cloudAuthMessage");if(!el)return;
+  el.textContent=text;el.className=`cloud-auth-message ${type}`.trim();
+}
+function cloudShowGate(){document.getElementById("cloudGate")?.classList.remove("hidden")}
+function cloudHideGate(){document.getElementById("cloudGate")?.classList.add("hidden")}
+async function cloudFlushPending(){
+  if(!supabaseClient||!cloudUser)return false;
+  if(!navigator.onLine){cloudStatus("offline","Hors ligne");return false}
+  if(cloudBusy)return false;
+  cloudBusy=true;cloudStatus("syncing","Synchronisation…");
+  try{
+    let q=cloudLoadPending();
+    while(q.length){
+      const op=q[0],table=cloudTable(op.kind),idKey=cloudIdKey(op.kind),now=new Date().toISOString();
+      let response;
+      if(op.action==="delete"){
+        const row={user_id:cloudUser.id,[idKey]:op.id,payload:{},updated_at:now,deleted_at:now};
+        response=await supabaseClient.from(table).upsert(row,{onConflict:`user_id,${idKey}`});
+      }else{
+        const row={user_id:cloudUser.id,[idKey]:op.id,payload:op.payload||{},updated_at:now,deleted_at:null};
+        response=await supabaseClient.from(table).upsert(row,{onConflict:`user_id,${idKey}`});
+      }
+      if(response.error)throw response.error;
+      q.shift();cloudSavePending(q);
+    }
+    cloudSetShadowFromLocal();
+    cloudStatus("synced","Synchronisé");
+    return true;
+  }catch(err){
+    console.error("SILTRIDE cloud flush",err);
+    cloudStatus(navigator.onLine?"error":"offline",navigator.onLine?"Erreur cloud":"Hors ligne");
+    return false;
+  }finally{cloudBusy=false}
+}
+async function cloudFetchRows(){
+  const [s,w]=await Promise.all([
+    supabaseClient.from("siltride_sessions").select("session_id,payload,updated_at,deleted_at").eq("user_id",cloudUser.id),
+    supabaseClient.from("siltride_weights").select("weight_id,payload,updated_at,deleted_at").eq("user_id",cloudUser.id)
+  ]);
+  if(s.error)throw s.error;if(w.error)throw w.error;
+  return {sessions:s.data||[],weights:w.data||[]};
+}
+function cloudMergeFirst(kind,remoteRows,localItems){
+  const idKey=cloudIdKey(kind),remoteActive=new Map(),remoteDeleted=new Set();
+  remoteRows.forEach(r=>{
+    const id=String(r[idKey]);
+    if(r.deleted_at)remoteDeleted.add(id);else if(r.payload)remoteActive.set(id,r.payload);
+  });
+  const merged=[];
+  remoteActive.forEach((payload,id)=>merged.push({...clone(payload),id}));
+  localItems.forEach(item=>{
+    const id=String(item.id);
+    if(remoteDeleted.has(id)||remoteActive.has(id))return;
+    merged.push(clone(item));
+    cloudQueueOp(kind,"upsert",id,item);
+  });
+  return merged;
+}
+async function cloudApplyRemoteRows(rows){
+  const activeSessions=rows.sessions.filter(r=>!r.deleted_at&&r.payload).map(r=>({...clone(r.payload),id:String(r.session_id)}));
+  const activeWeights=rows.weights.filter(r=>!r.deleted_at&&r.payload).map(r=>({...clone(r.payload),id:String(r.weight_id)}));
+  cloudApplyingRemote=true;
+  try{
+    sessions=activeSessions;
+    weights=activeWeights.sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(sessions));
+    localStorage.setItem(WEIGHT_KEY,JSON.stringify(weights));
+    if(sessions.length){
+      selectedMonth=getExistingOrLatest(selectedMonth);
+      calendarMonth=getExistingOrLatest(calendarMonth);
+      dailyChartMonth=getExistingOrLatest(dailyChartMonth);
+    }
+    renderAll();
+    cloudSetShadowFromLocal();
+  }finally{cloudApplyingRemote=false}
+}
+async function cloudPull(){
+  if(!supabaseClient||!cloudUser)return false;
+  if(!navigator.onLine){cloudStatus("offline","Hors ligne");return false}
+  if(cloudLoadPending().length){
+    const flushed=await cloudFlushPending();if(!flushed)return false;
+  }
+  cloudStatus("syncing","Mise à jour…");
+  try{
+    const rows=await cloudFetchRows();
+    await cloudApplyRemoteRows(rows);
+    cloudStatus("synced","Synchronisé");
+    return true;
+  }catch(err){
+    console.error("SILTRIDE cloud pull",err);
+    cloudStatus("error","Erreur cloud");
+    return false;
+  }
+}
+function cloudDebouncedPull(){
+  clearTimeout(cloudPullTimer);
+  cloudPullTimer=setTimeout(()=>cloudPull(),500);
+}
+function cloudSubscribe(){
+  if(cloudChannel){supabaseClient.removeChannel(cloudChannel);cloudChannel=null}
+  cloudChannel=supabaseClient.channel(`siltride-${cloudUser.id}`)
+    .on("postgres_changes",{event:"*",schema:"public",table:"siltride_sessions",filter:`user_id=eq.${cloudUser.id}`},()=>cloudDebouncedPull())
+    .on("postgres_changes",{event:"*",schema:"public",table:"siltride_weights",filter:`user_id=eq.${cloudUser.id}`},()=>cloudDebouncedPull())
+    .subscribe();
+}
+async function cloudInitialSync(){
+  if(!supabaseClient||!cloudUser)return;
+  cloudStatus("syncing","Connexion…");
+  try{
+    const hasShadow=!!localStorage.getItem(CLOUD_SHADOW_KEY);
+    if(hasShadow){
+      cloudCaptureDiff("sessions");cloudCaptureDiff("weights");
+      if(cloudLoadPending().length){
+        const ok=await cloudFlushPending();if(!ok)return;
+      }
+      await cloudPull();
+    }else{
+      const remote=await cloudFetchRows();
+      const mergedSessions=cloudMergeFirst("sessions",remote.sessions,sessions);
+      const mergedWeights=cloudMergeFirst("weights",remote.weights,weights);
+      cloudApplyingRemote=true;
+      try{
+        sessions=mergedSessions;weights=mergedWeights.sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+        localStorage.setItem(STORAGE_KEY,JSON.stringify(sessions));
+        localStorage.setItem(WEIGHT_KEY,JSON.stringify(weights));
+        renderAll();
+      }finally{cloudApplyingRemote=false}
+      if(cloudLoadPending().length)await cloudFlushPending();
+      else cloudSetShadowFromLocal();
+      await cloudPull();
+    }
+    cloudSubscribe();
+    cloudStatus("synced","Synchronisé");
+  }catch(err){
+    console.error("SILTRIDE cloud init",err);
+    cloudStatus(navigator.onLine?"error":"offline",navigator.onLine?"Erreur cloud":"Hors ligne");
+  }
+}
+async function cloudStartSession(user){
+  cloudUser=user;
+  cloudHideGate();
+  cloudStatus("syncing","Connexion…");
+  await cloudInitialSync();
+}
+async function cloudStopSession(){
+  if(cloudChannel&&supabaseClient){await supabaseClient.removeChannel(cloudChannel)}
+  cloudChannel=null;cloudUser=null;
+  cloudStatus("","Déconnecté");
+  cloudShowGate();
+}
+async function initCloud(){
+  const warning=document.getElementById("cloudConfigWarning"),form=document.getElementById("cloudLoginForm");
+  if(!cloudIsConfigured()){
+    if(warning)warning.hidden=false;
+    if(form)form.querySelectorAll("input,button").forEach(x=>x.disabled=true);
+    cloudSetAuthMessage("Configure d’abord Supabase avec les fichiers fournis.","error");
+    cloudShowGate();cloudStatus("error","Non configuré");return;
+  }
+  if(warning)warning.hidden=true;
+  supabaseClient=window.supabase.createClient(CLOUD_CONFIG.supabaseUrl,CLOUD_CONFIG.supabasePublishableKey,{
+    auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
+  });
+  const {data,error}=await supabaseClient.auth.getSession();
+  if(error)console.error(error);
+  if(data?.session?.user)await cloudStartSession(data.session.user);else cloudShowGate();
+  supabaseClient.auth.onAuthStateChange((event,session)=>{
+    if(event==="SIGNED_OUT"||!session){cloudStopSession();return}
+    if(session?.user && session.user.id!==cloudUser?.id)cloudStartSession(session.user);
+  });
+}
+
 function pad(n){return String(n).padStart(2,"0")}
 function dateObj(iso){const [y,m,d]=iso.split("-").map(Number);return new Date(y,m-1,d)}
 function monthKey(iso){return iso.slice(0,7)}
@@ -2148,12 +2479,27 @@ document.getElementById("importFile").addEventListener("change",async e=>{
     const importedWeights=Array.isArray(data)?weights:(Array.isArray(data?.weights)?data.weights:[]);
     if(!Array.isArray(importedSessions))throw new Error();
     if(!confirm(`Importer ${importedSessions.length} séance(s)${importedWeights.length?` et ${importedWeights.length} relevé(s) de poids`:""} et remplacer les données locales ?`))return;
-    sessions=importedSessions;weights=importedWeights;localStorage.setItem(WEIGHT_KEY,JSON.stringify(weights));saveSessions();closeModal("manageModal");toast("Sauvegarde importée");
+    sessions=importedSessions;weights=importedWeights;saveWeights();saveSessions();closeModal("manageModal");toast("Sauvegarde importée et mise en file de synchronisation");
   }
   catch(err){alert("Fichier de sauvegarde invalide.")}finally{e.target.value=""}
 });
-document.getElementById("resetBtn").onclick=()=>{if(confirm("Rétablir les séances intégrées ? Les modifications locales seront remplacées.")){sessions=clone(INITIAL_SESSIONS);selectedMonth=latestMonthKey();calendarMonth=selectedMonth;saveSessions();closeModal("manageModal");toast("Données du tableur restaurées")}};
-document.getElementById("clearBtn").onclick=()=>{if(confirm("Effacer toutes les données locales ?")){sessions=[];weights=[];localStorage.setItem(STORAGE_KEY,"[]");localStorage.setItem(WEIGHT_KEY,"[]");selectedMonth=new Date().toISOString().slice(0,7);calendarMonth=selectedMonth;dailyChartMonth=selectedMonth;renderAll();closeModal("manageModal");toast("Données effacées")}};
+document.getElementById("resetBtn").onclick=async()=>{
+  if(!cloudUser){toast("Non connecté");return}
+  await cloudPull();closeModal("manageModal");toast("Données rechargées depuis le cloud");
+};
+document.getElementById("clearBtn").onclick=async()=>{
+  if(!confirm("Vider uniquement le cache local ? Les données Supabase ne seront pas supprimées."))return;
+  cloudApplyingRemote=true;
+  try{
+    sessions=[];weights=[];
+    localStorage.setItem(STORAGE_KEY,"[]");localStorage.setItem(WEIGHT_KEY,"[]");
+    localStorage.removeItem(CLOUD_SHADOW_KEY);
+    renderAll();
+  }finally{cloudApplyingRemote=false}
+  if(cloudUser&&navigator.onLine){await cloudPull();toast("Cache local rechargé depuis le cloud")}
+  else toast("Cache local vidé");
+  closeModal("manageModal");
+};
 
 let touchStart=null;
 document.getElementById("main").addEventListener("touchstart",e=>{if(e.target.closest("input,textarea,select,button,.card"))return;touchStart={x:e.touches[0].clientX,y:e.touches[0].clientY}},{passive:true});
@@ -2162,7 +2508,36 @@ document.getElementById("main").addEventListener("touchend",e=>{
   if(Math.abs(dx)>75&&Math.abs(dx)>Math.abs(dy)*1.4){const pages=["home","sessions","progress"],i=pages.indexOf(currentPage),n=dx<0?i+1:i-1;if(n>=0&&n<pages.length)goPage(pages[n])}
 },{passive:true});
 
+
+document.getElementById("cloudLoginForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(!supabaseClient)return;
+  const email=document.getElementById("cloudEmail").value.trim(),password=document.getElementById("cloudPassword").value;
+  cloudSetAuthMessage("Connexion…");
+  const {error}=await supabaseClient.auth.signInWithPassword({email,password});
+  if(error)cloudSetAuthMessage(error.message||"Connexion impossible.","error");
+});
+document.getElementById("cloudSignupBtn").onclick=async()=>{
+  if(!supabaseClient)return;
+  const email=document.getElementById("cloudEmail").value.trim(),password=document.getElementById("cloudPassword").value;
+  if(!email||password.length<6){cloudSetAuthMessage("Renseigne un e-mail et un mot de passe d’au moins 6 caractères.","error");return}
+  cloudSetAuthMessage("Création du compte…");
+  const {data,error}=await supabaseClient.auth.signUp({email,password});
+  if(error){cloudSetAuthMessage(error.message||"Création impossible.","error");return}
+  if(data?.session)cloudSetAuthMessage("Compte créé.","success");
+  else cloudSetAuthMessage("Compte créé. Si Supabase demande une confirmation e-mail, désactive cette option dans Auth pour reproduire le fonctionnement de tes autres apps.","success");
+};
+document.getElementById("cloudSyncNowBtn").onclick=async()=>{await cloudPull();toast("Synchronisation terminée")};
+document.getElementById("cloudLogoutBtn").onclick=async()=>{
+  if(!supabaseClient)return;
+  await supabaseClient.auth.signOut();
+  closeModal("manageModal");
+};
+window.addEventListener("online",async()=>{if(cloudUser){cloudStatus("syncing","Reconnexion…");await cloudFlushPending();await cloudPull()}});
+window.addEventListener("offline",()=>{if(cloudUser)cloudStatus("offline","Hors ligne")});
+
 renderAll();
+initCloud();
 </script>
 </body>
 </html>
